@@ -1,0 +1,14 @@
+CREATE TABLE `RecommendationLog` (
+  `id` VARCHAR(191) NOT NULL,
+  `userId` VARCHAR(191) NOT NULL,
+  `shownAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `source` VARCHAR(191) NOT NULL,
+  `recId` VARCHAR(191) NOT NULL,
+  `payload` JSON NOT NULL,
+  `shownIn` VARCHAR(191) NOT NULL,
+  `actedOn` BOOLEAN NOT NULL DEFAULT false,
+  `actedAt` DATETIME(3) NULL,
+  `dismissedAt` DATETIME(3) NULL,
+
+  PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

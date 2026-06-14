@@ -1,0 +1,24 @@
+# LiveKit config for the native single-host deploy. Keys MUST match the
+# LIVEKIT_API_KEY / LIVEKIT_API_SECRET in /srv/mentra/.env.
+port: 7880
+
+rtc:
+  tcp_port: 7881
+  udp_port: 7882
+  # Single host: advertise the loopback so a browser on the host (via the VM's
+  # forwarded UDP 7882) can reach media. On a real VPS set use_external_ip: true
+  # (and open UDP 7882), or pin node_ip to the server's public address.
+  node_ip: 127.0.0.1
+  use_external_ip: false
+
+keys:
+  devkey: devsecret_change_me_at_least_32_chars_xxxx
+
+# LiveKit signs each webhook; the API verifies it. Native API listens on 127.0.0.1:4000.
+webhook:
+  api_key: devkey
+  urls:
+    - http://127.0.0.1:4000/api/v1/live-session/webhook
+
+logging:
+  level: info

@@ -1,0 +1,99 @@
+import { motion } from 'framer-motion';
+import { Compass, Sparkles, Target, TrendingUp } from 'lucide-react';
+import { Badge, Card, StatCard } from '@mentra/ui';
+import { PageHeader } from '../../components/PageHeader.js';
+import { useDashboardOverview } from '../../lib/dashboard.js';
+import { useRoadmapSummary } from '../../lib/roadmap.js';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 320, damping: 28 } },
+};
+
+export function AnalyticsPage() {
+  const { data, isLoading } = useDashboardOverview();
+  const { data: roadmap } = useRoadmapSummary();
+
+  const assignment = data?.assignment;
+  const completed = assignment?.status === 'completed';
+  const days = daysSince(data?.stats.joinedAt);
+
+  if (isLoading) {
+    return <div className="grid min-h-[60vh] place-items-center text-ink-muted">Loading…</div>;
+  }
+
+  return (
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
+      className="mx-auto w-full max-w-8xl space-y-6"
+    >
+      <motion.div variants={fadeUp}>
+        <PageHeader
+          icon={<TrendingUp />}
+          title="Analytics"
+          subtitle="Your learning progress and momentum at a glance."
+        />
+      </motion.div>
+
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <motion.div variants={fadeUp}><StatCard inverse value={String(days)} label="Days on Mentra" /></motion.div>
+        <motion.div variants={fadeUp}><StatCard value={completed ? `${assignment?.score ?? 0}%` : '—'} label="Assignment score" /></motion.div>
+        <motion.div variants={fadeUp}><StatCard value={roadmap?.hasRoadmap ? `${roadmap.percentComplete}%` : '—'} label="Roadmap complete" /></motion.div>
+        <motion.div variants={fadeUp}><StatCard value={roadmap?.hasRoadmap ? `${roadmap.completedItems}/${roadmap.totalItems}` : '—'} label="Items done" /></motion.div>
+      </div>
+
+      <div className="grid grid-cols-12 gap-4">
+        <motion.div className="col-span-12 lg:col-span-7" variants={fadeUp}>
+          <Card className="h-full">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-sm font-medium text-ink"><TrendingUp className="size-4" /> Roadmap progress</h3>
+              <Badge variant="outline" size="md">{roadmap?.hasRoadmap ? `Week ${roadmap.currentWeek}` : 'Not started'}</Badge>
+            </div>
+            {roadmap?.hasRoadmap ? (
+              <>
+                <div className="text-display-md">{roadmap.percentComplete}%</div>
+                <div className="mt-1 text-xs text-ink-muted">{roadmap.completedItems} of {roadmap.totalItems} items · {roadmap.totalWeeks} weeks</div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-surface-sunken">
+                  <div className="h-full rounded-full bg-accent-green" style={{ width: `${roadmap.percentComplete}%` }} />
+                </div>
+              </>
+            ) : (
+              <p className="text-sm leading-6 text-ink-muted">
+                Complete your assignment to generate a roadmap — your weekly progress will chart here.
+              </p>
+            )}
+          </Card>
+        </motion.div>
+
+        <motion.div className="col-span-12 lg:col-span-5" variants={fadeUp}>
+          <Card className="h-full">
+            <h3 className="mb-4 flex items-center gap-2 text-sm font-medium text-ink"><Target className="size-4" /> Milestones</h3>
+            <div className="space-y-2.5">
+              <Milestone icon={<Sparkles className="size-4" />} label="Assignment completed" done={completed} />
+              <Milestone icon={<Compass className="size-4" />} label="Roadmap generated" done={Boolean(roadmap?.hasRoadmap)} />
+              <Milestone icon={<TrendingUp className="size-4" />} label="First roadmap item done" done={(roadmap?.completedItems ?? 0) > 0} />
+              <Milestone icon={<Target className="size-4" />} label="Halfway through roadmap" done={(roadmap?.percentComplete ?? 0) >= 50} />
+            </div>
+          </Card>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
+function Milestone({ icon, label, done }: { icon: React.ReactNode; label: string; done: boolean }) {
+  return (
+    <div className="flex items-center gap-3 rounded-md bg-surface-sunken p-3 ring-1 ring-border-subtle">
+      <span className={`grid size-7 place-items-center rounded-md ${done ? 'bg-accent-green/15 text-accent-green' : 'bg-surface text-ink-faint'}`}>{icon}</span>
+      <span className={`text-sm ${done ? 'text-ink' : 'text-ink-muted'}`}>{label}</span>
+      {done ? <span className="ml-auto text-xs font-medium text-accent-green">Done</span> : null}
+    </div>
+  );
+}
+
+function daysSince(value?: string) {
+  if (!value) return 0;
+  return Math.max(1, Math.ceil((Date.now() - new Date(value).getTime()) / 86_400_000));
+}

@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `RoadmapItem_weekId_order_key` ON `RoadmapItem`(`weekId`, `order`);

@@ -1,0 +1,1 @@
+ALTER TABLE `MentorBooking` ADD COLUMN `joinCode` VARCHAR(12) NULL;

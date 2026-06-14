@@ -1,0 +1,1 @@
+ALTER TABLE `User` ADD COLUMN `roleId` VARCHAR(191) NULL AFTER `role`;

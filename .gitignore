@@ -1,0 +1,42 @@
+# deps
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+
+# build
+dist/
+build/
+.next/
+.turbo/
+.vite/
+*.tsbuildinfo
+
+# env
+.env
+.env.*
+!.env.example
+
+# test / coverage
+coverage/
+.nyc_output/
+*.log
+
+# editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# prisma
+apps/api/prisma/migrations/dev.db*
+
+# docker
+*.pid
+
+# misc
+tmp/
+.cache/
+
+# local uploads (resumes, etc.)
+var/

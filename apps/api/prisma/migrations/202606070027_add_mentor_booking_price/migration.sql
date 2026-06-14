@@ -1,0 +1,1 @@
+ALTER TABLE `MentorBooking` ADD COLUMN `priceCents` INT NOT NULL DEFAULT 0;

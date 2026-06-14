@@ -1,0 +1,15 @@
+CREATE TABLE `MentorProfile` (
+  `id` VARCHAR(191) NOT NULL,
+  `userId` VARCHAR(191) NOT NULL,
+  `headline` VARCHAR(160) NULL,
+  `bio` VARCHAR(1000) NULL,
+  `expertise` JSON NULL,
+  `techStack` JSON NULL,
+  `yearsExperience` INT NULL,
+  `timezone` VARCHAR(64) NOT NULL DEFAULT 'Asia/Kolkata',
+  `accepting` BOOLEAN NOT NULL DEFAULT true,
+  `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+
+  PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

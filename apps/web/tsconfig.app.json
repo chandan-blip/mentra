@@ -1,0 +1,16 @@
+{
+  "extends": "@mentra/config/tsconfig.react",
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "useDefineForClassFields": true,
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": []
+  },
+  "include": ["src"]
+}

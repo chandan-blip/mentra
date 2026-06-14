@@ -1,0 +1,20 @@
+CREATE TABLE `LiveSession` (
+  `id` VARCHAR(191) NOT NULL,
+  `mentorId` VARCHAR(191) NOT NULL,
+  `title` VARCHAR(191) NOT NULL,
+  `topic` VARCHAR(191) NOT NULL,
+  `status` VARCHAR(16) NOT NULL DEFAULT 'scheduled',
+  `scheduledFor` DATETIME(3) NULL,
+  `startedAt` DATETIME(3) NULL,
+  `endedAt` DATETIME(3) NULL,
+  `livekitRoom` VARCHAR(191) NOT NULL,
+  `currentViewers` INT NOT NULL DEFAULT 0,
+  `peakViewers` INT NOT NULL DEFAULT 0,
+  `recordingStatus` VARCHAR(32) NULL,
+  `recordingUrl` TEXT NULL,
+  `egressId` VARCHAR(191) NULL,
+  `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+
+  PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

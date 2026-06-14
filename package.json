@@ -1,0 +1,38 @@
+{
+  "name": "mentra",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Mentra — Personalized Software Engineering Career OS",
+  "packageManager": "pnpm@10.33.4",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter='./apps/*' dev",
+    "build": "pnpm -r --filter='./packages/*' build && pnpm -r --filter='./apps/*' build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "clean": "pnpm -r exec rm -rf dist .turbo .vite node_modules && rm -rf node_modules",
+    "db:migrate": "pnpm --filter @mentra/api db:migrate",
+    "db:deploy": "pnpm --filter @mentra/api db:deploy",
+    "db:generate": "pnpm --filter @mentra/api db:generate",
+    "db:studio": "pnpm --filter @mentra/api db:studio",
+    "db:seed": "pnpm --filter @mentra/api db:seed"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "prettier": "^3.3.3",
+    "@types/node": "^20.14.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "argon2",
+      "esbuild",
+      "prisma"
+    ]
+  }
+}

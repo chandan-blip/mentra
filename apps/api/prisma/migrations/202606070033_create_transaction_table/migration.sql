@@ -1,0 +1,18 @@
+CREATE TABLE `Transaction` (
+  `id` VARCHAR(191) NOT NULL,
+  `kind` VARCHAR(24) NOT NULL DEFAULT 'booking_payment',
+  `bookingId` VARCHAR(191) NOT NULL,
+  `studentId` VARCHAR(191) NOT NULL,
+  `mentorId` VARCHAR(191) NOT NULL,
+  `amountCents` INT NOT NULL DEFAULT 0,
+  `currency` VARCHAR(8) NOT NULL DEFAULT 'INR',
+  `status` VARCHAR(16) NOT NULL DEFAULT 'pending',
+  `gatewayRef` VARCHAR(191) NULL,
+  `reviewedBy` VARCHAR(191) NULL,
+  `reviewedAt` DATETIME(3) NULL,
+  `note` VARCHAR(500) NULL,
+  `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+
+  PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

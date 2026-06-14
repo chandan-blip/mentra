@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Global slim scrollbar — thin white thumb, transparent track, no arrows. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.45) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.45);
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+  /* Kill the scrollbar arrow buttons in WebKit. */
+  *::-webkit-scrollbar-button {
+    display: none;
+  }
+}
+
+@layer components {
+  .auth-input-wrap {
+    @apply flex h-12 items-center gap-3 rounded-md bg-surface-sunken px-4 ring-1 ring-border-subtle transition focus-within:ring-border-strong;
+  }
+
+  .auth-input {
+    @apply h-full min-w-0 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink-faint;
+  }
+
+  .auth-input-plain {
+    @apply h-12 w-full rounded-md bg-surface-sunken px-4 text-sm text-ink outline-none ring-1 ring-border-subtle transition placeholder:text-ink-faint focus:ring-border-strong;
+  }
+
+  .auth-social-button {
+    @apply flex h-11 items-center justify-center gap-2 rounded-md bg-surface px-3 text-sm font-medium text-ink ring-1 ring-border-subtle transition hover:bg-surface-raised;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbars while keeping scroll behaviour — used by full-screen experiences. */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -1,0 +1,25 @@
+CREATE TABLE `Lead` (
+  `id` VARCHAR(191) NOT NULL,
+  `ownerId` VARCHAR(191) NOT NULL,
+  `firstName` VARCHAR(120) NULL,
+  `lastName` VARCHAR(120) NULL,
+  `email` VARCHAR(255) NULL,
+  `phone` VARCHAR(40) NULL,
+  `company` VARCHAR(200) NULL,
+  `jobTitle` VARCHAR(160) NULL,
+  `status` VARCHAR(20) NOT NULL DEFAULT 'new',
+  `source` VARCHAR(40) NULL,
+  `value` INT NULL,
+  `website` VARCHAR(500) NULL,
+  `linkedinUrl` VARCHAR(500) NULL,
+  `city` VARCHAR(120) NULL,
+  `country` VARCHAR(120) NULL,
+  `timezone` VARCHAR(64) NULL,
+  `notes` TEXT NULL,
+  `tags` JSON NULL,
+  `lastContactedAt` DATETIME(3) NULL,
+  `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+
+  PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

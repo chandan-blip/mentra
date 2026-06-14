@@ -1,0 +1,18 @@
+CREATE TABLE `LeadCall` (
+  `id` VARCHAR(191) NOT NULL,
+  `ownerId` VARCHAR(191) NOT NULL,
+  `leadId` VARCHAR(191) NOT NULL,
+  `listId` VARCHAR(191) NULL,
+  `vapiCallId` VARCHAR(191) NULL,
+  `status` VARCHAR(24) NOT NULL DEFAULT 'queued',
+  `endedReason` VARCHAR(120) NULL,
+  `summary` TEXT NULL,
+  `transcript` MEDIUMTEXT NULL,
+  `recordingUrl` VARCHAR(1000) NULL,
+  `startedAt` DATETIME(3) NULL,
+  `endedAt` DATETIME(3) NULL,
+  `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+
+  PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

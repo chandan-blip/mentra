@@ -1,0 +1,1 @@
+ALTER TABLE `Module` ADD COLUMN `role` VARCHAR(64) NULL AFTER `placement`;

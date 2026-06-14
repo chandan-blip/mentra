@@ -1,0 +1,1 @@
+ALTER TABLE `MentorAvailabilitySlot` ADD COLUMN `access` VARCHAR(16) NOT NULL DEFAULT 'paid';
