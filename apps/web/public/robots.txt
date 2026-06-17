@@ -1,0 +1,27 @@
+User-agent: *
+Allow: /$
+Allow: /og-image.png
+Allow: /favicon.png
+Allow: /brand/
+Allow: /assets/
+
+# Private, login-gated app — no value to index, keep out of search
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /assignment
+Disallow: /roadmap
+Disallow: /learning
+Disallow: /projects
+Disallow: /live-sessions
+Disallow: /jobs
+Disallow: /mentors
+Disallow: /community
+Disallow: /analytics
+Disallow: /support
+Disallow: /subscriptions
+Disallow: /leads
+Disallow: /transactions
+Disallow: /onboarding
+
+Sitemap: https://mentra.app/sitemap.xml

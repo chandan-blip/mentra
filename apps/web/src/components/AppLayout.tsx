@@ -183,7 +183,7 @@ export function AppLayout() {
                 onClick={() => navigate('/dashboard')}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-inverse text-ink-inverse"
               >
-                <span className="text-lg font-bold">M</span>
+                <img src="/brand/mentra-icon-black.png" alt="Mentra" className="h-5 w-auto" />
               </button>
               {railExpanded ? <span className="flex-1 truncate text-base font-bold text-ink">Mentra</span> : null}
               {/* Collapse/expand toggle is desktop-only (mobile uses the off-canvas drawer). */}

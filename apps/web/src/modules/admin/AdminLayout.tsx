@@ -92,7 +92,7 @@ export function AdminLayout() {
               onClick={() => navigate('/admin')}
               className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-surface-inverse text-ink-inverse"
             >
-              <span className="text-lg font-bold">M</span>
+              <img src="/brand/mentra-icon-black.png" alt="Mentra" className="h-5 w-auto" />
             </button>
           }
           footer={

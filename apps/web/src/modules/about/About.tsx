@@ -94,11 +94,12 @@ export function AboutPage() {
 const grad = (hue: number) =>
   `radial-gradient(120% 120% at 20% 10%, hsl(${hue} 75% 55%), hsl(${(hue + 50) % 360} 70% 38%) 70%)`;
 
-/** Full-width "image" banner. Swap the gradient for a real <img> when assets are ready. */
-function Hero({ hue, icon, kicker, title }: { hue: number; icon: ReactNode; kicker: string; title: string }) {
+/** Full-width image banner. Falls back to the gradient if the image is missing. */
+function Hero({ hue, icon, kicker, title, image }: { hue: number; icon: ReactNode; kicker: string; title: string; image?: string }) {
   return (
     <div className="relative overflow-hidden rounded-lg" style={{ background: grad(hue) }}>
-      <div className="absolute inset-0 bg-black/20" />
+      {image ? <img src={image} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" /> : null}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
       <div className="relative flex min-h-[200px] flex-col justify-end gap-1 p-6 sm:min-h-[260px] sm:p-8">
         <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-black/25 px-2.5 py-1 text-xs font-medium text-white ring-1 ring-white/25 [&_svg]:size-3.5">
           {icon} {kicker}
@@ -117,11 +118,11 @@ function H3({ children }: { children: ReactNode }) {
   return <h3 className="pt-2 text-base font-semibold text-ink">{children}</h3>;
 }
 
-function ImageCard({ hue, icon, label }: { hue: number; icon: ReactNode; label: string }) {
+function ImageCard({ hue, icon, label, image }: { hue: number; icon: ReactNode; label: string; image?: string }) {
   return (
     <div className="overflow-hidden rounded-lg ring-1 ring-border-subtle">
-      <div className="grid aspect-[4/3] place-items-center text-white [&_svg]:size-8" style={{ background: grad(hue) }}>
-        {icon}
+      <div className="relative grid aspect-[4/3] place-items-center text-white [&_svg]:size-8" style={{ background: grad(hue) }}>
+        {image ? <img src={image} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" /> : icon}
       </div>
       <div className="bg-surface px-4 py-3 text-sm font-medium text-ink">{label}</div>
     </div>
@@ -133,7 +134,7 @@ function ImageCard({ hue, icon, label }: { hue: number; icon: ReactNode; label: 
 function AboutUs() {
   return (
     <div>
-      <Hero hue={250} icon={<Sparkles />} kicker="Our story" title="A personal engineering career coach, powered by AI and real mentors." />
+      <Hero hue={250} icon={<Sparkles />} kicker="Our story" title="A personal engineering career coach, powered by AI and real mentors." image="/assets/about/about-us.png" />
 
       <Prose>
         <p>
@@ -144,9 +145,9 @@ function AboutUs() {
       </Prose>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <ImageCard hue={160} icon={<Target />} label="Assess your level" />
-        <ImageCard hue={250} icon={<Sparkles />} label="Follow your roadmap" />
-        <ImageCard hue={20} icon={<Users />} label="Learn with mentors" />
+        <ImageCard hue={160} icon={<Target />} label="Assess your level" image="/assets/about/assess-your-level.png" />
+        <ImageCard hue={250} icon={<Sparkles />} label="Follow your roadmap" image="/assets/about/follow-your-roadmap.png" />
+        <ImageCard hue={20} icon={<Users />} label="Learn with mentors" image="/assets/about/learn-with-mentors.png" />
       </div>
 
       <Prose>
@@ -179,7 +180,7 @@ function AboutUs() {
 function Terms() {
   return (
     <div>
-      <Hero hue={210} icon={<FileText />} kicker="Legal" title="Terms of Service" />
+      <Hero hue={210} icon={<FileText />} kicker="Legal" title="Terms of Service" image="/assets/about/terms-of-service.png" />
       <Prose>
         <p>Last updated: June 2026. By using Mentra you agree to these terms.</p>
         <H3>1. Using Mentra</H3>
@@ -200,7 +201,7 @@ function Terms() {
 function Privacy() {
   return (
     <div>
-      <Hero hue={150} icon={<ShieldCheck />} kicker="Legal" title="Privacy Policy" />
+      <Hero hue={150} icon={<ShieldCheck />} kicker="Legal" title="Privacy Policy" image="/assets/about/privacy-policy.png" />
       <Prose>
         <p>We collect only what we need to personalize your learning and run the platform.</p>
         <H3>What we collect</H3>
@@ -219,7 +220,7 @@ function Privacy() {
 function Refund() {
   return (
     <div>
-      <Hero hue={30} icon={<RotateCcw />} kicker="Legal" title="Refund Policy" />
+      <Hero hue={30} icon={<RotateCcw />} kicker="Legal" title="Refund Policy" image="/assets/about/refund-policy.png" />
       <Prose>
         <p>We want you to be confident in your subscription.</p>
         <H3>7-day guarantee</H3>
@@ -236,7 +237,7 @@ function Refund() {
 function Contact() {
   return (
     <div>
-      <Hero hue={280} icon={<Mail />} kicker="Say hello" title="Contact us" />
+      <Hero hue={280} icon={<Mail />} kicker="Say hello" title="Contact us" image="/assets/about/contact-us.png" />
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <ContactItem icon={<Mail className="size-5" />} label="Email" value="hello@mentra.app" />
         <ContactItem icon={<Phone className="size-5" />} label="Phone" value="+91 90000 00000" />
