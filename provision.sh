@@ -103,6 +103,7 @@ systemctl daemon-reload
 systemctl enable --now livekit
 systemctl restart mentra-api && systemctl enable mentra-api
 
+if [ "${INSTALL_PHPMYADMIN:-0}" = "1" ]; then
 echo "==> [8/9] phpMyAdmin (DB admin UI, served by nginx via php-fpm)"
 # Install from the Ubuntu archive — the upstream phpmyadmin.net download is often
 # unreachable from inside the VM. Preseed debconf so apt neither prompts nor pulls
@@ -133,12 +134,20 @@ mkdir -p /var/lib/phpmyadmin/tmp
 # php-fpm runs as www-data and needs to write TempDir.
 chown -R www-data:www-data /var/lib/phpmyadmin
 systemctl enable --now php8.1-fpm
+else
+  echo "==> [8/9] phpMyAdmin — skipped (public host; set INSTALL_PHPMYADMIN=1 to enable)"
+fi
 
+if [ "${SKIP_NGINX:-0}" = "1" ]; then
+  echo "==> [9/9] nginx site — skipped (SKIP_NGINX=1; manage the vhost yourself)"
+else
 echo "==> [9/9] nginx site"
 cp "$KIT/nginx/mentra.conf" /etc/nginx/sites-available/mentra.conf
 ln -sf /etc/nginx/sites-available/mentra.conf /etc/nginx/sites-enabled/mentra.conf
-rm -f /etc/nginx/sites-enabled/default
+# Only remove the catch-all default on a single-tenant host; never on a shared one.
+[ "${REMOVE_DEFAULT_SITE:-0}" = "1" ] && rm -f /etc/nginx/sites-enabled/default
 nginx -t && systemctl reload nginx
+fi
 
 echo "✅ Done. App: $PUBLIC_URL   (api: /api, livekit ws: /rtc, phpMyAdmin: /phpmyadmin)"
 echo "   phpMyAdmin login: MySQL user '$DB_USER' / its password, DB '$DB_NAME'."

@@ -7,6 +7,7 @@ import { AppSidebar, FOOTER_MODULE_KEYS, SidebarLink, SidebarModuleButton } from
 import { NotificationBell } from './NotificationBell.js';
 import { LogoutConfirmModal } from './LogoutConfirmModal.js';
 import { useMyAccess } from '../lib/access.js';
+import { useProfile } from '../lib/profile.js';
 import { useSmoothScroll } from '../lib/smoothScroll.js';
 import {
   clearAuthSession,
@@ -14,6 +15,7 @@ import {
   getAccessToken,
   getApiBaseUrl,
   getStoredUser,
+  resolveAvatarUrl,
   type AuthUser,
 } from '../lib/auth.js';
 
@@ -129,6 +131,12 @@ export function AppLayout() {
   const displayName = user?.name ?? 'Student';
   const todayLabel = useMemo(() => formatToday(), []);
 
+  // Avatar for the header. Sourced from the profile query (not the cached AuthUser,
+  // which has no avatar) so it refreshes automatically when an upload invalidates
+  // ['profile','me']. The URL is already cache-busted (?v=timestamp) server-side.
+  const { data: profileMe } = useProfile();
+  const avatarSrc = resolveAvatarUrl(profileMe?.profile?.avatarUrl);
+
   // Module-access guard. Blocks a module page when the user's role can't read it
   // ('forbidden') or their plan doesn't unlock it ('locked'). Admins bypass.
   const { data: access, isLoading: accessLoading } = useMyAccess();
@@ -237,7 +245,7 @@ export function AppLayout() {
                 aria-label="Open profile settings"
                 className="flex items-center gap-2 rounded-full bg-surface p-1 ring-1 ring-border-subtle transition hover:ring-border-strong md:px-2 md:py-1.5"
               >
-                <Avatar size="sm" name={displayName} online={!loadingUser} />
+                <Avatar size="sm" src={avatarSrc} name={displayName} online={!loadingUser} />
                 <div className="hidden pr-2 text-left text-xs md:block">
                   <div className="font-medium text-ink">{displayName}</div>
                   <div className="text-ink-faint">{roleLabel}</div>

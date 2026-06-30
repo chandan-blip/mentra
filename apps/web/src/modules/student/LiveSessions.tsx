@@ -321,9 +321,14 @@ function Viewer({ session, onLeave }: { session: LiveSessionView; onLeave: () =>
         <Card className="overflow-hidden p-0">
           {conn ? (
             <LiveStage
+              // Re-key on the publish flag so a raised-hand approval (which swaps in a
+              // publish-capable token) fully remounts and reconnects to LiveKit with
+              // the new grant — otherwise the mic toggle stays silently denied.
+              key={conn.canPublish ? 'speak' : 'watch'}
               token={conn.token}
               wsUrl={conn.wsUrl}
               publish={conn.canPublish}
+              publishVideo={false}
               mentorId={session.mentorId}
               mentorName={session.mentorName}
               placeholderBg={stageBg(hueOf(session.id))}
