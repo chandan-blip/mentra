@@ -26,6 +26,18 @@ export const updateLiveSessionSchema = z.object({
 });
 export type UpdateLiveSessionInput = z.infer<typeof updateLiveSessionSchema>;
 
+/** Max size for a mentor-uploaded recording (1 GB). Enforced client- and server-side. */
+export const MAX_UPLOAD_BYTES = 1024 * 1024 * 1024;
+
+/** Mentor starts an upload — returns a presigned URL; the browser PUTs the file to R2. */
+export const createUploadSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  topic: z.string().trim().min(1).max(120).default('General'),
+  /** MIME type of the file being uploaded (e.g. video/mp4). */
+  contentType: z.string().trim().min(1).max(120),
+});
+export type CreateUploadInput = z.infer<typeof createUploadSchema>;
+
 /** A chat message sent over Socket.IO. */
 export const chatSendSchema = z.object({
   sessionId: z.string().trim().min(1).max(191),
@@ -39,6 +51,8 @@ export type LiveSessionView = {
   id: string;
   mentorId: string;
   mentorName: string;
+  /** Servable avatar URL of the mentor (relative path), or null if none uploaded. */
+  mentorAvatarUrl: string | null;
   title: string;
   topic: string;
   status: LiveSessionStatus;
@@ -47,9 +61,25 @@ export type LiveSessionView = {
   endedAt: string | null;
   currentViewers: number;
   peakViewers: number;
+  /** Number of chat messages on the session (used as the "comments" count). */
+  chatCount: number;
   /** True when the requesting user is the owning mentor. */
   isOwner: boolean;
+  /** Recording lifecycle: null (none) → recording → processing → ready | failed. */
+  recordingStatus: 'recording' | 'processing' | 'ready' | 'failed' | null;
+  /** HLS master playlist URL (CDN-served) — present only when recordingStatus is 'ready'. */
+  recordingUrl: string | null;
+  /** Playback duration in seconds (recordings/uploads), or null until transcoded. */
+  durationSeconds: number | null;
+  /** 'live' (recorded broadcast) or 'upload' (mentor-uploaded video). */
+  source: 'live' | 'upload';
   createdAt: string;
+};
+
+/** Returned when a mentor starts an upload: the row + a presigned R2 PUT URL. */
+export type UploadInitResponse = {
+  session: LiveSessionView;
+  uploadUrl: string;
 };
 
 export type ChatMessageView = {

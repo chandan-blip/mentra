@@ -629,10 +629,14 @@ model LiveSession {
   livekitRoom     String    @unique // LiveKit room name, e.g. "ls_<id>"
   currentViewers  Int       @default(0)
   peakViewers     Int       @default(0)
-  // Recording seam — populated by a later LiveKit egress phase; unused for now.
+  // 'live' = recorded from a LiveKit broadcast; 'upload' = mentor-uploaded video.
+  source          String    @default("live") @db.VarChar(16)
+  // Recording: status + public HLS URL + LiveKit egress id (null for uploads).
   recordingStatus String?   @db.VarChar(32)
   recordingUrl    String?   @db.Text
   egressId        String?
+  // Playback duration (seconds), filled by the transcode worker via ffprobe.
+  durationSeconds Int?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @default(now()) @updatedAt
 
@@ -669,6 +673,18 @@ model ChatMessage {
 
   @@index([sessionId])
   @@index([sessionId, createdAt])
+}
+
+// Per-user resume position for a session recording (Netflix-style "continue watching").
+// One row per (user, session); upserted as the student watches.
+model WatchProgress {
+  id              String   @id @default(cuid())
+  userId          String
+  sessionId       String
+  positionSeconds Int      @default(0)
+  updatedAt       DateTime @default(now()) @updatedAt
+
+  @@unique([userId, sessionId])
 }
 
 // Job postings surfaced to students on the Jobs board. Two origins (`source`):

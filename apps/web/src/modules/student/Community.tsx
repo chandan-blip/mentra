@@ -1,9 +1,13 @@
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageSquare, Pin, PinOff, Pencil, Plus, Trash2, Users, X } from 'lucide-react';
+import { MessageSquare, Pin, Pencil, Trash2, Users, X } from 'lucide-react';
 import { Avatar, Badge, Card } from '@mentra/ui';
 import type { CommunityCommentView, CommunityPostView } from '@mentra/shared';
 import { RichComposer, renderRichText, type ComposerValue } from '../../components/RichComposer.js';
+import { getStoredUser, resolveAvatarUrl } from '../../lib/auth.js';
+import { useProfile } from '../../lib/profile.js';
+import { useHideChromeOnScroll } from '../../lib/chrome.js';
 import {
   formatAgo,
   useComments,
@@ -12,7 +16,6 @@ import {
   useDeleteComment,
   useDeletePost,
   usePosts,
-  useTogglePin,
   useUpdatePost,
 } from '../../lib/community.js';
 
@@ -32,39 +35,60 @@ export function CommunityPage() {
   const createPost = useCreatePost();
   const [composerOpen, setComposerOpen] = useState(false);
 
+  // Current user, for the mobile composer-trigger avatar.
+  const { data: me } = useProfile();
+  const avatarSrc = resolveAvatarUrl(me?.profile?.avatarUrl);
+  const displayName = getStoredUser()?.name ?? '';
+
+  // Hide the app chrome (top bar + bottom nav) while scrolling the feed down.
+  const feedRef = useRef<HTMLDivElement>(null);
+  useHideChromeOnScroll(feedRef);
+
   async function submitPost(v: ComposerValue) {
     await createPost.mutateAsync({ body: v.body, mediaUrl: v.mediaUrl, mediaType: v.mediaType, mentions: v.mentions });
   }
 
+  // Mobile: h-[calc(100%+6rem)] + -mb-24 reclaims the shell's bottom-nav padding so the
+  // feed fills the full height; the feed pads its own scroll content to clear the nav.
   return (
     <motion.div
       initial="hidden"
       animate="visible"
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
-      className="mx-auto flex h-full w-full max-w-2xl flex-col"
+      className="mx-auto flex h-[calc(100%+6rem)] w-full max-w-2xl flex-col -mb-24 md:h-full md:mb-0"
     >
       {/* Fixed header */}
       <motion.div variants={fadeUp} className="shrink-0">
-        <div className="flex items-center justify-between gap-2">
+        {/* Desktop: icon + title (hidden on mobile — the app top bar already names the page) */}
+        <div className="hidden items-center justify-between gap-2 md:flex">
           <h1 className="flex items-center gap-3 text-display-md tracking-normal">
             <span className="grid size-14 shrink-0 place-items-center rounded-lg bg-surface-inverse text-ink-inverse [&_svg]:size-7">
               <Users />
             </span>
             Community
           </h1>
-          {/* Mobile-only: open the post composer as a bottom sheet */}
-          <button
-            type="button"
-            onClick={() => setComposerOpen(true)}
-            aria-label="Create post"
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-inverse text-ink-inverse transition hover:bg-ink md:hidden"
+          <Link
+            to="/students"
+            className="inline-flex h-10 items-center gap-2 rounded-md bg-surface-sunken px-4 text-sm font-semibold text-ink ring-1 ring-border-subtle transition hover:ring-border-strong"
           >
-            <Plus className="size-5" />
-          </button>
+            <Users className="size-4" /> Browse students
+          </Link>
         </div>
         <p className="mt-1 hidden text-sm text-ink-muted md:block">
           Share wins, ask questions, help each other — everyone's here.
         </p>
+
+        {/* Mobile: avatar + tappable input that opens the post composer bottom sheet */}
+        <div className="flex items-center gap-3 md:hidden">
+          <Avatar src={avatarSrc} name={displayName} size="md" />
+          <button
+            type="button"
+            onClick={() => setComposerOpen(true)}
+            className="flex-1 rounded-full bg-surface-sunken px-4 py-2.5 text-left text-sm text-ink-faint ring-1 ring-border-subtle transition hover:ring-border-strong"
+          >
+            What's on your mind?
+          </button>
+        </div>
       </motion.div>
 
       {/* Fixed post composer — desktop only (mobile uses the bottom sheet) */}
@@ -78,7 +102,7 @@ export function CommunityPage() {
       </motion.div>
 
       {/* Scrollable feed — only the posts scroll */}
-      <div className="mt-5 min-h-0 flex-1 overflow-y-auto pb-4 pr-1">
+      <div ref={feedRef} className="mt-5 min-h-0 flex-1 overflow-y-auto pb-24 pr-1 md:pb-4">
         {posts.isLoading ? (
           <Card className="text-sm text-ink-muted">Loading the feed…</Card>
         ) : (posts.data?.length ?? 0) === 0 ? (
@@ -143,7 +167,6 @@ export function CommunityPage() {
 function PostCard({ post: p }: { post: CommunityPostView }) {
   const update = useUpdatePost();
   const del = useDeletePost();
-  const pin = useTogglePin();
   const [editing, setEditing] = useState(false);
   const [showComments, setShowComments] = useState(false);
 
@@ -156,12 +179,16 @@ function PostCard({ post: p }: { post: CommunityPostView }) {
   }
 
   return (
-    <Card className={`p-4 ${p.pinned ? 'ring-1 ring-accent-amber/40' : ''}`}>
+    <Card padding={false} className={`p-4 ${p.pinned ? 'ring-1 ring-accent-amber/40' : ''}`}>
       <div className="flex items-center gap-3">
-        <Avatar src={p.author.avatarUrl ?? undefined} name={p.author.name} size="md" />
+        <Link to={`/students/${p.author.id}`} aria-label={`View ${p.author.name}'s profile`}>
+          <Avatar src={p.author.avatarUrl ?? undefined} name={p.author.name} size="md" />
+        </Link>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <span className="truncate text-sm font-semibold text-ink">{p.author.name}</span>
+            <Link to={`/students/${p.author.id}`} className="truncate text-sm font-semibold text-ink hover:underline">
+              {p.author.name}
+            </Link>
             <RoleBadge role={p.author.role} />
             <span className="text-xs text-ink-faint">· {formatAgo(p.createdAt)}{p.editedAt ? ' · edited' : ''}</span>
             {p.pinned ? (
@@ -171,7 +198,7 @@ function PostCard({ post: p }: { post: CommunityPostView }) {
             ) : null}
           </div>
         </div>
-        <PostActions post={p} onEdit={() => setEditing((v) => !v)} onDelete={() => del.mutate(p.id)} onPin={() => pin.mutate(p.id)} />
+        <PostActions post={p} onEdit={() => setEditing((v) => !v)} onDelete={() => del.mutate(p.id)} />
       </div>
 
       {editing ? (
@@ -189,7 +216,7 @@ function PostCard({ post: p }: { post: CommunityPostView }) {
           {p.body ? (
             <div className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-ink">{renderRichText(p.body)}</div>
           ) : null}
-          {p.mediaUrl ? <img src={p.mediaUrl} alt="post media" className="mt-3 max-h-96 rounded-md ring-1 ring-border-subtle" /> : null}
+          {p.mediaUrl ? <img src={p.mediaUrl} alt="post media" loading="lazy" decoding="async" className="mt-3 max-h-96 rounded-md ring-1 ring-border-subtle" /> : null}
         </>
       )}
 
@@ -212,20 +239,13 @@ function PostActions({
   post: p,
   onEdit,
   onDelete,
-  onPin,
 }: {
   post: CommunityPostView;
   onEdit: () => void;
   onDelete: () => void;
-  onPin: () => void;
 }) {
   return (
     <div className="flex shrink-0 items-center gap-0.5">
-      {p.canModerate ? (
-        <IconBtn label="Pin" onClick={onPin}>
-          {p.pinned ? <PinOff className="size-4" /> : <Pin className="size-4" />}
-        </IconBtn>
-      ) : null}
       {p.isMine ? (
         <IconBtn label="Edit" onClick={onEdit}>
           <Pencil className="size-4" />
@@ -269,10 +289,14 @@ function CommentThread({ postId }: { postId: string }) {
 function CommentRow({ comment: c, onDelete }: { comment: CommunityCommentView; onDelete: () => void }) {
   return (
     <div className="flex items-start gap-2">
-      <Avatar src={c.author.avatarUrl ?? undefined} name={c.author.name} size="sm" />
+      <Link to={`/students/${c.author.id}`} aria-label={`View ${c.author.name}'s profile`}>
+        <Avatar src={c.author.avatarUrl ?? undefined} name={c.author.name} size="sm" />
+      </Link>
       <div className="min-w-0 flex-1 rounded-lg bg-surface-sunken px-3 py-2">
         <div className="flex flex-wrap items-center gap-x-2">
-          <span className="truncate text-xs font-semibold text-ink">{c.author.name}</span>
+          <Link to={`/students/${c.author.id}`} className="truncate text-xs font-semibold text-ink hover:underline">
+            {c.author.name}
+          </Link>
           <RoleBadge role={c.author.role} />
           <span className="text-[11px] text-ink-faint">· {formatAgo(c.createdAt)}</span>
         </div>

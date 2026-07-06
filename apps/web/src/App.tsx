@@ -14,8 +14,11 @@ import { SupportPage } from './modules/student/Support.js';
 import { LearningPage } from './modules/student/Learning.js';
 import { ProjectsPage } from './modules/student/Projects.js';
 import { LiveSessionsPage } from './modules/student/LiveSessions.js';
+import { WatchSessionPage } from './modules/student/WatchSession.js';
 import { MentorsPage } from './modules/student/Mentors.js';
 import { CommunityPage } from './modules/student/Community.js';
+import { StudentsPage } from './modules/student/Students.js';
+import { StudentProfilePage } from './modules/student/StudentProfile.js';
 import { ManifestoPage } from './modules/student/Manifesto.js';
 import { JobsPage } from './modules/student/Jobs.js';
 import { MentorLiveSessionsPage } from './modules/mentor/MentorLiveSessions.js';
@@ -59,9 +62,12 @@ export function App() {
         <Route path="/learning" element={<LearningPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/live-sessions" element={<LiveSessionsPage />} />
+        <Route path="/live-sessions/:id" element={<WatchSessionPage />} />
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/mentors" element={<MentorsPage />} />
         <Route path="/community" element={<CommunityPage />} />
+        <Route path="/students" element={<StudentsPage />} />
+        <Route path="/students/:id" element={<StudentProfilePage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/support" element={<SupportPage />} />
         <Route path="/subscriptions" element={<SubscriptionsPage />} />

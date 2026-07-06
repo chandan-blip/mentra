@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Lock, LogOut, PanelLeftClose, PanelLeftOpen, Sun } from 'lucide-react';
+import { Lock, LogOut, PanelLeftClose, PanelLeftOpen, Sparkles, Sun } from 'lucide-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AppShell, Avatar, Sidebar, TopBar } from '@mentra/ui';
 import type { ModuleEntitlement } from '@mentra/shared';
-import { AppSidebar, FOOTER_MODULE_KEYS, SidebarLink, SidebarModuleButton } from './AppSidebar.js';
+import { AppSidebar, FOOTER_MODULE_KEYS, isRouteActive, SidebarLink, SidebarModuleButton } from './AppSidebar.js';
+import { MobileBottomNav } from './MobileBottomNav.js';
 import { NotificationBell } from './NotificationBell.js';
 import { LogoutConfirmModal } from './LogoutConfirmModal.js';
 import { useMyAccess } from '../lib/access.js';
 import { useProfile } from '../lib/profile.js';
+import { usePageViewTracking } from '../lib/activity.js';
+import { ChromeContext, ChromeScrollWatcher } from '../lib/chrome.js';
 import { useSmoothScroll } from '../lib/smoothScroll.js';
 import {
   clearAuthSession,
@@ -63,6 +66,18 @@ function guardedModuleKey(pathname: string): string | null {
 }
 
 /**
+ * Titles for the always-available pages that aren't plan-gated modules, so the
+ * mobile header can still name them. Module pages fall back to their admin-authored
+ * `label` from the access list.
+ */
+const STATIC_PAGE_TITLES: { prefix: string; title: string }[] = [
+  { prefix: '/dashboard', title: 'Dashboard' },
+  { prefix: '/settings', title: 'Settings' },
+  { prefix: '/community', title: 'Community' },
+  { prefix: '/manifesto', title: 'Manifesto' },
+];
+
+/**
  * Persistent app frame: the icon-rail sidebar and top header are always present;
  * routed pages render in the scrollable content area via <Outlet/>.
  */
@@ -81,6 +96,12 @@ export function AppLayout() {
   });
 
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  // App-chrome visibility (top bar + bottom nav), driven by pages via useHideChromeOnScroll.
+  const [chromeHidden, setChromeHidden] = useState(false);
+  const chromeValue = useMemo(
+    () => ({ hidden: chromeHidden, setHidden: setChromeHidden }),
+    [chromeHidden],
+  );
   const isDesktop = useIsDesktop();
   // On mobile the rail is an off-canvas drawer — always show titles there.
   const railExpanded = isDesktop ? navExpanded : true;
@@ -128,6 +149,9 @@ export function AppLayout() {
   // App-wide inertial wheel smoothing on the main scroll area.
   useSmoothScroll('#app-scroll-root');
 
+  // Record a page.view on every route change (feeds the activity tracker).
+  usePageViewTracking();
+
   const displayName = user?.name ?? 'Student';
   const todayLabel = useMemo(() => formatToday(), []);
 
@@ -153,6 +177,19 @@ export function AppLayout() {
   // Show the user's actual assigned RBAC role (not the coarse legacy user.role).
   const roleLabel = formatRole(access?.roleId ?? user?.role);
 
+  // Title of the page the user is on — shown in the mobile header. Prefer the
+  // module's admin-authored label; fall back to the always-available static pages.
+  const currentModuleTitle = (() => {
+    const key = guardedModuleKey(location.pathname);
+    const moduleLabel = key ? access?.modules.find((m) => m.key === key)?.label : null;
+    if (moduleLabel) return moduleLabel;
+    return (
+      STATIC_PAGE_TITLES.find(
+        (p) => location.pathname === p.prefix || location.pathname.startsWith(`${p.prefix}/`),
+      )?.title ?? 'Mentra'
+    );
+  })();
+
   // Modules pinned to the bottom of the rail (e.g. About), rendered above logout.
   const footerModules = (access?.modules ?? []).filter(
     (m) => !m.parentKey && m.placement === 'sidebar' && FOOTER_MODULE_KEYS.includes(m.key),
@@ -176,11 +213,24 @@ export function AppLayout() {
   }
 
   return (
+    <ChromeContext.Provider value={chromeValue}>
     <AppShell
       sidebarWidth={navExpanded ? '240px' : '72px'}
+      chromeHidden={chromeHidden}
       mobileNavOpen={mobileNavOpen}
       onMenuClick={() => setMobileNavOpen(true)}
       onCloseMobileNav={() => setMobileNavOpen(false)}
+      mobileBrand={
+        <button
+          type="button"
+          onClick={() => navigate('/dashboard')}
+          aria-label="Mentra home"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-inverse text-ink-inverse"
+        >
+          <img src="/brand/mentra-icon-black.png" alt="Mentra" className="h-5 w-auto" />
+        </button>
+      }
+      bottomNav={<MobileBottomNav onMenuClick={() => setMobileNavOpen(true)} hidden={chromeHidden} />}
       sidebar={
         <Sidebar
           expanded={railExpanded}
@@ -211,6 +261,20 @@ export function AppLayout() {
               {footerModules.map((m) => (
                 <SidebarModuleButton key={m.key} module={m} pathname={location.pathname} expanded={railExpanded} />
               ))}
+              {/* Manifesto entry — mobile drawer only (md:hidden never shows on the
+                  desktop rail, which is itself hidden below md), students only. The
+                  dashboard keeps its own floating CTA on desktop. */}
+              {access?.roleId === 'student' ? (
+                <div className="md:hidden">
+                  <SidebarLink
+                    icon={<Sparkles />}
+                    label="Read the Manifesto"
+                    active={isRouteActive('/manifesto', location.pathname)}
+                    expanded={railExpanded}
+                    onClick={() => navigate('/manifesto')}
+                  />
+                </div>
+              ) : null}
               <SidebarLink icon={<LogOut />} label="Sign out" danger expanded={railExpanded} onClick={() => setLogoutOpen(true)} />
             </>
           }
@@ -226,7 +290,9 @@ export function AppLayout() {
                 <div className="text-ink-muted">{todayLabel}</div>
                 <div className="flex items-center gap-1.5 font-medium text-ink">
                   <Sun className="size-4 text-accent-amber" />
-                  {loadingUser ? 'Loading' : 'Online'}
+                  {/* Mobile: name the current page. Desktop keeps the online status. */}
+                  <span className="md:hidden">{currentModuleTitle}</span>
+                  <span className="hidden md:inline">{loadingUser ? 'Loading' : 'Online'}</span>
                 </div>
               </div>
               <div className="ml-4 hidden md:block">
@@ -256,6 +322,9 @@ export function AppLayout() {
         />
       }
     >
+      {/* Global hide-on-scroll for pages that scroll in the main root; re-keyed per
+          route so it re-anchors and reveals the chrome on every navigation. */}
+      <ChromeScrollWatcher key={location.pathname} />
       {accessLoading ? (
         <div className="grid min-h-[60vh] place-items-center text-ink-muted">Loading…</div>
       ) : denied?.kind === 'locked' ? (
@@ -271,6 +340,7 @@ export function AppLayout() {
       )}
       <LogoutConfirmModal open={logoutOpen} onCancel={() => setLogoutOpen(false)} onConfirm={handleLogout} />
     </AppShell>
+    </ChromeContext.Provider>
   );
 }
 

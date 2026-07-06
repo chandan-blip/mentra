@@ -25,7 +25,9 @@ const param = (req: Request, name: string): string => {
 };
 
 export async function getPosts(req: Request, res: Response): Promise<void> {
-  res.json({ data: await listFeed(uid(req)) });
+  // `?author=<userId>` narrows the feed to one student's posts (their profile activity).
+  const author = typeof req.query.author === 'string' ? req.query.author : undefined;
+  res.json({ data: await listFeed(uid(req), author) });
 }
 
 export async function postPost(req: Request, res: Response): Promise<void> {

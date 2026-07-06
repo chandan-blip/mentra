@@ -14,6 +14,11 @@ rtc:
 keys:
   devkey: devsecret_change_me_at_least_32_chars_xxxx
 
+# Required for the Egress service (recordings) to coordinate with LiveKit over Redis.
+# Same Redis the API/BullMQ use. Harmless for the single-node SFU if egress is unused.
+redis:
+  address: 127.0.0.1:6379
+
 # LiveKit signs each webhook; the API verifies it. Native API listens on 127.0.0.1:4000.
 webhook:
   api_key: devkey

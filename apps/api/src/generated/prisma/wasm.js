@@ -485,9 +485,11 @@ exports.Prisma.LiveSessionScalarFieldEnum = {
   livekitRoom: 'livekitRoom',
   currentViewers: 'currentViewers',
   peakViewers: 'peakViewers',
+  source: 'source',
   recordingStatus: 'recordingStatus',
   recordingUrl: 'recordingUrl',
   egressId: 'egressId',
+  durationSeconds: 'durationSeconds',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -510,6 +512,14 @@ exports.Prisma.ChatMessageScalarFieldEnum = {
   authorName: 'authorName',
   body: 'body',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.WatchProgressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  sessionId: 'sessionId',
+  positionSeconds: 'positionSeconds',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.JobScalarFieldEnum = {
@@ -761,6 +771,7 @@ exports.Prisma.ModelName = {
   LiveSession: 'LiveSession',
   SessionParticipant: 'SessionParticipant',
   ChatMessage: 'ChatMessage',
+  WatchProgress: 'WatchProgress',
   Job: 'Job',
   Lead: 'Lead',
   LeadList: 'LeadList',

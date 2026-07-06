@@ -5,17 +5,22 @@ import { requirePermission } from '../access/access.middleware.js';
 import { LiveSessionError } from './live-session.errors.js';
 import { MENTOR_MODULE, STUDENT_MODULE } from './live-session.service.js';
 import {
+  getById,
   getChatHistory,
   getLive,
   getMine,
   getPast,
   getSessionSummary,
   getUpcoming,
+  getWatchProgress,
   patchSchedule,
   postCreate,
   postEnd,
+  postFinalizeUpload,
   postJoinToken,
   postStart,
+  postUpload,
+  putWatchProgress,
 } from './live-session.controller.js';
 
 export const liveSessionRouter: Router = Router();
@@ -30,6 +35,9 @@ const student = requirePermission(STUDENT_MODULE, 'read');
 
 liveSessionRouter.post('/sessions', mentor, asyncHandler(postCreate));
 liveSessionRouter.get('/sessions/mine', mentor, asyncHandler(getMine));
+// Mentor uploads a recorded video → presigned R2 PUT, then finalize → transcode.
+liveSessionRouter.post('/sessions/upload', mentor, asyncHandler(postUpload));
+liveSessionRouter.post('/sessions/:id/upload/finalize', mentor, asyncHandler(postFinalizeUpload));
 liveSessionRouter.patch('/sessions/:id/schedule', mentor, asyncHandler(patchSchedule));
 liveSessionRouter.post('/sessions/:id/start', mentor, asyncHandler(postStart));
 liveSessionRouter.post('/sessions/:id/end', mentor, asyncHandler(postEnd));
@@ -43,6 +51,13 @@ liveSessionRouter.get('/sessions/past', student, asyncHandler(getPast));
 // are resolved in the service, so no single module gate fits here.
 liveSessionRouter.get('/sessions/:id/messages', asyncHandler(getChatHistory));
 liveSessionRouter.post('/sessions/:id/join-token', asyncHandler(postJoinToken));
+// Single-session detail for the watch page. Registered AFTER the specific /sessions/<word>
+// GETs (live/upcoming/past/mine) so those win; this matches any remaining id.
+liveSessionRouter.get('/sessions/:id', asyncHandler(getById));
+
+// Resume-watching — auth only; each user reads/writes their own recording position.
+liveSessionRouter.get('/sessions/:id/progress', asyncHandler(getWatchProgress));
+liveSessionRouter.put('/sessions/:id/progress', asyncHandler(putWatchProgress));
 
 function asyncHandler(handler: (req: Request, res: Response) => Promise<void>) {
   return (req: Request, res: Response) => {

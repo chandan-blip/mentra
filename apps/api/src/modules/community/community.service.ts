@@ -60,8 +60,8 @@ function toCommentView(row: repo.CommentRow, userId: string, admin: boolean): Co
 
 // --- Posts ---
 
-export async function listFeed(userId: string): Promise<CommunityPostView[]> {
-  const [rows, admin] = await Promise.all([repo.listPosts(), isUserAdmin(userId)]);
+export async function listFeed(userId: string, authorId?: string): Promise<CommunityPostView[]> {
+  const [rows, admin] = await Promise.all([repo.listPosts({ authorId }), isUserAdmin(userId)]);
   return rows.map((r) => toPostView(r, userId, admin));
 }
 

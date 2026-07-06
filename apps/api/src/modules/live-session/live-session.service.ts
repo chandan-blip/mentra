@@ -1,20 +1,26 @@
 import type {
   ChatMessageView,
   CreateLiveSessionInput,
+  CreateUploadInput,
   JoinTokenResponse,
   LiveSessionStatus,
   LiveSessionView,
   SessionSummary,
   UpdateLiveSessionInput,
+  UploadInitResponse,
 } from '@mentra/shared';
+import { MAX_UPLOAD_BYTES } from '@mentra/shared';
 import type { WebhookEvent } from 'livekit-server-sdk';
+import { EgressStatus } from 'livekit-server-sdk';
 import { env } from '../../env.js';
 import { logger } from '../../logger.js';
 import { emit } from '../../core/events.js';
-import { ensureRoom, endRoom, mintToken } from '../../core/livekit.js';
+import { ensureRoom, endRoom, mintToken, rawRecordingKey } from '../../core/livekit.js';
+import { presignPut, r2Delete, r2Enabled, r2Head } from '../../core/r2.js';
 import { tryGetIo } from '../../core/realtime.js';
 import { getEffectivePermission, isUserAdmin } from '../access/access.service.js';
 import { LiveSessionError } from './live-session.errors.js';
+import { enqueueTranscode } from './recording.queue.js';
 import * as repo from './live-session.repository.js';
 
 /** Module keys gating the two surfaces (match the frontend AppLayout guard). */
@@ -23,11 +29,17 @@ export const MENTOR_MODULE = 'mentor-live-sessions';
 
 const iso = (d: Date | null): string | null => (d ? d.toISOString() : null);
 
-function toView(row: repo.LiveSessionRow, mentorName: string, requesterId: string): LiveSessionView {
+function toView(
+  row: repo.LiveSessionRow,
+  mentor: { name: string; avatarUrl: string | null },
+  chatCount: number,
+  requesterId: string,
+): LiveSessionView {
   return {
     id: row.id,
     mentorId: row.mentorId,
-    mentorName,
+    mentorName: mentor.name,
+    mentorAvatarUrl: mentor.avatarUrl,
     title: row.title,
     topic: row.topic,
     status: row.status as LiveSessionStatus,
@@ -36,14 +48,24 @@ function toView(row: repo.LiveSessionRow, mentorName: string, requesterId: strin
     endedAt: iso(row.endedAt),
     currentViewers: row.currentViewers,
     peakViewers: row.peakViewers,
+    chatCount,
     isOwner: row.mentorId === requesterId,
+    recordingStatus: row.recordingStatus,
+    recordingUrl: row.recordingUrl,
+    durationSeconds: row.durationSeconds,
+    source: row.source,
     createdAt: row.createdAt.toISOString(),
   };
 }
 
 async function toViews(rows: repo.LiveSessionRow[], requesterId: string): Promise<LiveSessionView[]> {
-  const names = await repo.findUserNames([...new Set(rows.map((r) => r.mentorId))]);
-  return rows.map((r) => toView(r, names.get(r.mentorId) ?? 'Mentor', requesterId));
+  const [cards, counts] = await Promise.all([
+    repo.findUserCards([...new Set(rows.map((r) => r.mentorId))]),
+    repo.countMessagesForSessions(rows.map((r) => r.id)),
+  ]);
+  return rows.map((r) =>
+    toView(r, cards.get(r.mentorId) ?? { name: 'Mentor', avatarUrl: null }, counts.get(r.id) ?? 0, requesterId),
+  );
 }
 
 async function loadOwned(userId: string, id: string): Promise<repo.LiveSessionRow> {
@@ -87,7 +109,7 @@ export async function createSession(
     startedAt: null,
   });
   const me = await repo.findUserById(userId);
-  return toView(row, me?.name ?? 'Mentor', userId);
+  return toView(row, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
 }
 
 export async function listMine(userId: string): Promise<LiveSessionView[]> {
@@ -111,14 +133,14 @@ export async function updateSchedule(
   });
   const updated = await repo.findById(id);
   const me = await repo.findUserById(userId);
-  return toView(updated!, me?.name ?? 'Mentor', userId);
+  return toView(updated!, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
 }
 
 export async function startSession(userId: string, id: string): Promise<LiveSessionView> {
   const session = await loadOwned(userId, id);
   if (session.status === 'live') {
     const me = await repo.findUserById(userId);
-    return toView(session, me?.name ?? 'Mentor', userId);
+    return toView(session, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
   }
   if (session.status !== 'scheduled') {
     throw new LiveSessionError('SESSION_CLOSED', 'This session has already ended', 409);
@@ -128,7 +150,7 @@ export async function startSession(userId: string, id: string): Promise<LiveSess
   emit('live-session.started', { sessionId: id, mentorId: userId });
   const updated = await repo.findById(id);
   const me = await repo.findUserById(userId);
-  return toView(updated!, me?.name ?? 'Mentor', userId);
+  return toView(updated!, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
 }
 
 export async function endSession(userId: string, id: string): Promise<LiveSessionView> {
@@ -139,7 +161,53 @@ export async function endSession(userId: string, id: string): Promise<LiveSessio
   emit('live-session.ended', { sessionId: id, mentorId: session.mentorId });
   const updated = await repo.findById(id);
   const me = await repo.findUserById(userId);
-  return toView(updated!, me?.name ?? 'Mentor', userId);
+  return toView(updated!, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
+}
+
+// --- Mentor upload (video → same HLS pipeline) ---
+
+/** R2 key for a mentor-uploaded source video (no extension — ffmpeg sniffs the container). */
+const uploadKey = (id: string) => `uploads/${id}/source`;
+
+/**
+ * Start an upload: create the row and hand back a presigned PUT URL. The browser uploads
+ * the file straight to R2, then calls finalizeUpload to kick off transcoding.
+ */
+export async function createUpload(userId: string, input: CreateUploadInput): Promise<UploadInitResponse> {
+  if (!r2Enabled()) {
+    throw new LiveSessionError('UPLOAD_DISABLED', 'Uploads are not available right now', 400);
+  }
+  const row = await repo.createUpload({ mentorId: userId, title: input.title, topic: input.topic });
+  const uploadUrl = await presignPut(uploadKey(row.id), input.contentType);
+  const me = await repo.findUserById(userId);
+  return {
+    session: toView(row, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId),
+    uploadUrl,
+  };
+}
+
+/**
+ * Finalize an upload after the browser PUT completes: verify the object exists and is
+ * within the size cap, then enqueue the same transcode job recordings use.
+ */
+export async function finalizeUpload(userId: string, id: string): Promise<LiveSessionView> {
+  const session = await loadOwned(userId, id);
+  if (session.source !== 'upload') {
+    throw new LiveSessionError('NOT_UPLOAD', 'This session is not an upload', 400);
+  }
+  const key = uploadKey(id);
+  const head = await r2Head(key);
+  if (!head.exists) {
+    throw new LiveSessionError('UPLOAD_MISSING', 'No uploaded file was found', 400);
+  }
+  if (head.size > MAX_UPLOAD_BYTES) {
+    await r2Delete(key).catch(() => {});
+    await repo.setRecordingStatus(id, 'failed');
+    throw new LiveSessionError('UPLOAD_TOO_LARGE', 'The file exceeds the 1 GB limit', 413);
+  }
+  await enqueueTranscode(id, key);
+  const me = await repo.findUserById(userId);
+  return toView(session, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
 }
 
 // --- Student / shared operations ---
@@ -154,6 +222,23 @@ export async function listUpcoming(requesterId: string): Promise<LiveSessionView
 
 export async function listPast(requesterId: string): Promise<LiveSessionView[]> {
   return toViews(await repo.listPast(), requesterId);
+}
+
+/** Full view of a single session for the watch page (any authenticated user). */
+export async function getOne(userId: string, id: string): Promise<LiveSessionView> {
+  const row = await repo.findById(id);
+  if (!row) throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
+  const [cards, counts] = await Promise.all([
+    repo.findUserCards([row.mentorId]),
+    repo.countMessagesForSessions([row.id]),
+  ]);
+  const card = cards.get(row.mentorId);
+  return toView(
+    row,
+    { name: card?.name ?? 'Mentor', avatarUrl: card?.avatarUrl ?? null },
+    counts.get(row.id) ?? 0,
+    userId,
+  );
 }
 
 export async function getMessages(userId: string, id: string): Promise<ChatMessageView[]> {
@@ -268,12 +353,28 @@ function toMessageView(row: repo.ChatMessageRow): ChatMessageView {
 
 // --- LiveKit webhook handling (authoritative for attendance + viewer counts) ---
 
+// --- Watch progress (resume) ---
+
+export async function getProgress(userId: string, sessionId: string): Promise<{ positionSeconds: number }> {
+  return { positionSeconds: await repo.getWatchProgress(userId, sessionId) };
+}
+
+export async function saveProgress(userId: string, sessionId: string, positionSeconds: number): Promise<void> {
+  await repo.upsertWatchProgress(userId, sessionId, Math.max(0, Math.floor(positionSeconds)));
+}
+
 function emitViewerCount(sessionId: string, count: number): void {
   const io = tryGetIo();
   io?.in(`session:${sessionId}`).emit('presence:update', { count });
 }
 
 export async function handleWebhookEvent(event: WebhookEvent): Promise<void> {
+  // Egress lifecycle webhooks carry `egressInfo`, not a room we look up by name.
+  if (event.event === 'egress_started' || event.event === 'egress_updated' || event.event === 'egress_ended') {
+    await handleEgressEvent(event);
+    return;
+  }
+
   const roomName = event.room?.name;
   if (!roomName) return;
   const session = await repo.findByRoom(roomName);
@@ -318,5 +419,34 @@ export async function handleWebhookEvent(event: WebhookEvent): Promise<void> {
     }
     default:
       break;
+  }
+}
+
+/**
+ * Egress lifecycle. On completion we flip the recording to 'processing' and enqueue the
+ * FFmpeg transcode (raw MP4 → HLS ladder); the worker marks it 'ready' with the public
+ * URL. Any non-complete terminal status marks the recording 'failed'.
+ */
+async function handleEgressEvent(event: WebhookEvent): Promise<void> {
+  const info = event.egressInfo;
+  if (!info?.egressId) return;
+  const session = await repo.findByEgressId(info.egressId);
+  if (!session) {
+    logger.warn({ egressId: info.egressId, event: event.event }, 'egress webhook for unknown session');
+    return;
+  }
+
+  if (event.event !== 'egress_ended') return; // started/updated: status already 'recording'
+
+  if (info.status === EgressStatus.EGRESS_COMPLETE) {
+    await repo.setRecordingStatus(session.id, 'processing');
+    await enqueueTranscode(session.id, rawRecordingKey(session.id));
+    logger.info({ sessionId: session.id, egressId: info.egressId }, 'egress complete → transcoding queued');
+  } else {
+    await repo.setRecordingStatus(session.id, 'failed');
+    logger.error(
+      { sessionId: session.id, egressId: info.egressId, status: info.status },
+      'egress ended without completing',
+    );
   }
 }

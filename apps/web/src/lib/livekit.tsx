@@ -9,10 +9,49 @@ import {
   useParticipants,
   useTracks,
 } from '@livekit/components-react';
-import { Track } from 'livekit-client';
+import { Track, VideoPresets, type RoomOptions } from 'livekit-client';
 import { Maximize2, Mic, MicOff, Minimize2, Video as VideoIcon, VideoOff } from 'lucide-react';
 import { Avatar } from '@mentra/ui';
 import '@livekit/components-styles';
+
+/**
+ * Publish quality (Phase 0 — explicit simulcast ladder).
+ *
+ * Broadcast: capture at 1080p and publish a 3-rung simulcast ladder (1080/720/360) so
+ * `adaptiveStream` + `dynacast` can hand each viewer the rung their connection supports
+ * — no buffering on weak links, full quality on strong ones. Screen-share simulcasts
+ * too (LiveKit leaves that off by default). Audio enables DTX (silence suppression) +
+ * RED (redundant encoding) for resilience on lossy networks.
+ *
+ * Note: WebRTC simulcast tops out at 3 spatial layers, so the finer 1080/720/480/360
+ * ladder from the spec is produced for *recordings* by the FFmpeg/HLS pipeline (Phase 2),
+ * not for the live stream.
+ */
+const BROADCAST_OPTIONS: RoomOptions = {
+  adaptiveStream: true,
+  dynacast: true,
+  publishDefaults: {
+    simulcast: true,
+    videoSimulcastLayers: [VideoPresets.h360, VideoPresets.h720],
+    screenShareSimulcastLayers: [VideoPresets.h360, VideoPresets.h720],
+    red: true,
+    dtx: true,
+  },
+  videoCaptureDefaults: { resolution: VideoPresets.h1080.resolution },
+};
+
+/** 1:1 calls don't need a 1080 ladder — capture 720 with a light 2-rung simulcast. */
+const CALL_OPTIONS: RoomOptions = {
+  adaptiveStream: true,
+  dynacast: true,
+  publishDefaults: {
+    simulcast: true,
+    videoSimulcastLayers: [VideoPresets.h180, VideoPresets.h360],
+    red: true,
+    dtx: true,
+  },
+  videoCaptureDefaults: { resolution: VideoPresets.h720.resolution },
+};
 
 /**
  * Live video stage backed by the self-hosted LiveKit SFU. `adaptiveStream` +
@@ -62,7 +101,7 @@ export function LiveStage({
       connect
       video={publish && publishVideo}
       audio={publish}
-      options={{ adaptiveStream: true, dynacast: true }}
+      options={BROADCAST_OPTIONS}
       onDisconnected={onLeft}
       onError={(e: Error) => setErr(e.message)}
       // Mic/camera acquisition failures are otherwise silent — surface which device
@@ -160,7 +199,7 @@ export function CallStage({
       connect
       video
       audio
-      options={{ adaptiveStream: true, dynacast: true }}
+      options={CALL_OPTIONS}
       onDisconnected={onLeft}
       onError={(e: Error) => setErr(e.message)}
       // A missing/denied camera or mic must NOT silently block the join (common on

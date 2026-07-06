@@ -1,9 +1,10 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { PageHeader } from '../../components/PageHeader.js';
-import { ArrowLeft, BarChart3, Calendar, Radio, Users, Video } from 'lucide-react';
+import { ArrowLeft, BarChart3, Calendar, Radio, Upload, Users, Video } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
 import type { JoinTokenResponse, LiveSessionView } from '@mentra/shared';
+import { MAX_UPLOAD_BYTES } from '@mentra/shared';
 import { LiveChat } from '../../components/LiveChat.js';
 import { LiveStage, MediaControls } from '../../lib/livekit.js';
 import { useLiveSocket } from '../../lib/socket.js';
@@ -12,12 +13,15 @@ import {
   hueOf,
   stageBg,
   useCreateSession,
+  useCreateUpload,
   useElapsed,
   useEndSession,
+  useFinalizeUpload,
   useJoinToken,
   useMyMentorSessions,
   useSessionSummary,
   useStartSession,
+  uploadFileToR2,
 } from '../../lib/live.js';
 import { getStoredUser } from '../../lib/auth.js';
 import { useMyAccess } from '../../lib/access.js';
@@ -155,6 +159,10 @@ export function MentorLiveSessionsPage() {
             </Card>
           </motion.div>
 
+          <motion.div variants={fadeUp}>
+            <UploadRecordingCard />
+          </motion.div>
+
           {liveOnes.length > 0 ? (
             <motion.div variants={fadeUp}>
               <div className="mb-3 flex items-center gap-2">
@@ -221,6 +229,140 @@ export function MentorLiveSessionsPage() {
       )}
     </motion.div>
   );
+}
+
+/**
+ * Upload a pre-recorded video (≤1 GB). The browser PUTs the file straight to R2 via a
+ * presigned URL, then we finalize → the same FFmpeg HLS pipeline transcodes it, and it
+ * shows up in students' recordings once ready.
+ */
+function UploadRecordingCard() {
+  const createUpload = useCreateUpload();
+  const finalize = useFinalizeUpload();
+  const [title, setTitle] = useState('');
+  const [topic, setTopic] = useState('');
+  const [file, setFile] = useState<File | null>(null);
+  const [progress, setProgress] = useState<number | null>(null); // 0..1 while uploading
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+
+  const tooBig = file ? file.size > MAX_UPLOAD_BYTES : false;
+  const busy = progress !== null || finalize.isPending;
+
+  function pick(f: File | null) {
+    setError(null);
+    setDone(false);
+    setFile(f);
+  }
+
+  async function upload() {
+    if (!file || !title.trim() || tooBig || busy) return;
+    setError(null);
+    setDone(false);
+    const contentType = file.type || 'video/mp4';
+    try {
+      setProgress(0);
+      const init = await createUpload.mutateAsync({
+        title: title.trim(),
+        topic: topic.trim() || 'General',
+        contentType,
+      });
+      await uploadFileToR2(init.uploadUrl, file, contentType, setProgress);
+      await finalize.mutateAsync(init.session.id);
+      setProgress(null);
+      setDone(true);
+      setTitle('');
+      setTopic('');
+      setFile(null);
+    } catch (e) {
+      setProgress(null);
+      setError(e instanceof Error ? e.message : 'Upload failed');
+    }
+  }
+
+  return (
+    <Card className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
+        <Upload className="size-4 text-ink-muted" />
+        <h2 className="text-sm font-medium text-ink">Upload a recording</h2>
+        <span className="text-xs text-ink-faint">up to 1 GB</span>
+      </div>
+
+      <div>
+        <label className="mb-1.5 block text-xs font-medium text-ink-muted">Title</label>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g. Recorded: Dynamic Programming masterclass"
+          className="auth-input-plain h-11 w-full"
+          disabled={busy}
+        />
+      </div>
+      <div>
+        <label className="mb-1.5 block text-xs font-medium text-ink-muted">Topic</label>
+        <input
+          value={topic}
+          onChange={(e) => setTopic(e.target.value)}
+          placeholder="e.g. DSA, System Design, Interview"
+          className="auth-input-plain h-11 w-full"
+          disabled={busy}
+        />
+      </div>
+
+      <div>
+        <label className="mb-1.5 block text-xs font-medium text-ink-muted">Video file</label>
+        <input
+          type="file"
+          accept="video/*"
+          onChange={(e) => pick(e.target.files?.[0] ?? null)}
+          disabled={busy}
+          className="block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border-0 file:bg-surface-sunken file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink hover:file:bg-surface-raised"
+        />
+        {file ? (
+          <p className={`mt-1.5 text-xs ${tooBig ? 'text-accent-red' : 'text-ink-faint'}`}>
+            {file.name} · {formatBytes(file.size)}
+            {tooBig ? ' — exceeds the 1 GB limit' : ''}
+          </p>
+        ) : null}
+      </div>
+
+      {progress !== null ? (
+        <div>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-surface-sunken">
+            <div
+              className="h-full rounded-full bg-accent-blue transition-[width] duration-150"
+              style={{ width: `${Math.round(progress * 100)}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-xs text-ink-faint">
+            {finalize.isPending ? 'Finalizing…' : `Uploading… ${Math.round(progress * 100)}%`}
+          </p>
+        </div>
+      ) : null}
+
+      {error ? <p className="text-xs text-accent-red">{error}</p> : null}
+      {done ? (
+        <p className="text-xs text-accent-green">
+          Uploaded — it’s transcoding now and will appear in students’ recordings once ready.
+        </p>
+      ) : null}
+
+      <button
+        type="button"
+        onClick={upload}
+        disabled={!file || !title.trim() || tooBig || busy}
+        className="flex h-11 items-center justify-center gap-2 rounded-md bg-accent-blue px-6 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
+      >
+        <Upload className="size-4" /> {busy ? 'Uploading…' : 'Upload recording'}
+      </button>
+    </Card>
+  );
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
 
 function Row({ session, children }: { session: LiveSessionView; children: ReactNode }) {

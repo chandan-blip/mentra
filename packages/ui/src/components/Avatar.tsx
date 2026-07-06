@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { cn } from '../cn.js';
 
 type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -42,12 +42,22 @@ function initials(name?: string): string {
 }
 
 export function Avatar({ src, alt, name, size = 'md', online, className }: AvatarProps) {
+  // Fall back to the initials placeholder when the image fails to load (e.g. a
+  // deleted/broken upload URL). Reset on src change so a new upload is retried.
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
   return (
     <div className={cn('relative inline-flex shrink-0', className)}>
-      {src ? (
+      {src && !failed ? (
         <img
           src={src}
           alt={alt ?? name ?? 'avatar'}
+          loading="lazy"
+          decoding="async"
+          onError={() => setFailed(true)}
           className={cn(
             'rounded-full object-cover ring-1 ring-border',
             sizeClasses[size],

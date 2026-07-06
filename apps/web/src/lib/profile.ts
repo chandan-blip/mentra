@@ -1,9 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
+  FollowResultView,
   NotificationPreferencesView,
   NotificationPrefsPatchInput,
   ProfileMeView,
   ProfilePatchInput,
+  PublicProfileCardView,
+  PublicProfileView,
   SkillCatalogueEntry,
   StudentProfileView,
 } from '@mentra/shared';
@@ -30,6 +33,48 @@ export function usePatchProfile() {
       qc.setQueryData<ProfileMeView>(profileKey, (prev) =>
         prev ? { ...prev, profile } : prev,
       );
+    },
+  });
+}
+
+/** Another student's public profile (identity subset + computed achievement stats). */
+export function usePublicProfile(userId: string | undefined) {
+  return useQuery({
+    queryKey: ['profile', 'public', userId],
+    queryFn: () => apiFetch<PublicProfileView>(`/api/v1/profile/${userId}`),
+    enabled: Boolean(userId),
+  });
+}
+
+/** Browsable student directory. `q` filters by name / skill / role (server-side). */
+export function useDirectory(q: string) {
+  return useQuery({
+    queryKey: ['profile', 'directory', q.trim()],
+    queryFn: () =>
+      apiFetch<PublicProfileCardView[]>(
+        `/api/v1/profile/directory${q.trim() ? `?q=${encodeURIComponent(q.trim())}` : ''}`,
+      ),
+    staleTime: 30_000,
+  });
+}
+
+/**
+ * Follow / unfollow a student. The mutation input is the DESIRED state (true =
+ * follow); on success it patches the cached profile so the button + count update
+ * without a refetch, and invalidates the directory (its follow badges may change).
+ */
+export function useToggleFollow(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (next: boolean) =>
+      apiFetch<FollowResultView>(`/api/v1/profile/${userId}/follow`, {
+        method: next ? 'POST' : 'DELETE',
+      }),
+    onSuccess: (res) => {
+      qc.setQueryData<PublicProfileView>(['profile', 'public', userId], (prev) =>
+        prev ? { ...prev, isFollowedByViewer: res.following, followers: res.followers } : prev,
+      );
+      qc.invalidateQueries({ queryKey: ['profile', 'directory'] });
     },
   });
 }

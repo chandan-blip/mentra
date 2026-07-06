@@ -93,9 +93,15 @@ export async function createPost(input: {
   return created;
 }
 
-export async function listPosts(limit = 50): Promise<PostRow[]> {
+export async function listPosts(opts: { authorId?: string; limit?: number } = {}): Promise<PostRow[]> {
+  const limit = Math.trunc(opts.limit ?? 50);
+  // A single author's feed (for their profile activity) pins nothing — order purely
+  // by recency; the global feed keeps pinned posts on top.
+  const where = opts.authorId ? 'WHERE p.`authorId` = :authorId' : '';
+  const order = opts.authorId ? 'p.`createdAt` DESC' : 'p.`pinned` DESC, p.`createdAt` DESC';
   const [rows] = await db.execute<(PostRow & RowDataPacket)[]>(
-    `${POST_SELECT} ORDER BY p.\`pinned\` DESC, p.\`createdAt\` DESC LIMIT ${Math.trunc(limit)}`,
+    `${POST_SELECT} ${where} ORDER BY ${order} LIMIT ${limit}`,
+    opts.authorId ? { authorId: opts.authorId } : {},
   );
   return rows;
 }

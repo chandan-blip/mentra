@@ -14,11 +14,21 @@ export type LiveSessionRow = {
   livekitRoom: string;
   currentViewers: number;
   peakViewers: number;
+  /** 'live' (recorded broadcast) or 'upload' (mentor-uploaded video). */
+  source: 'live' | 'upload';
+  /** Recording lifecycle: null → recording → processing → ready | failed. */
+  recordingStatus: 'recording' | 'processing' | 'ready' | 'failed' | null;
+  /** Public CDN URL of the HLS master playlist, set when status = 'ready'. */
+  recordingUrl: string | null;
+  /** LiveKit egress id of the in-flight/completed composite recording. */
+  egressId: string | null;
+  /** Playback duration in seconds (ffprobe), filled by the transcode worker. */
+  durationSeconds: number | null;
   createdAt: Date;
 };
 
 const COLS =
-  '`id`, `mentorId`, `title`, `topic`, `status`, `scheduledFor`, `startedAt`, `endedAt`, `livekitRoom`, `currentViewers`, `peakViewers`, `createdAt`';
+  '`id`, `mentorId`, `title`, `topic`, `status`, `scheduledFor`, `startedAt`, `endedAt`, `livekitRoom`, `currentViewers`, `peakViewers`, `source`, `recordingStatus`, `recordingUrl`, `egressId`, `durationSeconds`, `createdAt`';
 
 // --- Sessions ---
 
@@ -137,6 +147,90 @@ export async function markEnded(id: string): Promise<void> {
   );
 }
 
+// --- Mentor upload (video → same HLS pipeline) ---
+
+/**
+ * Create a session row for a mentor-uploaded video. It's born 'ended' + source='upload'
+ * + recordingStatus='processing' (the worker flips it to 'ready'), with a synthetic
+ * livekitRoom so the UNIQUE constraint holds. Returns the created row.
+ */
+export async function createUpload(input: {
+  mentorId: string;
+  title: string;
+  topic: string;
+}): Promise<LiveSessionRow> {
+  const id = createId();
+  await db.execute<ResultSetHeader>(
+    "INSERT INTO `LiveSession` (`id`, `mentorId`, `title`, `topic`, `status`, `livekitRoom`, `source`, `recordingStatus`, `startedAt`, `endedAt`) " +
+      "VALUES (:id, :mentorId, :title, :topic, 'ended', :room, 'upload', 'processing', NOW(3), NOW(3))",
+    { id, mentorId: input.mentorId, title: input.title, topic: input.topic, room: `up_${id}` },
+  );
+  const created = await findById(id);
+  if (!created) throw new Error('failed to read back created upload');
+  return created;
+}
+
+export async function setDuration(id: string, seconds: number): Promise<void> {
+  await db.execute<ResultSetHeader>(
+    'UPDATE `LiveSession` SET `durationSeconds` = :seconds WHERE `id` = :id',
+    { id, seconds },
+  );
+}
+
+// --- Recording (egress → HLS) ---
+
+export async function findByEgressId(egressId: string): Promise<LiveSessionRow | null> {
+  const [rows] = await db.execute<(LiveSessionRow & RowDataPacket)[]>(
+    `SELECT ${COLS} FROM \`LiveSession\` WHERE \`egressId\` = :egressId LIMIT 1`,
+    { egressId },
+  );
+  return rows[0] ?? null;
+}
+
+/** Record the egress id and mark the session as actively recording. */
+export async function setEgress(id: string, egressId: string): Promise<void> {
+  await db.execute<ResultSetHeader>(
+    "UPDATE `LiveSession` SET `egressId` = :egressId, `recordingStatus` = 'recording' WHERE `id` = :id",
+    { id, egressId },
+  );
+}
+
+/** Update recording status (and the public HLS URL once ready). */
+export async function setRecordingStatus(
+  id: string,
+  status: 'recording' | 'processing' | 'ready' | 'failed',
+  url: string | null = null,
+): Promise<void> {
+  await db.execute<ResultSetHeader>(
+    'UPDATE `LiveSession` SET `recordingStatus` = :status, `recordingUrl` = :url WHERE `id` = :id',
+    { id, status, url },
+  );
+}
+
+// --- Watch progress (resume) ---
+
+export async function getWatchProgress(userId: string, sessionId: string): Promise<number> {
+  const [rows] = await db.execute<({ positionSeconds: number } & RowDataPacket)[]>(
+    'SELECT `positionSeconds` FROM `WatchProgress` WHERE `userId` = :userId AND `sessionId` = :sessionId LIMIT 1',
+    { userId, sessionId },
+  );
+  return rows[0]?.positionSeconds ?? 0;
+}
+
+/** Upsert the resume position (unique on userId+sessionId). */
+export async function upsertWatchProgress(
+  userId: string,
+  sessionId: string,
+  positionSeconds: number,
+): Promise<void> {
+  await db.execute<ResultSetHeader>(
+    'INSERT INTO `WatchProgress` (`id`, `userId`, `sessionId`, `positionSeconds`) ' +
+      'VALUES (:id, :userId, :sessionId, :pos) ' +
+      'ON DUPLICATE KEY UPDATE `positionSeconds` = :pos, `updatedAt` = NOW(3)',
+    { id: createId(), userId, sessionId, pos: positionSeconds },
+  );
+}
+
 // --- Viewer count (students only) ---
 
 export async function incrementViewers(id: string): Promise<number> {
@@ -241,6 +335,25 @@ export async function insertMessage(input: {
   return rows[0]!;
 }
 
+/** Bulk-insert buffered chat messages (one round-trip). Used by the batch flusher. */
+export async function insertMessages(
+  rows: {
+    id: string;
+    sessionId: string;
+    authorUserId: string;
+    authorName: string;
+    body: string;
+    createdAt: Date;
+  }[],
+): Promise<void> {
+  if (rows.length === 0) return;
+  const values = rows.map((r) => [r.id, r.sessionId, r.authorUserId, r.authorName, r.body, r.createdAt]);
+  await db.query<ResultSetHeader>(
+    'INSERT INTO `ChatMessage` (`id`, `sessionId`, `authorUserId`, `authorName`, `body`, `createdAt`) VALUES ?',
+    [values],
+  );
+}
+
 export async function listMessages(sessionId: string, limit = 100): Promise<ChatMessageRow[]> {
   // Take the most recent N, then return in chronological order.
   const [rows] = await db.query<(ChatMessageRow & RowDataPacket)[]>(
@@ -257,6 +370,29 @@ export async function countMessages(sessionId: string): Promise<number> {
     { sessionId },
   );
   return Number(rows[0]?.n ?? 0);
+}
+
+/** Batch chat counts for a set of sessions (the "comments" number on cards). */
+export async function countMessagesForSessions(sessionIds: string[]): Promise<Map<string, number>> {
+  if (sessionIds.length === 0) return new Map();
+  const [rows] = await db.query<({ sessionId: string; n: number } & RowDataPacket)[]>(
+    'SELECT `sessionId`, COUNT(*) AS `n` FROM `ChatMessage` WHERE `sessionId` IN (?) GROUP BY `sessionId`',
+    [sessionIds],
+  );
+  return new Map(rows.map((r) => [r.sessionId, Number(r.n)]));
+}
+
+/** Batch mentor display cards (name + avatar) for a set of user ids. */
+export async function findUserCards(
+  userIds: string[],
+): Promise<Map<string, { name: string; avatarUrl: string | null }>> {
+  if (userIds.length === 0) return new Map();
+  const [rows] = await db.query<({ id: string; name: string; avatarUrl: string | null } & RowDataPacket)[]>(
+    'SELECT u.`id`, u.`name`, p.`avatarUrl` FROM `User` u ' +
+      'LEFT JOIN `StudentProfile` p ON p.`userId` = u.`id` WHERE u.`id` IN (?)',
+    [userIds],
+  );
+  return new Map(rows.map((r) => [r.id, { name: r.name, avatarUrl: r.avatarUrl ?? null }]));
 }
 
 // --- Users (display names) ---

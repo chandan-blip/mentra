@@ -8,10 +8,14 @@ import {
   deleteAvatarHandler,
   deleteResumeHandler,
   getAvatarPublic,
+  followHandler,
+  getDirectoryHandler,
   getMe,
   getNotifications,
+  getPublicProfileHandler,
   getResume,
   getSkillsCatalogue,
+  unfollowHandler,
   patchMe,
   patchNotifications,
   postAvatar,
@@ -86,6 +90,18 @@ userProfileRouter.get('/me/notifications', asyncHandler(getNotifications));
 userProfileRouter.patch('/me/notifications', patchLimiter, asyncHandler(patchNotifications));
 
 userProfileRouter.get('/skills/catalogue', asyncHandler(getSkillsCatalogue));
+
+// Student discovery directory. Registered before `/:userId` so the literal
+// `/directory` segment isn't captured as a userId.
+userProfileRouter.get('/directory', asyncHandler(getDirectoryHandler));
+
+// Follow / unfollow another student (two-segment paths — no clash with `/:userId`).
+userProfileRouter.post('/:userId/follow', patchLimiter, asyncHandler(followHandler));
+userProfileRouter.delete('/:userId/follow', patchLimiter, asyncHandler(unfollowHandler));
+
+// Public profile of another student. MUST stay last: its `/:userId` param would
+// otherwise shadow the specific one-segment GET routes above (e.g. `/me`, `/directory`).
+userProfileRouter.get('/:userId', asyncHandler(getPublicProfileHandler));
 
 function asyncHandler(handler: (req: Request, res: Response) => Promise<void>) {
   return (req: Request, res: Response) => {

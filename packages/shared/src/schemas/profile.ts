@@ -82,6 +82,8 @@ const preferredCompanyTypeSchema = z.array(CompanyTypeSchema).max(6);
 /** Full set of editable profile fields. All optional; PATCH applies partials. */
 export const profilePatchSchema = z
   .object({
+    // Display name lives on the User record; the profile PATCH forwards it there.
+    name: z.string().trim().min(2).max(120),
     avatarUrl: avatarUrlSchema.nullable(),
     bio: z.string().trim().max(500).nullable(),
 

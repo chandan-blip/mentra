@@ -59,6 +59,19 @@ const EnvSchema = z.object({
   // Access-token lifetime for a room join (seconds).
   LIVEKIT_TOKEN_TTL_SECONDS: z.coerce.number().int().positive().default(21_600),
 
+  // Recordings storage — Cloudflare R2 (S3-compatible). Empty = recordings pipeline
+  // disabled, app still boots. R2_ENDPOINT is the S3 API endpoint
+  // (https://<accountid>.r2.cloudflarestorage.com); region is always 'auto' for R2.
+  // R2_PUBLIC_BASE_URL is the public CDN domain that serves the HLS .m3u8/.ts files
+  // (the bucket itself stays private to the API/worker). Secrets live in .env only.
+  R2_ACCOUNT_ID: z.string().default(''),
+  R2_ENDPOINT: z.string().default(''),
+  R2_REGION: z.string().default('auto'),
+  R2_ACCESS_KEY_ID: z.string().default(''),
+  R2_SECRET_ACCESS_KEY: z.string().default(''),
+  R2_BUCKET: z.string().default(''),
+  R2_PUBLIC_BASE_URL: z.string().default(''),
+
   // Marketing — LinkedIn OAuth (optional; empty = feature disabled, app still boots).
   LINKEDIN_CLIENT_ID: z.string().default(''),
   LINKEDIN_CLIENT_SECRET: z.string().default(''),

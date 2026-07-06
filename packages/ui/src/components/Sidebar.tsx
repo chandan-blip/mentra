@@ -21,8 +21,9 @@ export interface SidebarProps {
 export function Sidebar({ brand, footer, children, className, expanded }: SidebarProps) {
   const align = expanded ? 'items-stretch' : 'items-center';
   return (
-    <aside className={cn('flex h-full flex-col justify-between gap-6 px-3 py-6', align, className)}>
-      <div className={cn('flex flex-col gap-2', align)}>
+    <aside className={cn('flex h-full flex-col gap-6 px-3 py-6', align, className)}>
+      {/* Nav scrolls when it's taller than the rail/drawer; footer stays pinned. */}
+      <div className={cn('flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto', align)}>
         {brand && <div className="mb-2">{brand}</div>}
         {children}
       </div>

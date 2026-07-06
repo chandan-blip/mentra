@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Compass, Sparkles } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import type { DashboardRecommendation } from '@mentra/shared';
-import { Badge, Card, StatCard } from '@mentra/ui';
+import { ArrowRight, Check, Compass, Sparkles, Target, UserPlus, Users } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import type { DashboardRecommendation, PublicProfileCardView } from '@mentra/shared';
+import { Avatar, Badge, Card, StatCard } from '@mentra/ui';
 import { useAckRecommendation, useDashboardOverview } from '../../lib/dashboard.js';
 import { useAssignmentStatus } from '../../lib/assignment.js';
 import { useRoadmapSummary } from '../../lib/roadmap.js';
+import { useDirectory, useToggleFollow } from '../../lib/profile.js';
+import { useActivityFocus, useActivitySummary } from '../../lib/activity.js';
+import { resolveAvatarUrl } from '../../lib/auth.js';
 import { BlackHoleTransition } from '../../components/BlackHoleTransition.js';
 
 const fadeUp = {
@@ -28,7 +31,6 @@ export function StudentDashboard() {
 
   const assignment = data?.assignment;
   const completed = assignment?.status === 'completed';
-  const stats = data?.stats;
   const nextSteps = data?.nextSteps ?? [];
 
   const assignmentValue = completed
@@ -69,7 +71,8 @@ export function StudentDashboard() {
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
       className="mx-auto w-full max-w-8xl space-y-6 pb-24"
     >
-      <motion.div variants={fadeUp}>
+      {/* Header is hidden on phones to save vertical space; shown at sm+. */}
+      <motion.div variants={fadeUp} className="hidden sm:block">
         <h1 className="text-display-md tracking-normal">Overview</h1>
         <p className="mt-1 text-sm text-ink-muted">Your progress at a glance — assignment, roadmap, and what&apos;s next.</p>
       </motion.div>
@@ -78,11 +81,14 @@ export function StudentDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <motion.div variants={fadeUp}><StatCard inverse value={String(daysSince(stats?.joinedAt))} label="Days on Mentra" /></motion.div>
+        <motion.div variants={fadeUp}><StreakStat /></motion.div>
         <motion.div variants={fadeUp}><StatCard value={assignmentValue} label="Assignment" /></motion.div>
         <motion.div variants={fadeUp}><StatCard value={roadmap?.hasRoadmap ? `${roadmap.percentComplete}%` : '—'} label="Roadmap done" /></motion.div>
         <motion.div variants={fadeUp}><StatCard value={roadmap?.hasRoadmap ? `Week ${roadmap.currentWeek}` : '—'} label="Current week" /></motion.div>
       </div>
+
+      {/* AI-driven "where to focus" — reads the activity signals */}
+      <motion.div variants={fadeUp}><FocusCard /></motion.div>
 
       {/* Main row */}
       <div className="grid grid-cols-12 gap-4">
@@ -109,11 +115,16 @@ export function StudentDashboard() {
         </motion.div>
       </div>
 
+      {/* Discover other students — connects the dashboard to the social layer */}
+      <motion.div variants={fadeUp}><PeopleToFollow /></motion.div>
+
     </motion.div>
     </motion.div>
 
     {!warping && (
-      <div className="fixed inset-x-0 bottom-6 z-40 flex justify-center">
+      <div className="fixed inset-x-0 bottom-6 z-40 hidden justify-center md:flex">
+        {/* Floating CTA is desktop-only; on mobile the Manifesto lives in the off-canvas
+            menu drawer (added in AppLayout) so it doesn't collide with the bottom nav. */}
         <ManifestoCta onWarp={() => setWarping(true)} />
       </div>
     )}
@@ -218,6 +229,125 @@ function RecRow({ rec, index, onClick }: { rec: DashboardRecommendation; index: 
   );
 }
 
+/** Day-streak tile from the activity summary (falls back to 0 while loading). */
+function StreakStat() {
+  const { data } = useActivitySummary();
+  const streak = data?.currentStreak ?? 0;
+  return (
+    <StatCard
+      inverse
+      value={String(streak)}
+      unit={streak === 1 ? 'day' : 'days'}
+      label="Activity streak"
+    />
+  );
+}
+
+/**
+ * "Where to focus" — the AI-generated (Groq, cached) guidance built from the
+ * student's activity signals. Falls back to rule-based tips if the model is down.
+ */
+function FocusCard() {
+  const navigate = useNavigate();
+  const { data, isLoading } = useActivityFocus();
+
+  if (isLoading) return <Card className="text-sm text-ink-muted">Analyzing your progress…</Card>;
+  if (!data || data.items.length === 0) return null;
+
+  return (
+    <Card>
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="flex items-center gap-2 text-sm font-medium text-ink">
+          <Target className="size-4" /> Where to focus
+        </h3>
+        <Badge variant="outline" size="md">{data.source === 'ai' ? 'AI' : 'For you'}</Badge>
+      </div>
+      <p className="mb-3 text-sm font-semibold text-ink">{data.headline}</p>
+      <div className="space-y-2">
+        {data.items.map((it, i) => (
+          <button
+            key={i}
+            type="button"
+            disabled={!it.href}
+            onClick={() => it.href && navigate(it.href)}
+            className="flex w-full items-start gap-3 rounded-md bg-surface-sunken p-3 text-left ring-1 ring-border-subtle transition enabled:hover:ring-border-strong disabled:cursor-default"
+          >
+            <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-md bg-surface-inverse text-[11px] font-semibold text-ink-inverse">
+              {i + 1}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-medium text-ink">{it.title}</span>
+              <span className="mt-0.5 block text-xs leading-5 text-ink-muted">{it.reason}</span>
+            </span>
+            {it.href ? <ArrowRight className="size-4 shrink-0 self-center text-ink-faint" /> : null}
+          </button>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+/**
+ * Discovery widget — a few suggested students (most-followed first, from the
+ * directory) with inline follow buttons and a link to browse everyone.
+ */
+function PeopleToFollow() {
+  const { data, isLoading } = useDirectory('');
+  const people = (data ?? []).slice(0, 4);
+
+  if (isLoading || people.length === 0) return null;
+
+  return (
+    <Card>
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="flex items-center gap-2 text-sm font-medium text-ink">
+          <Users className="size-4" /> People to follow
+        </h3>
+        <Link to="/students" className="inline-flex items-center gap-1 text-xs font-semibold text-ink-muted transition hover:text-ink">
+          Browse all <ArrowRight className="size-3.5" />
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {people.map((p) => (
+          <SuggestedStudent key={p.userId} student={p} />
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function SuggestedStudent({ student: s }: { student: PublicProfileCardView }) {
+  const toggle = useToggleFollow(s.userId);
+  const following = s.isFollowedByViewer;
+
+  return (
+    <div className="flex items-center gap-3 rounded-md bg-surface-sunken p-3 ring-1 ring-border-subtle">
+      <Link to={`/students/${s.userId}`} className="flex min-w-0 flex-1 items-center gap-3">
+        <Avatar src={resolveAvatarUrl(s.avatarUrl)} name={s.name} size="md" />
+        <div className="min-w-0">
+          <div className="truncate text-sm font-semibold text-ink">{s.name}</div>
+          {s.headline ? <div className="truncate text-xs text-ink-faint">{s.headline}</div> : null}
+        </div>
+      </Link>
+      <button
+        type="button"
+        onClick={() => toggle.mutate(!following)}
+        disabled={toggle.isPending}
+        aria-label={following ? `Unfollow ${s.name}` : `Follow ${s.name}`}
+        className={[
+          'flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md px-3 text-xs font-semibold transition disabled:opacity-50',
+          following
+            ? 'bg-surface text-ink ring-1 ring-border-subtle hover:ring-border-strong'
+            : 'bg-surface-inverse text-ink-inverse hover:bg-ink',
+        ].join(' ')}
+      >
+        {following ? <Check className="size-3.5" /> : <UserPlus className="size-3.5" />}
+        {following ? 'Following' : 'Follow'}
+      </button>
+    </div>
+  );
+}
+
 function RoadmapWidget() {
   const navigate = useNavigate();
   const { data } = useRoadmapSummary();
@@ -252,8 +382,3 @@ function RoadmapWidget() {
   );
 }
 
-function daysSince(value?: string) {
-  if (!value) return 0;
-  const diff = Date.now() - new Date(value).getTime();
-  return Math.max(1, Math.ceil(diff / 86_400_000));
-}

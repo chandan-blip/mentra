@@ -1,0 +1,23 @@
+# LiveKit Egress config for the recordings pipeline.
+# Egress coordinates with LiveKit over the SAME Redis, and talks to the SFU via ws_url.
+# Output destination (R2) is passed per-request by the API (core/livekit.ts startEgress),
+# so no storage block is needed here.
+#
+# IMPORTANT: api_key/api_secret + redis MUST match livekit.yaml and the API's .env.
+# The egress process needs ffmpeg + a headless Chrome available (room-composite renders
+# the room in Chrome, then encodes with ffmpeg) — see DEPLOY_RECORDINGS.md.
+
+redis:
+  address: 127.0.0.1:6379
+
+api_key: devkey
+api_secret: devsecret_change_me_at_least_32_chars_xxxx
+
+# Public/loopback ws URL of the SFU the egress connects to as a participant.
+ws_url: ws://127.0.0.1:7880
+
+# Render the room composite at 1080p30 by default; per-rung HLS is produced later by the
+# FFmpeg worker, so this is just the master capture quality.
+template_port: 7980
+logging:
+  level: info

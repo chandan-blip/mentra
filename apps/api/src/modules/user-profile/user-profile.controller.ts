@@ -9,10 +9,14 @@ import { submitOnboardingStep } from './onboarding.service.js';
 import { deleteResume, getResumeBytes, storeResume } from './resume.service.js';
 import { deleteAvatar, getAvatarBytes, storeAvatar } from './avatar.service.js';
 import {
+  followUser,
+  getDirectory,
   getNotificationPrefs,
   getProfileMe,
+  getPublicProfile,
   patchNotificationPrefs,
   patchProfile,
+  unfollowUser,
 } from './user-profile.service.js';
 
 function userId(req: Request): string {
@@ -70,6 +74,31 @@ export async function getAvatarPublic(req: Request, res: Response): Promise<void
   res.setHeader('Content-Type', contentType);
   res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
   res.send(bytes);
+}
+
+/** Pull a `:userId` route param safely (Express can hand back string | string[]). */
+function paramId(req: Request): string {
+  const raw = req.params.userId;
+  return Array.isArray(raw) ? (raw[0] ?? '') : (raw ?? '');
+}
+
+/** View another student's public profile (identity subset + computed stats). */
+export async function getPublicProfileHandler(req: Request, res: Response): Promise<void> {
+  res.json({ data: await getPublicProfile(paramId(req), userId(req)) });
+}
+
+/** Browsable student directory. `?q=` filters by name / skill / role. */
+export async function getDirectoryHandler(req: Request, res: Response): Promise<void> {
+  const q = typeof req.query.q === 'string' ? req.query.q : undefined;
+  res.json({ data: await getDirectory(userId(req), q) });
+}
+
+export async function followHandler(req: Request, res: Response): Promise<void> {
+  res.json({ data: await followUser(userId(req), paramId(req)) });
+}
+
+export async function unfollowHandler(req: Request, res: Response): Promise<void> {
+  res.json({ data: await unfollowUser(userId(req), paramId(req)) });
 }
 
 export async function getNotifications(req: Request, res: Response): Promise<void> {

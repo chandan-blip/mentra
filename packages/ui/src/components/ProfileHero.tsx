@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Card } from './Card.js';
 import { OnlineDot } from './OnlineDot.js';
 import { cn } from '../cn.js';
@@ -27,6 +27,12 @@ export function ProfileHero({
   action,
   className,
 }: ProfileHeroProps) {
+  // Fall back to the gradient placeholder if the portrait fails to load.
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    setFailed(false);
+  }, [avatarUrl]);
+
   return (
     <Card variant="default" padding={false} className={cn('relative overflow-hidden', className)}>
       {/* Top meta strip */}
@@ -40,10 +46,13 @@ export function ProfileHero({
       </div>
 
       {/* Portrait */}
-      {avatarUrl ? (
+      {avatarUrl && !failed ? (
         <img
           src={avatarUrl}
           alt={name}
+          loading="lazy"
+          decoding="async"
+          onError={() => setFailed(true)}
           className="aspect-[4/5] w-full object-cover"
         />
       ) : (

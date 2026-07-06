@@ -42,7 +42,7 @@ export function HrJobsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-8xl space-y-6 py-2">
+    <div className="mx-auto w-full max-w-8xl py-2">
       <PageHeader
         icon={<Building2 />}
         title="Job Postings"

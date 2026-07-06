@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../cn.js';
 
 export interface AppShellProps {
@@ -14,6 +14,22 @@ export interface AppShellProps {
   onMenuClick?: () => void;
   /** Close the mobile drawer (backdrop / nav). */
   onCloseMobileNav?: () => void;
+  /**
+   * Mobile-only top-left content. When provided, it replaces the hamburger button
+   * (e.g. the menu trigger has moved to a bottom nav, freeing the corner for a logo).
+   */
+  mobileBrand?: ReactNode;
+  /**
+   * Mobile-only bottom navigation. Rendered fixed to the viewport bottom; when set,
+   * the content area reserves bottom padding so nothing hides behind it.
+   */
+  bottomNav?: ReactNode;
+  /**
+   * When true, the top bar smoothly collapses out of view (a page requested it via
+   * the chrome-visibility context, e.g. hide-on-scroll). Bottom-nav hiding is driven
+   * separately by the bottomNav element itself.
+   */
+  chromeHidden?: boolean;
 }
 
 /**
@@ -29,7 +45,24 @@ export function AppShell({
   mobileNavOpen,
   onMenuClick,
   onCloseMobileNav,
+  mobileBrand,
+  bottomNav,
+  chromeHidden,
 }: AppShellProps) {
+  // Measure the top bar so we can animate its height 0↔natural without a layout
+  // jump (translate alone would leave a canvas-colored gap above the content).
+  const topBarRef = useRef<HTMLDivElement>(null);
+  const [topBarHeight, setTopBarHeight] = useState<number | undefined>(undefined);
+  useLayoutEffect(() => {
+    const el = topBarRef.current;
+    if (!el) return;
+    const measure = () => setTopBarHeight(el.offsetHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [topBar]);
+
   return (
     <div className={cn('flex h-full min-h-screen w-full bg-canvas text-ink', className)}>
       {/* Desktop rail */}
@@ -60,24 +93,41 @@ export function AppShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         {topBar && (
-          <div className="sticky top-0 z-20 flex items-center border-b border-border-subtle bg-canvas/80 backdrop-blur">
-            {onMenuClick ? (
-              <button
-                type="button"
-                onClick={onMenuClick}
-                aria-label="Open menu"
-                className="ml-2 grid size-10 shrink-0 place-items-center rounded-md text-ink-muted transition hover:bg-surface hover:text-ink md:hidden"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="size-5">
-                  <path d="M3 6h18M3 12h18M3 18h18" />
-                </svg>
-              </button>
-            ) : null}
-            <div className="min-w-0 flex-1">{topBar}</div>
+          <div
+            className="sticky top-0 z-20 overflow-hidden transition-[height] duration-300 ease-out"
+            style={{ height: chromeHidden ? 0 : topBarHeight }}
+          >
+            <div
+              ref={topBarRef}
+              className="flex items-center border-b border-border-subtle bg-canvas/80 backdrop-blur"
+            >
+              {mobileBrand ? (
+                <div className="ml-2 shrink-0 md:hidden">{mobileBrand}</div>
+              ) : onMenuClick ? (
+                <button
+                  type="button"
+                  onClick={onMenuClick}
+                  aria-label="Open menu"
+                  className="ml-2 grid size-10 shrink-0 place-items-center rounded-md text-ink-muted transition hover:bg-surface hover:text-ink md:hidden"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="size-5">
+                    <path d="M3 6h18M3 12h18M3 18h18" />
+                  </svg>
+                </button>
+              ) : null}
+              <div className="min-w-0 flex-1">{topBar}</div>
+            </div>
           </div>
         )}
-        <main id="app-scroll-root" className="flex-1 overflow-y-auto p-6 md:p-8">{children}</main>
+        <main
+          id="app-scroll-root"
+          className={cn('flex-1 overflow-y-auto p-3 md:p-8', bottomNav && 'pb-24 md:pb-8')}
+        >
+          {children}
+        </main>
       </div>
+
+      {bottomNav}
     </div>
   );
 }

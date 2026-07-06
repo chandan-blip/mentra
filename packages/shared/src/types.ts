@@ -32,6 +32,8 @@ export type AuthProvider = 'email' | 'google' | 'github';
 export type StudentProfileView = {
   id: string;
   userId: string;
+  /** Display name, sourced from the User record (not the profile row). */
+  name: string;
   avatarUrl: string | null;
   bio: string | null;
   country: string | null;
@@ -58,6 +60,69 @@ export type StudentProfileView = {
   onboardingComplete: boolean;
   createdAt: string;
   updatedAt: string;
+};
+
+/** Computed "achievements" — derived from real activity, not self-claimed. */
+export type PublicProfileStats = {
+  /** ISO date the student joined (StudentProfile.createdAt). */
+  memberSince: string;
+  /** Number of skills on the tech stack. */
+  skillCount: number;
+  /** Active-roadmap completion 0–100, or null if there's no active roadmap. */
+  roadmapCompletion: number | null;
+  /** Number of community posts authored. */
+  communityPosts: number;
+};
+
+/**
+ * Public-facing profile — the safe subset of StudentProfileView shown to OTHER
+ * students (no resume, notification prefs, or onboarding internals), plus computed
+ * achievement stats.
+ */
+export type PublicProfileView = {
+  userId: string;
+  name: string;
+  avatarUrl: string | null;
+  bio: string | null;
+  city: string | null;
+  country: string | null;
+  currentRole: string | null;
+  currentCompany: string | null;
+  experienceLevel: string | null;
+  goal: string | null;
+  targetRoles: string[];
+  techStack: string[];
+  githubUrl: string | null;
+  linkedinUrl: string | null;
+  portfolioUrl: string | null;
+  twitterUrl: string | null;
+  stats: PublicProfileStats;
+  /** Total followers / following (social graph). */
+  followers: number;
+  following: number;
+  /** Whether the requesting user follows this profile. */
+  isFollowedByViewer: boolean;
+  /** Whether this profile belongs to the requesting user. */
+  isSelf: boolean;
+};
+
+/** Compact profile shown in the discovery directory grid. */
+export type PublicProfileCardView = {
+  userId: string;
+  name: string;
+  avatarUrl: string | null;
+  /** Role · company, or the career goal if no role is set. */
+  headline: string | null;
+  location: string | null;
+  techStack: string[];
+  followers: number;
+  isFollowedByViewer: boolean;
+};
+
+/** Returned by follow / unfollow — lets the client update the button + count in place. */
+export type FollowResultView = {
+  following: boolean;
+  followers: number;
 };
 
 export type NotificationPreferencesView = {

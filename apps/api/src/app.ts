@@ -21,9 +21,13 @@ import { notificationRouter } from './modules/notification/index.js';
 import { marketingRouter, marketingOauthRouter } from './modules/marketing/index.js';
 import { jobsRouter } from './modules/jobs/index.js';
 import { leadsRouter, leadsVapiWebhookRouter } from './modules/leads/index.js';
+import { activityRouter, registerActivityRecorder } from './modules/activity/index.js';
 
 export function createApp(): Express {
   const app = express();
+
+  // Bridge domain events into the activity log (idempotent — safe if called twice).
+  registerActivityRecorder();
 
   app.disable('x-powered-by');
   app.set('trust proxy', 1);
@@ -79,6 +83,7 @@ export function createApp(): Express {
   app.use('/api/v1/mentor', mentorRouter);
   app.use('/api/v1/transaction', transactionRouter);
   app.use('/api/v1/community', communityRouter);
+  app.use('/api/v1/activity', activityRouter);
   app.use('/api/v1/notification', notificationRouter);
   app.use('/api/v1/marketing', marketingOauthRouter);
   app.use('/api/v1/marketing', marketingRouter);

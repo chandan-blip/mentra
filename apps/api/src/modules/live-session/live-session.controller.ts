@@ -1,15 +1,21 @@
 import type { Request, Response } from 'express';
-import { createLiveSessionSchema, updateLiveSessionSchema } from '@mentra/shared';
+import { z } from 'zod';
+import { createLiveSessionSchema, createUploadSchema, updateLiveSessionSchema } from '@mentra/shared';
 import {
   createSession,
+  createUpload,
   endSession,
+  finalizeUpload,
   getJoinToken,
   getMessages,
+  getOne,
+  getProgress,
   getSummary,
   listLive,
   listMine,
   listPast,
   listUpcoming,
+  saveProgress,
   startSession,
   updateSchedule,
 } from './live-session.service.js';
@@ -27,6 +33,15 @@ export async function postCreate(req: Request, res: Response): Promise<void> {
 
 export async function getMine(req: Request, res: Response): Promise<void> {
   res.json({ data: await listMine(uid(req)) });
+}
+
+export async function postUpload(req: Request, res: Response): Promise<void> {
+  const input = createUploadSchema.parse(req.body ?? {});
+  res.json({ data: await createUpload(uid(req), input) });
+}
+
+export async function postFinalizeUpload(req: Request, res: Response): Promise<void> {
+  res.json({ data: await finalizeUpload(uid(req), id(req)) });
 }
 
 export async function patchSchedule(req: Request, res: Response): Promise<void> {
@@ -58,10 +73,26 @@ export async function getChatHistory(req: Request, res: Response): Promise<void>
   res.json({ data: await getMessages(uid(req), id(req)) });
 }
 
+export async function getById(req: Request, res: Response): Promise<void> {
+  res.json({ data: await getOne(uid(req), id(req)) });
+}
+
 export async function postJoinToken(req: Request, res: Response): Promise<void> {
   res.json({ data: await getJoinToken(uid(req), id(req)) });
 }
 
 export async function getSessionSummary(req: Request, res: Response): Promise<void> {
   res.json({ data: await getSummary(uid(req), id(req)) });
+}
+
+const progressSchema = z.object({ positionSeconds: z.number().int().min(0).max(60 * 60 * 24) });
+
+export async function getWatchProgress(req: Request, res: Response): Promise<void> {
+  res.json({ data: await getProgress(uid(req), id(req)) });
+}
+
+export async function putWatchProgress(req: Request, res: Response): Promise<void> {
+  const { positionSeconds } = progressSchema.parse(req.body ?? {});
+  await saveProgress(uid(req), id(req), positionSeconds);
+  res.json({ data: { ok: true } });
 }

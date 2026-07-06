@@ -8,6 +8,8 @@
     "dev": "set -a; [ -f ../../.env ] && . ../../.env; set +a; tsx watch src/index.ts",
     "build": "tsc -p tsconfig.build.json && node scripts/copy-assets.mjs",
     "start": "set -a; [ -f ../../.env ] && . ../../.env; set +a; node dist/index.js",
+    "worker": "set -a; [ -f ../../.env ] && . ../../.env; set +a; node dist/worker.js",
+    "worker:dev": "set -a; [ -f ../../.env ] && . ../../.env; set +a; tsx watch src/worker.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "echo \"(lint skipped until eslint wired up)\"",
     "db:migrate": "set -a; [ -f ../../.env ] && . ../../.env; set +a; prisma migrate dev",
@@ -23,6 +25,9 @@
     "schema": "prisma/schema.prisma"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.703.0",
+    "@aws-sdk/lib-storage": "^3.703.0",
+    "@aws-sdk/s3-request-presigner": "^3.703.0",
     "@mentra/shared": "workspace:*",
     "@prisma/client": "^5.22.0",
     "argon2": "^0.41.1",

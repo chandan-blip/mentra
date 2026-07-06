@@ -51,6 +51,13 @@ export function getStoredUser(): AuthUser | null {
   }
 }
 
+/** Patch the display name on the stored AuthUser (after a profile name change). */
+export function updateStoredUserName(name: string) {
+  const user = getStoredUser();
+  if (!user) return;
+  window.localStorage.setItem(userKey, JSON.stringify({ ...user, name }));
+}
+
 export function clearAuthSession() {
   window.localStorage.removeItem(accessTokenKey);
   window.localStorage.removeItem(userKey);

@@ -1,0 +1,24 @@
+# Recording transcode worker — runs the BullMQ ffmpeg consumer as its own service,
+# separate from mentra-api so heavy transcoding never blocks request handling.
+# Install: copy to /etc/systemd/system/mentra-worker.service, then
+#   sudo systemctl daemon-reload && sudo systemctl enable --now mentra-worker
+[Unit]
+Description=Mentra recording transcode worker
+After=network.target redis-server.service mysql.service
+Wants=redis-server.service
+
+[Service]
+Type=simple
+User=mentra
+WorkingDirectory=/srv/mentra/apps/api
+# Load the same env the API uses (DB, Redis, R2 creds). Optionally FFMPEG_PATH/FFPROBE_PATH.
+EnvironmentFile=/srv/mentra/.env
+ExecStart=/usr/bin/node dist/worker.js
+Restart=always
+RestartSec=5
+# ffmpeg is CPU-hungry; keep it from starving the API/DB on a shared host.
+Nice=10
+CPUWeight=50
+
+[Install]
+WantedBy=multi-user.target

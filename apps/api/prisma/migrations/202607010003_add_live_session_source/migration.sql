@@ -1,0 +1,1 @@
+ALTER TABLE `LiveSession` ADD COLUMN `source` VARCHAR(16) NOT NULL DEFAULT 'live';

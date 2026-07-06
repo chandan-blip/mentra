@@ -1,7 +1,8 @@
 import { chatSendSchema } from '@mentra/shared';
 import { logger } from '../../logger.js';
 import type { AppIo, AppSocket } from '../../core/realtime.js';
-import { assertCanAttend, isSessionOwner, mintPublishToken, persistChatMessage } from './live-session.service.js';
+import { assertCanAttend, isSessionOwner, mintPublishToken } from './live-session.service.js';
+import { bufferChatMessage } from './chat-buffer.js';
 import { findUserById } from './live-session.repository.js';
 
 const room = (sessionId: string) => `session:${sessionId}`;
@@ -54,7 +55,8 @@ export function registerLiveSessionSocket(io: AppIo): void {
         return;
       }
       try {
-        const message = await persistChatMessage({ sessionId, userId, body });
+        // Broadcast immediately; the DB write is batched by the flusher (chat-buffer).
+        const message = await bufferChatMessage({ sessionId, userId, body });
         io.in(room(sessionId)).emit('chat:new', message);
       } catch (err) {
         logger.error({ err, sessionId, userId }, 'chat:send failed');

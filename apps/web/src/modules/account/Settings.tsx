@@ -1,5 +1,7 @@
-import { useMemo, useState } from 'react';
-import { Bell, ShieldCheck, UserRound } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Bell, Settings as SettingsIcon, ShieldCheck, UserRound } from 'lucide-react';
+import { PublicProfileInline } from '../student/StudentProfile.js';
 import type { ProfilePatchInput, StudentProfileView } from '@mentra/shared';
 import { ApiError } from '../../lib/api.js';
 import {
@@ -11,37 +13,59 @@ import {
 import { SkillTagInput } from '../../components/SkillTagInput.js';
 import { ResumeUploader } from '../../components/ResumeUploader.js';
 import { AvatarUploader } from '../../components/AvatarUploader.js';
-import { getStoredUser } from '../../lib/auth.js';
+import { getStoredUser, updateStoredUserName } from '../../lib/auth.js';
 
-type Tab = 'profile' | 'notifications' | 'account';
+type Tab = 'profile' | 'settings' | 'notifications' | 'account';
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode; hint: string }[] = [
-  { id: 'profile', label: 'Profile', icon: <UserRound className="size-4" />, hint: 'About you, experience, links' },
+  { id: 'profile', label: 'Profile', icon: <UserRound className="size-4" />, hint: 'Your public profile' },
+  { id: 'settings', label: 'Settings', icon: <SettingsIcon className="size-4" />, hint: 'Picture, resume, about, experience, links' },
   { id: 'notifications', label: 'Notifications', icon: <Bell className="size-4" />, hint: 'Email & in-app alerts' },
   { id: 'account', label: 'Account', icon: <ShieldCheck className="size-4" />, hint: 'Password & sessions' },
 ];
 
+const TAB_IDS: Tab[] = ['profile', 'settings', 'notifications', 'account'];
+
 export function SettingsPage() {
-  const [tab, setTab] = useState<Tab>('profile');
+  // The active tab is driven by ?tab= so deep links (e.g. "Edit my profile" →
+  // ?tab=settings) land on the right section.
+  const [params, setParams] = useSearchParams();
+  const tabParam = params.get('tab');
+  const tab: Tab = TAB_IDS.includes(tabParam as Tab) ? (tabParam as Tab) : 'profile';
+  const setTab = (t: Tab) => setParams(t === 'profile' ? {} : { tab: t }, { replace: true });
+
   const { data, isLoading } = useProfile();
-  const activeTab = TABS.find((t) => t.id === tab)!;
+
+  // Keep the active tab centered in the horizontally-scrolling nav (mobile).
+  const navRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const active = navRef.current?.querySelector<HTMLElement>('[data-active="true"]');
+    active?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  }, [tab]);
 
   return (
     <div className="mx-auto w-full max-w-9xl">
       <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
         {/* Left: title + description + nav — sticky together */}
-        <div className="lg:sticky lg:top-0 lg:h-fit">
-          <h1 className="text-display-md tracking-normal">Settings</h1>
-          <p className="mt-1 text-sm text-ink-muted">Manage your profile, notifications, and account.</p>
+        <div className="min-w-0 lg:sticky lg:top-0 lg:h-fit">
+          {/* Title hidden on mobile (the app top bar already names the page), matching other modules. */}
+          <div className="hidden sm:block">
+            <h1 className="text-display-md tracking-normal">Settings</h1>
+            <p className="mt-1 text-sm text-ink-muted">Manage your profile, notifications, and account.</p>
+          </div>
 
-          <nav className="mt-5 flex flex-row gap-1 overflow-x-auto lg:flex-col">
+          <nav
+            ref={navRef}
+            className="no-scrollbar mt-0 flex snap-x snap-mandatory scroll-px-4 flex-row gap-1 overflow-x-auto scroll-smooth sm:mt-5 lg:snap-none lg:flex-col"
+          >
             {TABS.map((t) => (
               <button
                 key={t.id}
                 type="button"
+                data-active={t.id === tab}
                 onClick={() => setTab(t.id)}
                 className={[
-                  'flex shrink-0 items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm font-medium transition',
+                  'flex shrink-0 snap-center items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm font-medium transition',
                   t.id === tab ? 'bg-surface-inverse text-ink-inverse' : 'text-ink-muted hover:bg-surface-sunken hover:text-ink',
                 ].join(' ')}
               >
@@ -54,13 +78,11 @@ export function SettingsPage() {
 
         {/* Content */}
         <div className="min-w-0 max-w-3xl">
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold text-ink">{activeTab.label}</h2>
-            <p className="text-sm text-ink-muted">{activeTab.hint}</p>
-          </div>
           {isLoading || !data ? (
             <div className="text-sm text-ink-muted">Loading…</div>
           ) : tab === 'profile' ? (
+            <PublicProfileTab />
+          ) : tab === 'settings' ? (
             <ProfileForm profile={data.profile} />
           ) : tab === 'notifications' ? (
             <NotificationsForm />
@@ -80,6 +102,9 @@ function ProfileForm({ profile }: { profile: StudentProfileView }) {
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
 
+  // Prefer the profile's name; fall back to the stored auth user (always set) so the
+  // field is populated even before the API surfaces `name` on the profile response.
+  const [name, setName] = useState(profile.name ?? getStoredUser()?.name ?? '');
   const [bio, setBio] = useState(profile.bio ?? '');
   const [city, setCity] = useState(profile.city ?? '');
   const [country, setCountry] = useState(profile.country ?? '');
@@ -95,6 +120,7 @@ function ProfileForm({ profile }: { profile: StudentProfileView }) {
 
   const payload = useMemo<ProfilePatchInput>(
     () => ({
+      name: name.trim(),
       bio: blank(bio),
       city: blank(city),
       country: blank(country),
@@ -108,14 +134,19 @@ function ProfileForm({ profile }: { profile: StudentProfileView }) {
       portfolioUrl: blank(portfolio),
       twitterUrl: blank(twitter),
     }),
-    [bio, city, country, timezone, currentRole, currentCompany, studyHours, techStack, github, linkedin, portfolio, twitter],
+    [name, bio, city, country, timezone, currentRole, currentCompany, studyHours, techStack, github, linkedin, portfolio, twitter],
   );
 
   async function save() {
     setError('');
     setSaved(false);
+    if (name.trim().length < 2) {
+      setError('Name must be at least 2 characters');
+      return;
+    }
     try {
-      await patch.mutateAsync(payload);
+      const updated = await patch.mutateAsync(payload);
+      updateStoredUserName(updated.name ?? name.trim()); // keep header/avatar initials in sync
       setSaved(true);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Could not save');
@@ -126,6 +157,18 @@ function ProfileForm({ profile }: { profile: StudentProfileView }) {
     <div className="space-y-5">
       <Section title="Profile picture">
         <AvatarUploader currentUrl={profile.avatarUrl} name={getStoredUser()?.name ?? ''} />
+      </Section>
+
+      <Section title="Name">
+        <Field label="Full name">
+          <input
+            className="auth-input-plain"
+            value={name}
+            maxLength={120}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your name"
+          />
+        </Field>
       </Section>
 
       <Section title="Resume">
@@ -206,17 +249,36 @@ function NotificationsForm() {
               <span className="block text-sm text-ink">{label}</span>
               <span className="block text-xs text-ink-faint">{hint}</span>
             </span>
-            <input
-              type="checkbox"
-              checked={data[key]}
-              onChange={(e) => patch.mutate({ [key]: e.target.checked })}
-              className="h-4 w-4 shrink-0 rounded-sm border-border bg-surface text-ink"
-            />
+            {/* Toggle switch: the checkbox drives the styling via peer-* classes. */}
+            <span className="relative inline-flex shrink-0">
+              <input
+                type="checkbox"
+                checked={data[key]}
+                onChange={(e) => patch.mutate({ [key]: e.target.checked })}
+                className="peer sr-only"
+              />
+              <span
+                aria-hidden
+                className="h-6 w-11 rounded-full bg-surface-sunken ring-1 ring-border-subtle transition-colors peer-checked:bg-surface-inverse peer-focus-visible:ring-2 peer-focus-visible:ring-ink"
+              />
+              <span
+                aria-hidden
+                className="absolute left-0.5 top-0.5 size-5 rounded-full bg-canvas shadow-sm ring-1 ring-border-subtle transition-transform peer-checked:translate-x-5"
+              />
+            </span>
           </label>
         ))}
       </div>
     </Section>
   );
+}
+
+/**
+ * Profile tab — renders the student's own public profile directly (the social
+ * identity other students see). Editing lives under the Settings tab.
+ */
+function PublicProfileTab() {
+  return <PublicProfileInline userId={getStoredUser()?.id} />;
 }
 
 function AccountSection() {

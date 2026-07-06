@@ -35,6 +35,15 @@ export function usePosts() {
   });
 }
 
+/** One student's posts — the activity feed on their public profile. */
+export function useAuthorPosts(userId: string | undefined) {
+  return useQuery({
+    queryKey: ['community', 'posts', 'author', userId],
+    queryFn: () => apiFetch<CommunityPostView[]>(`${base}/posts?author=${encodeURIComponent(userId ?? '')}`),
+    enabled: Boolean(userId),
+  });
+}
+
 export function useCreatePost() {
   const qc = useQueryClient();
   return useMutation({

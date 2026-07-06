@@ -7,6 +7,7 @@ export * from './live-session.js';
 export * from './mentor.js';
 export * from './transaction.js';
 export * from './community.js';
+export * from './activity.js';
 export * from './notification.js';
 export * from './marketing.js';
 export * from './jobs.js';

@@ -46,46 +46,43 @@ export function AvatarUploader({ currentUrl, name, onChange }: Props) {
 
   return (
     <div className="flex items-center gap-4">
+      {/* Both actions live on the avatar: camera (upload/replace) bottom-right,
+          delete top-right (only when a photo is set). */}
       <div className="relative">
         <Avatar src={resolveAvatarUrl(currentUrl)} name={name} size="2xl" />
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={upload.isPending}
-          aria-label="Change profile picture"
+          aria-label={currentUrl ? 'Replace profile picture' : 'Upload profile picture'}
+          title={currentUrl ? 'Replace photo' : 'Upload photo'}
           className="absolute -bottom-1 -right-1 grid size-8 place-items-center rounded-full bg-surface-inverse text-ink-inverse ring-2 ring-canvas transition hover:bg-ink disabled:opacity-50"
         >
           <Camera className="size-4" />
         </button>
+        {currentUrl ? (
+          <button
+            type="button"
+            onClick={() =>
+              remove.mutate(undefined, {
+                onSuccess: () => onChange?.(null),
+                onError: (err) => setError(err instanceof ApiError ? err.message : 'Remove failed'),
+              })
+            }
+            disabled={remove.isPending}
+            aria-label="Remove profile picture"
+            title="Remove photo"
+            className="absolute -top-1 -right-1 grid size-8 place-items-center rounded-full bg-surface text-ink-faint ring-2 ring-canvas transition hover:text-accent-red disabled:opacity-50"
+          >
+            <Trash2 className="size-4" />
+          </button>
+        ) : null}
       </div>
 
       <div className="space-y-1">
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={upload.isPending}
-            className="rounded-md bg-surface-sunken px-3 py-2 text-sm font-medium text-ink ring-1 ring-border-subtle transition hover:ring-border-strong disabled:opacity-50"
-          >
-            {upload.isPending ? 'Uploading…' : currentUrl ? 'Replace photo' : 'Upload photo'}
-          </button>
-          {currentUrl ? (
-            <button
-              type="button"
-              onClick={() =>
-                remove.mutate(undefined, {
-                  onSuccess: () => onChange?.(null),
-                  onError: (err) => setError(err instanceof ApiError ? err.message : 'Remove failed'),
-                })
-              }
-              disabled={remove.isPending}
-              aria-label="Remove profile picture"
-              className="grid size-9 place-items-center rounded-md text-ink-faint ring-1 ring-border-subtle transition hover:text-accent-red hover:ring-border-strong disabled:opacity-50"
-            >
-              <Trash2 className="size-4" />
-            </button>
-          ) : null}
-        </div>
+        <p className="text-sm font-medium text-ink">
+          {upload.isPending ? 'Uploading…' : remove.isPending ? 'Removing…' : currentUrl ? 'Profile photo' : 'Add a profile photo'}
+        </p>
         <p className="text-xs text-ink-faint">PNG, JPEG or WebP · up to 2 MB</p>
         {error ? <p className="text-xs text-accent-red">{error}</p> : null}
       </div>

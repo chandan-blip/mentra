@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
+  ChatMessageView,
   CreateLiveSessionInput,
+  CreateUploadInput,
   JoinTokenResponse,
   LiveSessionView,
   SessionSummary,
   UpdateLiveSessionInput,
+  UploadInitResponse,
 } from '@mentra/shared';
 import { apiFetch } from './api.js';
 
@@ -67,6 +70,25 @@ export function usePastSessions() {
   return useQuery({
     queryKey: ['live', 'past'],
     queryFn: () => apiFetch<LiveSessionView[]>(`${base}/sessions/past`),
+  });
+}
+
+/** A single session for the watch page. Polls while open so processing→ready / live→ended flips show. */
+export function useSession(id: string | null) {
+  return useQuery({
+    queryKey: ['live', 'session', id],
+    queryFn: () => apiFetch<LiveSessionView>(`${base}/sessions/${id}`),
+    enabled: Boolean(id),
+    refetchInterval: 20_000,
+  });
+}
+
+/** Persisted chat history — used as the comments list on a recorded session's watch page. */
+export function useSessionMessages(id: string | null, enabled = true) {
+  return useQuery({
+    queryKey: ['live', 'messages', id],
+    queryFn: () => apiFetch<ChatMessageView[]>(`${base}/sessions/${id}/messages`),
+    enabled: Boolean(id) && enabled,
   });
 }
 
@@ -134,5 +156,77 @@ export function useJoinToken() {
   return useMutation({
     mutationFn: (id: string) =>
       apiFetch<JoinTokenResponse>(`${base}/sessions/${id}/join-token`, { method: 'POST' }),
+  });
+}
+
+// --- Mentor upload (video → same HLS pipeline) ---
+
+/** Step 1: create the row + get a presigned R2 PUT URL. */
+export function useCreateUpload() {
+  return useMutation({
+    mutationFn: (input: CreateUploadInput) =>
+      apiFetch<UploadInitResponse>(`${base}/sessions/upload`, {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+  });
+}
+
+/** Step 2: PUT the file straight to R2 with progress. contentType MUST match the one
+ *  sent to createUpload (the presigned URL signs it). */
+export function uploadFileToR2(
+  url: string,
+  file: File,
+  contentType: string,
+  onProgress?: (fraction: number) => void,
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', url);
+    xhr.setRequestHeader('Content-Type', contentType);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total);
+    };
+    xhr.onload = () =>
+      xhr.status >= 200 && xhr.status < 300
+        ? resolve()
+        : reject(new Error(`Upload failed (HTTP ${xhr.status})`));
+    xhr.onerror = () => reject(new Error('Upload failed — check your connection and CORS.'));
+    xhr.send(file);
+  });
+}
+
+/** Step 3: verify + enqueue transcoding (same pipeline as live recordings). */
+export function useFinalizeUpload() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      apiFetch<LiveSessionView>(`${base}/sessions/${id}/upload/finalize`, { method: 'POST' }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['live', 'mine'] });
+      qc.invalidateQueries({ queryKey: ['live', 'past'] });
+    },
+  });
+}
+
+// --- Resume watching (recording position) ---
+
+/** Saved resume position for a recording. Fetched once when the player opens. */
+export function useWatchProgress(sessionId: string | null) {
+  return useQuery({
+    queryKey: ['live', 'progress', sessionId],
+    queryFn: () => apiFetch<{ positionSeconds: number }>(`${base}/sessions/${sessionId}/progress`),
+    enabled: Boolean(sessionId),
+    staleTime: Infinity,
+  });
+}
+
+/** Fire-and-forget save of the current playback position (throttling is the caller's job). */
+export function saveWatchProgress(sessionId: string, positionSeconds: number): void {
+  void apiFetch(`${base}/sessions/${sessionId}/progress`, {
+    method: 'PUT',
+    body: JSON.stringify({ positionSeconds }),
+  }).catch(() => {
+    /* best-effort — resume is a convenience, never block playback on it */
   });
 }

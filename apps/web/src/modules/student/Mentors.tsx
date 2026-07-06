@@ -86,7 +86,7 @@ export function MentorsPage() {
       initial="hidden"
       animate="visible"
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
-      className="mx-auto w-full max-w-8xl space-y-6"
+      className="mx-auto w-full max-w-8xl"
     >
       <motion.div variants={fadeUp}>
         <PageHeader
@@ -157,7 +157,7 @@ function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
   }, [tab]);
 
   return (
-    <div className="flex snap-x snap-mandatory gap-1 overflow-x-auto rounded-lg bg-surface-sunken p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="flex mb-3 snap-x snap-mandatory gap-1 overflow-x-auto rounded-lg bg-surface-sunken p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {TABS.map((t) => {
         const active = tab === t.id;
         return (
