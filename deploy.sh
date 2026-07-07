@@ -57,5 +57,18 @@ pnpm --filter @mentra/api db:deploy
 
 chown -R "$RUN_USER":"$RUN_USER" "$APP"
 systemctl restart mentra-api
+
+# Recording transcode worker (BullMQ + ffmpeg consumer) — runs as its own service so
+# heavy transcoding never blocks the API. It is NOT part of the base image, so make the
+# deploy self-healing: ensure ffmpeg exists, (re)install the unit, and restart it on
+# every deploy so it always runs current code (mirrors mentra-api above). Without this,
+# recordings/uploads sit at recordingStatus='processing' forever.
+command -v ffmpeg >/dev/null 2>&1 || { apt-get update && apt-get install -y ffmpeg; }
+install -m 0644 "$APP/mentra-worker.service" /etc/systemd/system/mentra-worker.service
+systemctl daemon-reload
+systemctl enable mentra-worker
+systemctl restart mentra-worker
+
 systemctl reload nginx
 echo "✅ Redeployed. $PUBLIC_URL"
+echo "   Worker: $(systemctl is-active mentra-worker)  ·  API: $(systemctl is-active mentra-api)"

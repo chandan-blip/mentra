@@ -5,6 +5,7 @@ import type {
   CreateLiveSessionInput,
   CreateUploadInput,
   JoinTokenResponse,
+  LikeResultView,
   LiveSessionView,
   SessionSummary,
   UpdateLiveSessionInput,
@@ -156,6 +157,26 @@ export function useJoinToken() {
   return useMutation({
     mutationFn: (id: string) =>
       apiFetch<JoinTokenResponse>(`${base}/sessions/${id}/join-token`, { method: 'POST' }),
+  });
+}
+
+/**
+ * Like / unlike a session. The mutation input is the DESIRED state (true = like); on
+ * success it patches the cached single-session view so the heart + count update in
+ * place without a refetch.
+ */
+export function useToggleLike(sessionId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (next: boolean) =>
+      apiFetch<LikeResultView>(`${base}/sessions/${sessionId}/like`, {
+        method: next ? 'POST' : 'DELETE',
+      }),
+    onSuccess: (res) => {
+      qc.setQueryData<LiveSessionView>(['live', 'session', sessionId], (prev) =>
+        prev ? { ...prev, likedByViewer: res.liked, likeCount: res.likes } : prev,
+      );
+    },
   });
 }
 

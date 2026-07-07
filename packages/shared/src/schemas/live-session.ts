@@ -73,7 +73,17 @@ export type LiveSessionView = {
   durationSeconds: number | null;
   /** 'live' (recorded broadcast) or 'upload' (mentor-uploaded video). */
   source: 'live' | 'upload';
+  /** Total likes on the session. */
+  likeCount: number;
+  /** Whether the requesting user has liked this session. */
+  likedByViewer: boolean;
   createdAt: string;
+};
+
+/** Returned by like / unlike — lets the client update the button + count in place. */
+export type LikeResultView = {
+  liked: boolean;
+  likes: number;
 };
 
 /** Returned when a mentor starts an upload: the row + a presigned R2 PUT URL. */

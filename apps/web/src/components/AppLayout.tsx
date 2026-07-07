@@ -323,8 +323,11 @@ export function AppLayout() {
       }
     >
       {/* Global hide-on-scroll for pages that scroll in the main root; re-keyed per
-          route so it re-anchors and reveals the chrome on every navigation. */}
-      <ChromeScrollWatcher key={location.pathname} />
+          route so it re-anchors and reveals the chrome on every navigation. The watch
+          page owns its chrome (force-hidden for an immersive player), so skip it there. */}
+      {!location.pathname.startsWith('/live-sessions/') ? (
+        <ChromeScrollWatcher key={location.pathname} />
+      ) : null}
       {accessLoading ? (
         <div className="grid min-h-[60vh] place-items-center text-ink-muted">Loading…</div>
       ) : denied?.kind === 'locked' ? (

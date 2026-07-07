@@ -5,6 +5,7 @@ import { requirePermission } from '../access/access.middleware.js';
 import { LiveSessionError } from './live-session.errors.js';
 import { MENTOR_MODULE, STUDENT_MODULE } from './live-session.service.js';
 import {
+  deleteLike,
   getById,
   getChatHistory,
   getLive,
@@ -18,6 +19,7 @@ import {
   postEnd,
   postFinalizeUpload,
   postJoinToken,
+  postLike,
   postStart,
   postUpload,
   putWatchProgress,
@@ -51,6 +53,9 @@ liveSessionRouter.get('/sessions/past', student, asyncHandler(getPast));
 // are resolved in the service, so no single module gate fits here.
 liveSessionRouter.get('/sessions/:id/messages', asyncHandler(getChatHistory));
 liveSessionRouter.post('/sessions/:id/join-token', asyncHandler(postJoinToken));
+// Like / unlike a session — auth only (any user who can open the watch page).
+liveSessionRouter.post('/sessions/:id/like', asyncHandler(postLike));
+liveSessionRouter.delete('/sessions/:id/like', asyncHandler(deleteLike));
 // Single-session detail for the watch page. Registered AFTER the specific /sessions/<word>
 // GETs (live/upcoming/past/mine) so those win; this matches any remaining id.
 liveSessionRouter.get('/sessions/:id', asyncHandler(getById));

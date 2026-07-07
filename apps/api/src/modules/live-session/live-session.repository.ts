@@ -395,6 +395,60 @@ export async function findUserCards(
   return new Map(rows.map((r) => [r.id, { name: r.name, avatarUrl: r.avatarUrl ?? null }]));
 }
 
+// --- Likes (session reactions) ---
+
+/** Idempotently record a like (unique on userId+sessionId — a repeat is a no-op). */
+export async function insertLike(sessionId: string, userId: string): Promise<void> {
+  await db.execute<ResultSetHeader>(
+    'INSERT INTO `SessionLike` (`id`, `sessionId`, `userId`) VALUES (:id, :sessionId, :userId) ' +
+      'ON DUPLICATE KEY UPDATE `id` = `id`',
+    { id: createId(), sessionId, userId },
+  );
+}
+
+export async function deleteLike(sessionId: string, userId: string): Promise<void> {
+  await db.execute<ResultSetHeader>(
+    'DELETE FROM `SessionLike` WHERE `sessionId` = :sessionId AND `userId` = :userId',
+    { sessionId, userId },
+  );
+}
+
+export async function countLikes(sessionId: string): Promise<number> {
+  const [rows] = await db.execute<({ n: number } & RowDataPacket)[]>(
+    'SELECT COUNT(*) AS `n` FROM `SessionLike` WHERE `sessionId` = :sessionId',
+    { sessionId },
+  );
+  return Number(rows[0]?.n ?? 0);
+}
+
+export async function hasLiked(userId: string, sessionId: string): Promise<boolean> {
+  const [rows] = await db.execute<(RowDataPacket)[]>(
+    'SELECT 1 FROM `SessionLike` WHERE `userId` = :userId AND `sessionId` = :sessionId LIMIT 1',
+    { userId, sessionId },
+  );
+  return rows.length > 0;
+}
+
+/** Batch like counts for a set of sessions (the heart count on cards / lists). */
+export async function countLikesForSessions(sessionIds: string[]): Promise<Map<string, number>> {
+  if (sessionIds.length === 0) return new Map();
+  const [rows] = await db.query<({ sessionId: string; n: number } & RowDataPacket)[]>(
+    'SELECT `sessionId`, COUNT(*) AS `n` FROM `SessionLike` WHERE `sessionId` IN (?) GROUP BY `sessionId`',
+    [sessionIds],
+  );
+  return new Map(rows.map((r) => [r.sessionId, Number(r.n)]));
+}
+
+/** Which of the given sessions the user has already liked (batch, for list views). */
+export async function likedSessionIds(userId: string, sessionIds: string[]): Promise<Set<string>> {
+  if (sessionIds.length === 0) return new Set();
+  const [rows] = await db.query<({ sessionId: string } & RowDataPacket)[]>(
+    'SELECT `sessionId` FROM `SessionLike` WHERE `userId` = ? AND `sessionId` IN (?)',
+    [userId, sessionIds],
+  );
+  return new Set(rows.map((r) => r.sessionId));
+}
+
 // --- Users (display names) ---
 
 export async function findUserById(userId: string): Promise<{ name: string; role: string } | null> {

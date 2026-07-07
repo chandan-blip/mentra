@@ -3,6 +3,7 @@ import type {
   CreateLiveSessionInput,
   CreateUploadInput,
   JoinTokenResponse,
+  LikeResultView,
   LiveSessionStatus,
   LiveSessionView,
   SessionSummary,
@@ -34,6 +35,8 @@ function toView(
   mentor: { name: string; avatarUrl: string | null },
   chatCount: number,
   requesterId: string,
+  likeCount = 0,
+  likedByViewer = false,
 ): LiveSessionView {
   return {
     id: row.id,
@@ -54,17 +57,29 @@ function toView(
     recordingUrl: row.recordingUrl,
     durationSeconds: row.durationSeconds,
     source: row.source,
+    likeCount,
+    likedByViewer,
     createdAt: row.createdAt.toISOString(),
   };
 }
 
 async function toViews(rows: repo.LiveSessionRow[], requesterId: string): Promise<LiveSessionView[]> {
-  const [cards, counts] = await Promise.all([
+  const ids = rows.map((r) => r.id);
+  const [cards, counts, likeCounts, liked] = await Promise.all([
     repo.findUserCards([...new Set(rows.map((r) => r.mentorId))]),
-    repo.countMessagesForSessions(rows.map((r) => r.id)),
+    repo.countMessagesForSessions(ids),
+    repo.countLikesForSessions(ids),
+    repo.likedSessionIds(requesterId, ids),
   ]);
   return rows.map((r) =>
-    toView(r, cards.get(r.mentorId) ?? { name: 'Mentor', avatarUrl: null }, counts.get(r.id) ?? 0, requesterId),
+    toView(
+      r,
+      cards.get(r.mentorId) ?? { name: 'Mentor', avatarUrl: null },
+      counts.get(r.id) ?? 0,
+      requesterId,
+      likeCounts.get(r.id) ?? 0,
+      liked.has(r.id),
+    ),
   );
 }
 
@@ -228,9 +243,11 @@ export async function listPast(requesterId: string): Promise<LiveSessionView[]> 
 export async function getOne(userId: string, id: string): Promise<LiveSessionView> {
   const row = await repo.findById(id);
   if (!row) throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
-  const [cards, counts] = await Promise.all([
+  const [cards, counts, likeCount, liked] = await Promise.all([
     repo.findUserCards([row.mentorId]),
     repo.countMessagesForSessions([row.id]),
+    repo.countLikes(row.id),
+    repo.hasLiked(userId, row.id),
   ]);
   const card = cards.get(row.mentorId);
   return toView(
@@ -238,7 +255,27 @@ export async function getOne(userId: string, id: string): Promise<LiveSessionVie
     { name: card?.name ?? 'Mentor', avatarUrl: card?.avatarUrl ?? null },
     counts.get(row.id) ?? 0,
     userId,
+    likeCount,
+    liked,
   );
+}
+
+// --- Likes ---
+
+/** Like a session (idempotent). Returns the new liked state + total for optimistic UI. */
+export async function likeSession(userId: string, id: string): Promise<LikeResultView> {
+  const session = await repo.findById(id);
+  if (!session) throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
+  await repo.insertLike(id, userId);
+  return { liked: true, likes: await repo.countLikes(id) };
+}
+
+/** Remove a like (idempotent). Returns the new liked state + total. */
+export async function unlikeSession(userId: string, id: string): Promise<LikeResultView> {
+  const session = await repo.findById(id);
+  if (!session) throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
+  await repo.deleteLike(id, userId);
+  return { liked: false, likes: await repo.countLikes(id) };
 }
 
 export async function getMessages(userId: string, id: string): Promise<ChatMessageView[]> {

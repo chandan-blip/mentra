@@ -1,0 +1,28 @@
+# Native LiveKit Egress for Mentra recordings (no Docker).
+# Install via provision-egress.sh. Renders live rooms in headless Chrome + GStreamer and
+# writes the composite MP4 to R2 (destination is passed per-request by the API). Must
+# reach the SFU (ws://127.0.0.1:7880) and the SAME Redis as the API/worker.
+[Unit]
+Description=Mentra native LiveKit Egress (recordings)
+After=network.target redis-server.service mentra-api.service
+Wants=redis-server.service
+
+[Service]
+Type=simple
+User=egress
+Group=egress
+# Per-service /run/egress (owned by the egress user) — holds the generated config + PA socket.
+RuntimeDirectory=egress
+RuntimeDirectoryMode=0750
+Environment=XDG_RUNTIME_DIR=/run/egress
+ExecStart=/usr/local/bin/egress-run.sh
+Restart=always
+RestartSec=5
+# Headless Chrome + Xvfb + GStreamer open a lot of fds.
+LimitNOFILE=65536
+# CPU-hungry while recording; keep it from starving the API/DB on the shared host.
+Nice=10
+CPUWeight=50
+
+[Install]
+WantedBy=multi-user.target

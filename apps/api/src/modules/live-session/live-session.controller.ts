@@ -11,12 +11,14 @@ import {
   getOne,
   getProgress,
   getSummary,
+  likeSession,
   listLive,
   listMine,
   listPast,
   listUpcoming,
   saveProgress,
   startSession,
+  unlikeSession,
   updateSchedule,
 } from './live-session.service.js';
 
@@ -83,6 +85,14 @@ export async function postJoinToken(req: Request, res: Response): Promise<void> 
 
 export async function getSessionSummary(req: Request, res: Response): Promise<void> {
   res.json({ data: await getSummary(uid(req), id(req)) });
+}
+
+export async function postLike(req: Request, res: Response): Promise<void> {
+  res.json({ data: await likeSession(uid(req), id(req)) });
+}
+
+export async function deleteLike(req: Request, res: Response): Promise<void> {
+  res.json({ data: await unlikeSession(uid(req), id(req)) });
 }
 
 const progressSchema = z.object({ positionSeconds: z.number().int().min(0).max(60 * 60 * 24) });

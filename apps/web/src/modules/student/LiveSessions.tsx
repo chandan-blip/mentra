@@ -93,7 +93,7 @@ function durationOf(startIso: string | null, endIso: string | null): string | nu
  * mentor avatar beside the title and a views·comments meta line. Clicking opens the live
  * stage (live) or the recording (ready); upcoming / still-processing cards are inert.
  */
-function VideoCard({ session: s, onOpen }: { session: LiveSessionView; onOpen: () => void }) {
+export function VideoCard({ session: s, onOpen }: { session: LiveSessionView; onOpen: () => void }) {
   const isLive = s.status === 'live';
   const isUpcoming = s.status === 'scheduled';
   const ready = s.recordingStatus === 'ready' && Boolean(s.recordingUrl);
