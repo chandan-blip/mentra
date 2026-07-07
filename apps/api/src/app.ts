@@ -12,6 +12,7 @@ import { userProfileRouter, userProfilePublicRouter } from './modules/user-profi
 import { meRouter, adminRouter } from './modules/access/index.js';
 import { dashboardRouter } from './modules/dashboard/index.js';
 import { roadmapRouter } from './modules/roadmap/index.js';
+import { learningRouter } from './modules/learning/index.js';
 import { assignmentRouter } from './modules/assignment/index.js';
 import { liveSessionRouter, liveSessionWebhookRouter } from './modules/live-session/index.js';
 import { mentorRouter } from './modules/mentor/index.js';
@@ -78,6 +79,7 @@ export function createApp(): Express {
   app.use('/api/v1/admin', adminRouter);
   app.use('/api/v1/dashboard', dashboardRouter);
   app.use('/api/v1/roadmap', roadmapRouter);
+  app.use('/api/v1/learning', learningRouter);
   app.use('/api/v1/assignment', assignmentRouter);
   app.use('/api/v1/live-session', liveSessionRouter);
   app.use('/api/v1/mentor', mentorRouter);

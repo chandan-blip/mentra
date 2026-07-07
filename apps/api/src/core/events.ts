@@ -15,6 +15,14 @@ export type DomainEventMap = {
   'roadmap.item.completed': { userId: string; roadmapId: string; itemId: string };
   'assignment.generated': { userId: string; assignmentId: string };
   'assignment.completed': { userId: string; assignmentId: string; score: number };
+  'learning.test.completed': {
+    userId: string;
+    categoryId: string;
+    testId: string;
+    percent: number;
+    passed: boolean;
+  };
+  'learning.series.completed': { userId: string; categoryId: string };
   'live-session.started': { sessionId: string; mentorId: string };
   'live-session.ended': { sessionId: string; mentorId: string };
 };

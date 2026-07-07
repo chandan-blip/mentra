@@ -1,20 +1,19 @@
 import type { ReactNode } from 'react';
-import { Home, Map as MapIcon, MessageSquare, Menu, Users, Video } from 'lucide-react';
+import { Home, MessageSquare, Menu, Users, Video } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMyAccess } from '../lib/access.js';
 import { moduleIcon } from '../lib/moduleIcons.js';
 import { isRouteActive } from './AppSidebar.js';
 
 /**
- * Mobile-only bottom navigation. Five fixed slots: Dashboard, Roadmap, Find Mentor,
- * Live Sessions, and Menu (opens the full off-canvas drawer). Hidden at `md` and up,
- * where the persistent left rail takes over. The middle three render the same icon the
- * admin configured for that module in the DB (matched by key), so they stay in sync
- * with the rail; `fallbackIcon` covers a role whose module list omits the key. Locked/
- * forbidden routes are handled by the layout's access guard when tapped.
+ * Mobile-only bottom navigation. Fixed slots: Dashboard, Find Mentor, Live Sessions,
+ * Community, and Menu (opens the full off-canvas drawer). Hidden at `md` and up, where
+ * the persistent left rail takes over. The middle items render the same icon the admin
+ * configured for that module in the DB (matched by key), so they stay in sync with the
+ * rail; `fallbackIcon` covers a role whose module list omits the key. Locked/forbidden
+ * routes are handled by the layout's access guard when tapped.
  */
 const MIDDLE_ITEMS: { key: string; label: string; route: string; fallbackIcon: ReactNode }[] = [
-  { key: 'roadmap', label: 'Roadmap', route: '/roadmap', fallbackIcon: <MapIcon /> },
   { key: 'mentors', label: 'Find Mentor', route: '/mentors', fallbackIcon: <Users /> },
   { key: 'live-sessions', label: 'Live Sessions', route: '/live-sessions', fallbackIcon: <Video /> },
   // Community is auth-gated only (not a plan module), so it has no DB icon — use the fallback.

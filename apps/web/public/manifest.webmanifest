@@ -1,0 +1,19 @@
+{
+  "name": "Mentra — AI Career OS",
+  "short_name": "Mentra",
+  "description": "Your AI-powered Software Engineering Career OS — AI assignment, tailored roadmap, live mentorship, and real projects.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    { "src": "/brand/mentra-app-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/brand/mentra-app-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/brand/mentra-app-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/brand/mentra-app-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

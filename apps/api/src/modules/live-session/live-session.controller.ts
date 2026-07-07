@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { createLiveSessionSchema, createUploadSchema, updateLiveSessionSchema } from '@mentra/shared';
 import {
+  addMessage,
   createSession,
   createUpload,
   endSession,
@@ -73,6 +74,13 @@ export async function getPast(req: Request, res: Response): Promise<void> {
 
 export async function getChatHistory(req: Request, res: Response): Promise<void> {
   res.json({ data: await getMessages(uid(req), id(req)) });
+}
+
+const messageSchema = z.object({ body: z.string().trim().min(1).max(1000) });
+
+export async function postMessage(req: Request, res: Response): Promise<void> {
+  const { body } = messageSchema.parse(req.body ?? {});
+  res.json({ data: await addMessage(uid(req), id(req), body) });
 }
 
 export async function getById(req: Request, res: Response): Promise<void> {

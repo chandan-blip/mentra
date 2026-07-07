@@ -599,6 +599,61 @@ exports.Prisma.LeadCallScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.LearningCategoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  slug: 'slug',
+  title: 'title',
+  description: 'description',
+  skillTags: 'skillTags',
+  icon: 'icon',
+  order: 'order',
+  generatedBy: 'generatedBy',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LearningTestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  categoryId: 'categoryId',
+  difficulty: 'difficulty',
+  order: 'order',
+  title: 'title',
+  model: 'model',
+  totalQuestions: 'totalQuestions',
+  maxScore: 'maxScore',
+  passPercent: 'passPercent',
+  generatedAt: 'generatedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LearningTestQuestionScalarFieldEnum = {
+  id: 'id',
+  testId: 'testId',
+  order: 'order',
+  type: 'type',
+  body: 'body',
+  options: 'options',
+  correct: 'correct',
+  explanation: 'explanation',
+  points: 'points'
+};
+
+exports.Prisma.LearningTestResultScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  testId: 'testId',
+  categoryId: 'categoryId',
+  attemptNumber: 'attemptNumber',
+  score: 'score',
+  maxScore: 'maxScore',
+  percent: 'percent',
+  correctCount: 'correctCount',
+  totalQuestions: 'totalQuestions',
+  passed: 'passed',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -776,7 +831,11 @@ exports.Prisma.ModelName = {
   Lead: 'Lead',
   LeadList: 'LeadList',
   LeadListMember: 'LeadListMember',
-  LeadCall: 'LeadCall'
+  LeadCall: 'LeadCall',
+  LearningCategory: 'LearningCategory',
+  LearningTest: 'LearningTest',
+  LearningTestQuestion: 'LearningTestQuestion',
+  LearningTestResult: 'LearningTestResult'
 };
 
 /**

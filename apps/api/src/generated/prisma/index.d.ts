@@ -203,6 +203,26 @@ export type LeadListMember = $Result.DefaultSelection<Prisma.$LeadListMemberPayl
  * 
  */
 export type LeadCall = $Result.DefaultSelection<Prisma.$LeadCallPayload>
+/**
+ * Model LearningCategory
+ * 
+ */
+export type LearningCategory = $Result.DefaultSelection<Prisma.$LearningCategoryPayload>
+/**
+ * Model LearningTest
+ * 
+ */
+export type LearningTest = $Result.DefaultSelection<Prisma.$LearningTestPayload>
+/**
+ * Model LearningTestQuestion
+ * 
+ */
+export type LearningTestQuestion = $Result.DefaultSelection<Prisma.$LearningTestQuestionPayload>
+/**
+ * Model LearningTestResult
+ * 
+ */
+export type LearningTestResult = $Result.DefaultSelection<Prisma.$LearningTestResultPayload>
 
 /**
  * Enums
@@ -938,6 +958,46 @@ export class PrismaClient<
     * ```
     */
   get leadCall(): Prisma.LeadCallDelegate<ExtArgs>;
+
+  /**
+   * `prisma.learningCategory`: Exposes CRUD operations for the **LearningCategory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LearningCategories
+    * const learningCategories = await prisma.learningCategory.findMany()
+    * ```
+    */
+  get learningCategory(): Prisma.LearningCategoryDelegate<ExtArgs>;
+
+  /**
+   * `prisma.learningTest`: Exposes CRUD operations for the **LearningTest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LearningTests
+    * const learningTests = await prisma.learningTest.findMany()
+    * ```
+    */
+  get learningTest(): Prisma.LearningTestDelegate<ExtArgs>;
+
+  /**
+   * `prisma.learningTestQuestion`: Exposes CRUD operations for the **LearningTestQuestion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LearningTestQuestions
+    * const learningTestQuestions = await prisma.learningTestQuestion.findMany()
+    * ```
+    */
+  get learningTestQuestion(): Prisma.LearningTestQuestionDelegate<ExtArgs>;
+
+  /**
+   * `prisma.learningTestResult`: Exposes CRUD operations for the **LearningTestResult** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LearningTestResults
+    * const learningTestResults = await prisma.learningTestResult.findMany()
+    * ```
+    */
+  get learningTestResult(): Prisma.LearningTestResultDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -1416,7 +1476,11 @@ export namespace Prisma {
     Lead: 'Lead',
     LeadList: 'LeadList',
     LeadListMember: 'LeadListMember',
-    LeadCall: 'LeadCall'
+    LeadCall: 'LeadCall',
+    LearningCategory: 'LearningCategory',
+    LearningTest: 'LearningTest',
+    LearningTestQuestion: 'LearningTestQuestion',
+    LearningTestResult: 'LearningTestResult'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1432,7 +1496,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "module" | "accessRole" | "rolePermission" | "plan" | "planModule" | "recommendationLog" | "roadmap" | "roadmapWeek" | "roadmapItem" | "roadmapSubtopic" | "roadmapTest" | "roadmapTestQuestion" | "roadmapTestAnswer" | "roadmapTestResult" | "assignment" | "studentProfile" | "notificationPreferences" | "featureFlag" | "skill" | "question" | "questionSkill" | "assessmentTemplate" | "assessmentAttempt" | "assessmentAnswer" | "skillScore" | "skillScoreHistory" | "authIdentity" | "session" | "liveSession" | "sessionParticipant" | "chatMessage" | "watchProgress" | "job" | "lead" | "leadList" | "leadListMember" | "leadCall"
+      modelProps: "user" | "module" | "accessRole" | "rolePermission" | "plan" | "planModule" | "recommendationLog" | "roadmap" | "roadmapWeek" | "roadmapItem" | "roadmapSubtopic" | "roadmapTest" | "roadmapTestQuestion" | "roadmapTestAnswer" | "roadmapTestResult" | "assignment" | "studentProfile" | "notificationPreferences" | "featureFlag" | "skill" | "question" | "questionSkill" | "assessmentTemplate" | "assessmentAttempt" | "assessmentAnswer" | "skillScore" | "skillScoreHistory" | "authIdentity" | "session" | "liveSession" | "sessionParticipant" | "chatMessage" | "watchProgress" | "job" | "lead" | "leadList" | "leadListMember" | "leadCall" | "learningCategory" | "learningTest" | "learningTestQuestion" | "learningTestResult"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3941,6 +4005,270 @@ export namespace Prisma {
           count: {
             args: Prisma.LeadCallCountArgs<ExtArgs>
             result: $Utils.Optional<LeadCallCountAggregateOutputType> | number
+          }
+        }
+      }
+      LearningCategory: {
+        payload: Prisma.$LearningCategoryPayload<ExtArgs>
+        fields: Prisma.LearningCategoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LearningCategoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningCategoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LearningCategoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningCategoryPayload>
+          }
+          findFirst: {
+            args: Prisma.LearningCategoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningCategoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LearningCategoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningCategoryPayload>
+          }
+          findMany: {
+            args: Prisma.LearningCategoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningCategoryPayload>[]
+          }
+          create: {
+            args: Prisma.LearningCategoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningCategoryPayload>
+          }
+          createMany: {
+            args: Prisma.LearningCategoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.LearningCategoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningCategoryPayload>
+          }
+          update: {
+            args: Prisma.LearningCategoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningCategoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.LearningCategoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LearningCategoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.LearningCategoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningCategoryPayload>
+          }
+          aggregate: {
+            args: Prisma.LearningCategoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLearningCategory>
+          }
+          groupBy: {
+            args: Prisma.LearningCategoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LearningCategoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LearningCategoryCountArgs<ExtArgs>
+            result: $Utils.Optional<LearningCategoryCountAggregateOutputType> | number
+          }
+        }
+      }
+      LearningTest: {
+        payload: Prisma.$LearningTestPayload<ExtArgs>
+        fields: Prisma.LearningTestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LearningTestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LearningTestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestPayload>
+          }
+          findFirst: {
+            args: Prisma.LearningTestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LearningTestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestPayload>
+          }
+          findMany: {
+            args: Prisma.LearningTestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestPayload>[]
+          }
+          create: {
+            args: Prisma.LearningTestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestPayload>
+          }
+          createMany: {
+            args: Prisma.LearningTestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.LearningTestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestPayload>
+          }
+          update: {
+            args: Prisma.LearningTestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestPayload>
+          }
+          deleteMany: {
+            args: Prisma.LearningTestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LearningTestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.LearningTestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestPayload>
+          }
+          aggregate: {
+            args: Prisma.LearningTestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLearningTest>
+          }
+          groupBy: {
+            args: Prisma.LearningTestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LearningTestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LearningTestCountArgs<ExtArgs>
+            result: $Utils.Optional<LearningTestCountAggregateOutputType> | number
+          }
+        }
+      }
+      LearningTestQuestion: {
+        payload: Prisma.$LearningTestQuestionPayload<ExtArgs>
+        fields: Prisma.LearningTestQuestionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LearningTestQuestionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestQuestionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LearningTestQuestionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestQuestionPayload>
+          }
+          findFirst: {
+            args: Prisma.LearningTestQuestionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestQuestionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LearningTestQuestionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestQuestionPayload>
+          }
+          findMany: {
+            args: Prisma.LearningTestQuestionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestQuestionPayload>[]
+          }
+          create: {
+            args: Prisma.LearningTestQuestionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestQuestionPayload>
+          }
+          createMany: {
+            args: Prisma.LearningTestQuestionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.LearningTestQuestionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestQuestionPayload>
+          }
+          update: {
+            args: Prisma.LearningTestQuestionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestQuestionPayload>
+          }
+          deleteMany: {
+            args: Prisma.LearningTestQuestionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LearningTestQuestionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.LearningTestQuestionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestQuestionPayload>
+          }
+          aggregate: {
+            args: Prisma.LearningTestQuestionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLearningTestQuestion>
+          }
+          groupBy: {
+            args: Prisma.LearningTestQuestionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LearningTestQuestionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LearningTestQuestionCountArgs<ExtArgs>
+            result: $Utils.Optional<LearningTestQuestionCountAggregateOutputType> | number
+          }
+        }
+      }
+      LearningTestResult: {
+        payload: Prisma.$LearningTestResultPayload<ExtArgs>
+        fields: Prisma.LearningTestResultFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LearningTestResultFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestResultPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LearningTestResultFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestResultPayload>
+          }
+          findFirst: {
+            args: Prisma.LearningTestResultFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestResultPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LearningTestResultFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestResultPayload>
+          }
+          findMany: {
+            args: Prisma.LearningTestResultFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestResultPayload>[]
+          }
+          create: {
+            args: Prisma.LearningTestResultCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestResultPayload>
+          }
+          createMany: {
+            args: Prisma.LearningTestResultCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.LearningTestResultDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestResultPayload>
+          }
+          update: {
+            args: Prisma.LearningTestResultUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestResultPayload>
+          }
+          deleteMany: {
+            args: Prisma.LearningTestResultDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LearningTestResultUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.LearningTestResultUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LearningTestResultPayload>
+          }
+          aggregate: {
+            args: Prisma.LearningTestResultAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLearningTestResult>
+          }
+          groupBy: {
+            args: Prisma.LearningTestResultGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LearningTestResultGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LearningTestResultCountArgs<ExtArgs>
+            result: $Utils.Optional<LearningTestResultCountAggregateOutputType> | number
           }
         }
       }
@@ -39432,6 +39760,3747 @@ export namespace Prisma {
 
 
   /**
+   * Model LearningCategory
+   */
+
+  export type AggregateLearningCategory = {
+    _count: LearningCategoryCountAggregateOutputType | null
+    _avg: LearningCategoryAvgAggregateOutputType | null
+    _sum: LearningCategorySumAggregateOutputType | null
+    _min: LearningCategoryMinAggregateOutputType | null
+    _max: LearningCategoryMaxAggregateOutputType | null
+  }
+
+  export type LearningCategoryAvgAggregateOutputType = {
+    order: number | null
+  }
+
+  export type LearningCategorySumAggregateOutputType = {
+    order: number | null
+  }
+
+  export type LearningCategoryMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    slug: string | null
+    title: string | null
+    description: string | null
+    icon: string | null
+    order: number | null
+    generatedBy: string | null
+    createdAt: Date | null
+  }
+
+  export type LearningCategoryMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    slug: string | null
+    title: string | null
+    description: string | null
+    icon: string | null
+    order: number | null
+    generatedBy: string | null
+    createdAt: Date | null
+  }
+
+  export type LearningCategoryCountAggregateOutputType = {
+    id: number
+    userId: number
+    slug: number
+    title: number
+    description: number
+    skillTags: number
+    icon: number
+    order: number
+    generatedBy: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type LearningCategoryAvgAggregateInputType = {
+    order?: true
+  }
+
+  export type LearningCategorySumAggregateInputType = {
+    order?: true
+  }
+
+  export type LearningCategoryMinAggregateInputType = {
+    id?: true
+    userId?: true
+    slug?: true
+    title?: true
+    description?: true
+    icon?: true
+    order?: true
+    generatedBy?: true
+    createdAt?: true
+  }
+
+  export type LearningCategoryMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    slug?: true
+    title?: true
+    description?: true
+    icon?: true
+    order?: true
+    generatedBy?: true
+    createdAt?: true
+  }
+
+  export type LearningCategoryCountAggregateInputType = {
+    id?: true
+    userId?: true
+    slug?: true
+    title?: true
+    description?: true
+    skillTags?: true
+    icon?: true
+    order?: true
+    generatedBy?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type LearningCategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LearningCategory to aggregate.
+     */
+    where?: LearningCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningCategories to fetch.
+     */
+    orderBy?: LearningCategoryOrderByWithRelationInput | LearningCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LearningCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LearningCategories
+    **/
+    _count?: true | LearningCategoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LearningCategoryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LearningCategorySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LearningCategoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LearningCategoryMaxAggregateInputType
+  }
+
+  export type GetLearningCategoryAggregateType<T extends LearningCategoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateLearningCategory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLearningCategory[P]>
+      : GetScalarType<T[P], AggregateLearningCategory[P]>
+  }
+
+
+
+
+  export type LearningCategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LearningCategoryWhereInput
+    orderBy?: LearningCategoryOrderByWithAggregationInput | LearningCategoryOrderByWithAggregationInput[]
+    by: LearningCategoryScalarFieldEnum[] | LearningCategoryScalarFieldEnum
+    having?: LearningCategoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LearningCategoryCountAggregateInputType | true
+    _avg?: LearningCategoryAvgAggregateInputType
+    _sum?: LearningCategorySumAggregateInputType
+    _min?: LearningCategoryMinAggregateInputType
+    _max?: LearningCategoryMaxAggregateInputType
+  }
+
+  export type LearningCategoryGroupByOutputType = {
+    id: string
+    userId: string
+    slug: string
+    title: string
+    description: string
+    skillTags: JsonValue
+    icon: string | null
+    order: number
+    generatedBy: string
+    createdAt: Date
+    _count: LearningCategoryCountAggregateOutputType | null
+    _avg: LearningCategoryAvgAggregateOutputType | null
+    _sum: LearningCategorySumAggregateOutputType | null
+    _min: LearningCategoryMinAggregateOutputType | null
+    _max: LearningCategoryMaxAggregateOutputType | null
+  }
+
+  type GetLearningCategoryGroupByPayload<T extends LearningCategoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LearningCategoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LearningCategoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LearningCategoryGroupByOutputType[P]>
+            : GetScalarType<T[P], LearningCategoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LearningCategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    slug?: boolean
+    title?: boolean
+    description?: boolean
+    skillTags?: boolean
+    icon?: boolean
+    order?: boolean
+    generatedBy?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["learningCategory"]>
+
+
+  export type LearningCategorySelectScalar = {
+    id?: boolean
+    userId?: boolean
+    slug?: boolean
+    title?: boolean
+    description?: boolean
+    skillTags?: boolean
+    icon?: boolean
+    order?: boolean
+    generatedBy?: boolean
+    createdAt?: boolean
+  }
+
+
+  export type $LearningCategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LearningCategory"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      slug: string
+      title: string
+      description: string
+      skillTags: Prisma.JsonValue
+      icon: string | null
+      order: number
+      generatedBy: string
+      createdAt: Date
+    }, ExtArgs["result"]["learningCategory"]>
+    composites: {}
+  }
+
+  type LearningCategoryGetPayload<S extends boolean | null | undefined | LearningCategoryDefaultArgs> = $Result.GetResult<Prisma.$LearningCategoryPayload, S>
+
+  type LearningCategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<LearningCategoryFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: LearningCategoryCountAggregateInputType | true
+    }
+
+  export interface LearningCategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LearningCategory'], meta: { name: 'LearningCategory' } }
+    /**
+     * Find zero or one LearningCategory that matches the filter.
+     * @param {LearningCategoryFindUniqueArgs} args - Arguments to find a LearningCategory
+     * @example
+     * // Get one LearningCategory
+     * const learningCategory = await prisma.learningCategory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LearningCategoryFindUniqueArgs>(args: SelectSubset<T, LearningCategoryFindUniqueArgs<ExtArgs>>): Prisma__LearningCategoryClient<$Result.GetResult<Prisma.$LearningCategoryPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one LearningCategory that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {LearningCategoryFindUniqueOrThrowArgs} args - Arguments to find a LearningCategory
+     * @example
+     * // Get one LearningCategory
+     * const learningCategory = await prisma.learningCategory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LearningCategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, LearningCategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LearningCategoryClient<$Result.GetResult<Prisma.$LearningCategoryPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first LearningCategory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningCategoryFindFirstArgs} args - Arguments to find a LearningCategory
+     * @example
+     * // Get one LearningCategory
+     * const learningCategory = await prisma.learningCategory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LearningCategoryFindFirstArgs>(args?: SelectSubset<T, LearningCategoryFindFirstArgs<ExtArgs>>): Prisma__LearningCategoryClient<$Result.GetResult<Prisma.$LearningCategoryPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first LearningCategory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningCategoryFindFirstOrThrowArgs} args - Arguments to find a LearningCategory
+     * @example
+     * // Get one LearningCategory
+     * const learningCategory = await prisma.learningCategory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LearningCategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, LearningCategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__LearningCategoryClient<$Result.GetResult<Prisma.$LearningCategoryPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more LearningCategories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningCategoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LearningCategories
+     * const learningCategories = await prisma.learningCategory.findMany()
+     * 
+     * // Get first 10 LearningCategories
+     * const learningCategories = await prisma.learningCategory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const learningCategoryWithIdOnly = await prisma.learningCategory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LearningCategoryFindManyArgs>(args?: SelectSubset<T, LearningCategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LearningCategoryPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a LearningCategory.
+     * @param {LearningCategoryCreateArgs} args - Arguments to create a LearningCategory.
+     * @example
+     * // Create one LearningCategory
+     * const LearningCategory = await prisma.learningCategory.create({
+     *   data: {
+     *     // ... data to create a LearningCategory
+     *   }
+     * })
+     * 
+     */
+    create<T extends LearningCategoryCreateArgs>(args: SelectSubset<T, LearningCategoryCreateArgs<ExtArgs>>): Prisma__LearningCategoryClient<$Result.GetResult<Prisma.$LearningCategoryPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many LearningCategories.
+     * @param {LearningCategoryCreateManyArgs} args - Arguments to create many LearningCategories.
+     * @example
+     * // Create many LearningCategories
+     * const learningCategory = await prisma.learningCategory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LearningCategoryCreateManyArgs>(args?: SelectSubset<T, LearningCategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a LearningCategory.
+     * @param {LearningCategoryDeleteArgs} args - Arguments to delete one LearningCategory.
+     * @example
+     * // Delete one LearningCategory
+     * const LearningCategory = await prisma.learningCategory.delete({
+     *   where: {
+     *     // ... filter to delete one LearningCategory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LearningCategoryDeleteArgs>(args: SelectSubset<T, LearningCategoryDeleteArgs<ExtArgs>>): Prisma__LearningCategoryClient<$Result.GetResult<Prisma.$LearningCategoryPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one LearningCategory.
+     * @param {LearningCategoryUpdateArgs} args - Arguments to update one LearningCategory.
+     * @example
+     * // Update one LearningCategory
+     * const learningCategory = await prisma.learningCategory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LearningCategoryUpdateArgs>(args: SelectSubset<T, LearningCategoryUpdateArgs<ExtArgs>>): Prisma__LearningCategoryClient<$Result.GetResult<Prisma.$LearningCategoryPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more LearningCategories.
+     * @param {LearningCategoryDeleteManyArgs} args - Arguments to filter LearningCategories to delete.
+     * @example
+     * // Delete a few LearningCategories
+     * const { count } = await prisma.learningCategory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LearningCategoryDeleteManyArgs>(args?: SelectSubset<T, LearningCategoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LearningCategories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningCategoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LearningCategories
+     * const learningCategory = await prisma.learningCategory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LearningCategoryUpdateManyArgs>(args: SelectSubset<T, LearningCategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one LearningCategory.
+     * @param {LearningCategoryUpsertArgs} args - Arguments to update or create a LearningCategory.
+     * @example
+     * // Update or create a LearningCategory
+     * const learningCategory = await prisma.learningCategory.upsert({
+     *   create: {
+     *     // ... data to create a LearningCategory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LearningCategory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LearningCategoryUpsertArgs>(args: SelectSubset<T, LearningCategoryUpsertArgs<ExtArgs>>): Prisma__LearningCategoryClient<$Result.GetResult<Prisma.$LearningCategoryPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of LearningCategories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningCategoryCountArgs} args - Arguments to filter LearningCategories to count.
+     * @example
+     * // Count the number of LearningCategories
+     * const count = await prisma.learningCategory.count({
+     *   where: {
+     *     // ... the filter for the LearningCategories we want to count
+     *   }
+     * })
+    **/
+    count<T extends LearningCategoryCountArgs>(
+      args?: Subset<T, LearningCategoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LearningCategoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LearningCategory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningCategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LearningCategoryAggregateArgs>(args: Subset<T, LearningCategoryAggregateArgs>): Prisma.PrismaPromise<GetLearningCategoryAggregateType<T>>
+
+    /**
+     * Group by LearningCategory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningCategoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LearningCategoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LearningCategoryGroupByArgs['orderBy'] }
+        : { orderBy?: LearningCategoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LearningCategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLearningCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LearningCategory model
+   */
+  readonly fields: LearningCategoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LearningCategory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LearningCategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LearningCategory model
+   */ 
+  interface LearningCategoryFieldRefs {
+    readonly id: FieldRef<"LearningCategory", 'String'>
+    readonly userId: FieldRef<"LearningCategory", 'String'>
+    readonly slug: FieldRef<"LearningCategory", 'String'>
+    readonly title: FieldRef<"LearningCategory", 'String'>
+    readonly description: FieldRef<"LearningCategory", 'String'>
+    readonly skillTags: FieldRef<"LearningCategory", 'Json'>
+    readonly icon: FieldRef<"LearningCategory", 'String'>
+    readonly order: FieldRef<"LearningCategory", 'Int'>
+    readonly generatedBy: FieldRef<"LearningCategory", 'String'>
+    readonly createdAt: FieldRef<"LearningCategory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LearningCategory findUnique
+   */
+  export type LearningCategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningCategory
+     */
+    select?: LearningCategorySelect<ExtArgs> | null
+    /**
+     * Filter, which LearningCategory to fetch.
+     */
+    where: LearningCategoryWhereUniqueInput
+  }
+
+  /**
+   * LearningCategory findUniqueOrThrow
+   */
+  export type LearningCategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningCategory
+     */
+    select?: LearningCategorySelect<ExtArgs> | null
+    /**
+     * Filter, which LearningCategory to fetch.
+     */
+    where: LearningCategoryWhereUniqueInput
+  }
+
+  /**
+   * LearningCategory findFirst
+   */
+  export type LearningCategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningCategory
+     */
+    select?: LearningCategorySelect<ExtArgs> | null
+    /**
+     * Filter, which LearningCategory to fetch.
+     */
+    where?: LearningCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningCategories to fetch.
+     */
+    orderBy?: LearningCategoryOrderByWithRelationInput | LearningCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LearningCategories.
+     */
+    cursor?: LearningCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningCategories.
+     */
+    distinct?: LearningCategoryScalarFieldEnum | LearningCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * LearningCategory findFirstOrThrow
+   */
+  export type LearningCategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningCategory
+     */
+    select?: LearningCategorySelect<ExtArgs> | null
+    /**
+     * Filter, which LearningCategory to fetch.
+     */
+    where?: LearningCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningCategories to fetch.
+     */
+    orderBy?: LearningCategoryOrderByWithRelationInput | LearningCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LearningCategories.
+     */
+    cursor?: LearningCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningCategories.
+     */
+    distinct?: LearningCategoryScalarFieldEnum | LearningCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * LearningCategory findMany
+   */
+  export type LearningCategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningCategory
+     */
+    select?: LearningCategorySelect<ExtArgs> | null
+    /**
+     * Filter, which LearningCategories to fetch.
+     */
+    where?: LearningCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningCategories to fetch.
+     */
+    orderBy?: LearningCategoryOrderByWithRelationInput | LearningCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LearningCategories.
+     */
+    cursor?: LearningCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningCategories.
+     */
+    skip?: number
+    distinct?: LearningCategoryScalarFieldEnum | LearningCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * LearningCategory create
+   */
+  export type LearningCategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningCategory
+     */
+    select?: LearningCategorySelect<ExtArgs> | null
+    /**
+     * The data needed to create a LearningCategory.
+     */
+    data: XOR<LearningCategoryCreateInput, LearningCategoryUncheckedCreateInput>
+  }
+
+  /**
+   * LearningCategory createMany
+   */
+  export type LearningCategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LearningCategories.
+     */
+    data: LearningCategoryCreateManyInput | LearningCategoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LearningCategory update
+   */
+  export type LearningCategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningCategory
+     */
+    select?: LearningCategorySelect<ExtArgs> | null
+    /**
+     * The data needed to update a LearningCategory.
+     */
+    data: XOR<LearningCategoryUpdateInput, LearningCategoryUncheckedUpdateInput>
+    /**
+     * Choose, which LearningCategory to update.
+     */
+    where: LearningCategoryWhereUniqueInput
+  }
+
+  /**
+   * LearningCategory updateMany
+   */
+  export type LearningCategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LearningCategories.
+     */
+    data: XOR<LearningCategoryUpdateManyMutationInput, LearningCategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which LearningCategories to update
+     */
+    where?: LearningCategoryWhereInput
+  }
+
+  /**
+   * LearningCategory upsert
+   */
+  export type LearningCategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningCategory
+     */
+    select?: LearningCategorySelect<ExtArgs> | null
+    /**
+     * The filter to search for the LearningCategory to update in case it exists.
+     */
+    where: LearningCategoryWhereUniqueInput
+    /**
+     * In case the LearningCategory found by the `where` argument doesn't exist, create a new LearningCategory with this data.
+     */
+    create: XOR<LearningCategoryCreateInput, LearningCategoryUncheckedCreateInput>
+    /**
+     * In case the LearningCategory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LearningCategoryUpdateInput, LearningCategoryUncheckedUpdateInput>
+  }
+
+  /**
+   * LearningCategory delete
+   */
+  export type LearningCategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningCategory
+     */
+    select?: LearningCategorySelect<ExtArgs> | null
+    /**
+     * Filter which LearningCategory to delete.
+     */
+    where: LearningCategoryWhereUniqueInput
+  }
+
+  /**
+   * LearningCategory deleteMany
+   */
+  export type LearningCategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LearningCategories to delete
+     */
+    where?: LearningCategoryWhereInput
+  }
+
+  /**
+   * LearningCategory without action
+   */
+  export type LearningCategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningCategory
+     */
+    select?: LearningCategorySelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model LearningTest
+   */
+
+  export type AggregateLearningTest = {
+    _count: LearningTestCountAggregateOutputType | null
+    _avg: LearningTestAvgAggregateOutputType | null
+    _sum: LearningTestSumAggregateOutputType | null
+    _min: LearningTestMinAggregateOutputType | null
+    _max: LearningTestMaxAggregateOutputType | null
+  }
+
+  export type LearningTestAvgAggregateOutputType = {
+    order: number | null
+    totalQuestions: number | null
+    maxScore: number | null
+    passPercent: number | null
+  }
+
+  export type LearningTestSumAggregateOutputType = {
+    order: number | null
+    totalQuestions: number | null
+    maxScore: number | null
+    passPercent: number | null
+  }
+
+  export type LearningTestMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    categoryId: string | null
+    difficulty: string | null
+    order: number | null
+    title: string | null
+    model: string | null
+    totalQuestions: number | null
+    maxScore: number | null
+    passPercent: number | null
+    generatedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type LearningTestMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    categoryId: string | null
+    difficulty: string | null
+    order: number | null
+    title: string | null
+    model: string | null
+    totalQuestions: number | null
+    maxScore: number | null
+    passPercent: number | null
+    generatedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type LearningTestCountAggregateOutputType = {
+    id: number
+    userId: number
+    categoryId: number
+    difficulty: number
+    order: number
+    title: number
+    model: number
+    totalQuestions: number
+    maxScore: number
+    passPercent: number
+    generatedAt: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type LearningTestAvgAggregateInputType = {
+    order?: true
+    totalQuestions?: true
+    maxScore?: true
+    passPercent?: true
+  }
+
+  export type LearningTestSumAggregateInputType = {
+    order?: true
+    totalQuestions?: true
+    maxScore?: true
+    passPercent?: true
+  }
+
+  export type LearningTestMinAggregateInputType = {
+    id?: true
+    userId?: true
+    categoryId?: true
+    difficulty?: true
+    order?: true
+    title?: true
+    model?: true
+    totalQuestions?: true
+    maxScore?: true
+    passPercent?: true
+    generatedAt?: true
+    createdAt?: true
+  }
+
+  export type LearningTestMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    categoryId?: true
+    difficulty?: true
+    order?: true
+    title?: true
+    model?: true
+    totalQuestions?: true
+    maxScore?: true
+    passPercent?: true
+    generatedAt?: true
+    createdAt?: true
+  }
+
+  export type LearningTestCountAggregateInputType = {
+    id?: true
+    userId?: true
+    categoryId?: true
+    difficulty?: true
+    order?: true
+    title?: true
+    model?: true
+    totalQuestions?: true
+    maxScore?: true
+    passPercent?: true
+    generatedAt?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type LearningTestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LearningTest to aggregate.
+     */
+    where?: LearningTestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTests to fetch.
+     */
+    orderBy?: LearningTestOrderByWithRelationInput | LearningTestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LearningTestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LearningTests
+    **/
+    _count?: true | LearningTestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LearningTestAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LearningTestSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LearningTestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LearningTestMaxAggregateInputType
+  }
+
+  export type GetLearningTestAggregateType<T extends LearningTestAggregateArgs> = {
+        [P in keyof T & keyof AggregateLearningTest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLearningTest[P]>
+      : GetScalarType<T[P], AggregateLearningTest[P]>
+  }
+
+
+
+
+  export type LearningTestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LearningTestWhereInput
+    orderBy?: LearningTestOrderByWithAggregationInput | LearningTestOrderByWithAggregationInput[]
+    by: LearningTestScalarFieldEnum[] | LearningTestScalarFieldEnum
+    having?: LearningTestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LearningTestCountAggregateInputType | true
+    _avg?: LearningTestAvgAggregateInputType
+    _sum?: LearningTestSumAggregateInputType
+    _min?: LearningTestMinAggregateInputType
+    _max?: LearningTestMaxAggregateInputType
+  }
+
+  export type LearningTestGroupByOutputType = {
+    id: string
+    userId: string
+    categoryId: string
+    difficulty: string
+    order: number
+    title: string
+    model: string | null
+    totalQuestions: number
+    maxScore: number
+    passPercent: number
+    generatedAt: Date | null
+    createdAt: Date
+    _count: LearningTestCountAggregateOutputType | null
+    _avg: LearningTestAvgAggregateOutputType | null
+    _sum: LearningTestSumAggregateOutputType | null
+    _min: LearningTestMinAggregateOutputType | null
+    _max: LearningTestMaxAggregateOutputType | null
+  }
+
+  type GetLearningTestGroupByPayload<T extends LearningTestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LearningTestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LearningTestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LearningTestGroupByOutputType[P]>
+            : GetScalarType<T[P], LearningTestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LearningTestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    categoryId?: boolean
+    difficulty?: boolean
+    order?: boolean
+    title?: boolean
+    model?: boolean
+    totalQuestions?: boolean
+    maxScore?: boolean
+    passPercent?: boolean
+    generatedAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["learningTest"]>
+
+
+  export type LearningTestSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    categoryId?: boolean
+    difficulty?: boolean
+    order?: boolean
+    title?: boolean
+    model?: boolean
+    totalQuestions?: boolean
+    maxScore?: boolean
+    passPercent?: boolean
+    generatedAt?: boolean
+    createdAt?: boolean
+  }
+
+
+  export type $LearningTestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LearningTest"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      categoryId: string
+      difficulty: string
+      order: number
+      title: string
+      model: string | null
+      totalQuestions: number
+      maxScore: number
+      passPercent: number
+      generatedAt: Date | null
+      createdAt: Date
+    }, ExtArgs["result"]["learningTest"]>
+    composites: {}
+  }
+
+  type LearningTestGetPayload<S extends boolean | null | undefined | LearningTestDefaultArgs> = $Result.GetResult<Prisma.$LearningTestPayload, S>
+
+  type LearningTestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<LearningTestFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: LearningTestCountAggregateInputType | true
+    }
+
+  export interface LearningTestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LearningTest'], meta: { name: 'LearningTest' } }
+    /**
+     * Find zero or one LearningTest that matches the filter.
+     * @param {LearningTestFindUniqueArgs} args - Arguments to find a LearningTest
+     * @example
+     * // Get one LearningTest
+     * const learningTest = await prisma.learningTest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LearningTestFindUniqueArgs>(args: SelectSubset<T, LearningTestFindUniqueArgs<ExtArgs>>): Prisma__LearningTestClient<$Result.GetResult<Prisma.$LearningTestPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one LearningTest that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {LearningTestFindUniqueOrThrowArgs} args - Arguments to find a LearningTest
+     * @example
+     * // Get one LearningTest
+     * const learningTest = await prisma.learningTest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LearningTestFindUniqueOrThrowArgs>(args: SelectSubset<T, LearningTestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LearningTestClient<$Result.GetResult<Prisma.$LearningTestPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first LearningTest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestFindFirstArgs} args - Arguments to find a LearningTest
+     * @example
+     * // Get one LearningTest
+     * const learningTest = await prisma.learningTest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LearningTestFindFirstArgs>(args?: SelectSubset<T, LearningTestFindFirstArgs<ExtArgs>>): Prisma__LearningTestClient<$Result.GetResult<Prisma.$LearningTestPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first LearningTest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestFindFirstOrThrowArgs} args - Arguments to find a LearningTest
+     * @example
+     * // Get one LearningTest
+     * const learningTest = await prisma.learningTest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LearningTestFindFirstOrThrowArgs>(args?: SelectSubset<T, LearningTestFindFirstOrThrowArgs<ExtArgs>>): Prisma__LearningTestClient<$Result.GetResult<Prisma.$LearningTestPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more LearningTests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LearningTests
+     * const learningTests = await prisma.learningTest.findMany()
+     * 
+     * // Get first 10 LearningTests
+     * const learningTests = await prisma.learningTest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const learningTestWithIdOnly = await prisma.learningTest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LearningTestFindManyArgs>(args?: SelectSubset<T, LearningTestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LearningTestPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a LearningTest.
+     * @param {LearningTestCreateArgs} args - Arguments to create a LearningTest.
+     * @example
+     * // Create one LearningTest
+     * const LearningTest = await prisma.learningTest.create({
+     *   data: {
+     *     // ... data to create a LearningTest
+     *   }
+     * })
+     * 
+     */
+    create<T extends LearningTestCreateArgs>(args: SelectSubset<T, LearningTestCreateArgs<ExtArgs>>): Prisma__LearningTestClient<$Result.GetResult<Prisma.$LearningTestPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many LearningTests.
+     * @param {LearningTestCreateManyArgs} args - Arguments to create many LearningTests.
+     * @example
+     * // Create many LearningTests
+     * const learningTest = await prisma.learningTest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LearningTestCreateManyArgs>(args?: SelectSubset<T, LearningTestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a LearningTest.
+     * @param {LearningTestDeleteArgs} args - Arguments to delete one LearningTest.
+     * @example
+     * // Delete one LearningTest
+     * const LearningTest = await prisma.learningTest.delete({
+     *   where: {
+     *     // ... filter to delete one LearningTest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LearningTestDeleteArgs>(args: SelectSubset<T, LearningTestDeleteArgs<ExtArgs>>): Prisma__LearningTestClient<$Result.GetResult<Prisma.$LearningTestPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one LearningTest.
+     * @param {LearningTestUpdateArgs} args - Arguments to update one LearningTest.
+     * @example
+     * // Update one LearningTest
+     * const learningTest = await prisma.learningTest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LearningTestUpdateArgs>(args: SelectSubset<T, LearningTestUpdateArgs<ExtArgs>>): Prisma__LearningTestClient<$Result.GetResult<Prisma.$LearningTestPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more LearningTests.
+     * @param {LearningTestDeleteManyArgs} args - Arguments to filter LearningTests to delete.
+     * @example
+     * // Delete a few LearningTests
+     * const { count } = await prisma.learningTest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LearningTestDeleteManyArgs>(args?: SelectSubset<T, LearningTestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LearningTests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LearningTests
+     * const learningTest = await prisma.learningTest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LearningTestUpdateManyArgs>(args: SelectSubset<T, LearningTestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one LearningTest.
+     * @param {LearningTestUpsertArgs} args - Arguments to update or create a LearningTest.
+     * @example
+     * // Update or create a LearningTest
+     * const learningTest = await prisma.learningTest.upsert({
+     *   create: {
+     *     // ... data to create a LearningTest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LearningTest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LearningTestUpsertArgs>(args: SelectSubset<T, LearningTestUpsertArgs<ExtArgs>>): Prisma__LearningTestClient<$Result.GetResult<Prisma.$LearningTestPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of LearningTests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestCountArgs} args - Arguments to filter LearningTests to count.
+     * @example
+     * // Count the number of LearningTests
+     * const count = await prisma.learningTest.count({
+     *   where: {
+     *     // ... the filter for the LearningTests we want to count
+     *   }
+     * })
+    **/
+    count<T extends LearningTestCountArgs>(
+      args?: Subset<T, LearningTestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LearningTestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LearningTest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LearningTestAggregateArgs>(args: Subset<T, LearningTestAggregateArgs>): Prisma.PrismaPromise<GetLearningTestAggregateType<T>>
+
+    /**
+     * Group by LearningTest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LearningTestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LearningTestGroupByArgs['orderBy'] }
+        : { orderBy?: LearningTestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LearningTestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLearningTestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LearningTest model
+   */
+  readonly fields: LearningTestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LearningTest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LearningTestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LearningTest model
+   */ 
+  interface LearningTestFieldRefs {
+    readonly id: FieldRef<"LearningTest", 'String'>
+    readonly userId: FieldRef<"LearningTest", 'String'>
+    readonly categoryId: FieldRef<"LearningTest", 'String'>
+    readonly difficulty: FieldRef<"LearningTest", 'String'>
+    readonly order: FieldRef<"LearningTest", 'Int'>
+    readonly title: FieldRef<"LearningTest", 'String'>
+    readonly model: FieldRef<"LearningTest", 'String'>
+    readonly totalQuestions: FieldRef<"LearningTest", 'Int'>
+    readonly maxScore: FieldRef<"LearningTest", 'Int'>
+    readonly passPercent: FieldRef<"LearningTest", 'Int'>
+    readonly generatedAt: FieldRef<"LearningTest", 'DateTime'>
+    readonly createdAt: FieldRef<"LearningTest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LearningTest findUnique
+   */
+  export type LearningTestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTest
+     */
+    select?: LearningTestSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTest to fetch.
+     */
+    where: LearningTestWhereUniqueInput
+  }
+
+  /**
+   * LearningTest findUniqueOrThrow
+   */
+  export type LearningTestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTest
+     */
+    select?: LearningTestSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTest to fetch.
+     */
+    where: LearningTestWhereUniqueInput
+  }
+
+  /**
+   * LearningTest findFirst
+   */
+  export type LearningTestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTest
+     */
+    select?: LearningTestSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTest to fetch.
+     */
+    where?: LearningTestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTests to fetch.
+     */
+    orderBy?: LearningTestOrderByWithRelationInput | LearningTestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LearningTests.
+     */
+    cursor?: LearningTestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningTests.
+     */
+    distinct?: LearningTestScalarFieldEnum | LearningTestScalarFieldEnum[]
+  }
+
+  /**
+   * LearningTest findFirstOrThrow
+   */
+  export type LearningTestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTest
+     */
+    select?: LearningTestSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTest to fetch.
+     */
+    where?: LearningTestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTests to fetch.
+     */
+    orderBy?: LearningTestOrderByWithRelationInput | LearningTestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LearningTests.
+     */
+    cursor?: LearningTestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningTests.
+     */
+    distinct?: LearningTestScalarFieldEnum | LearningTestScalarFieldEnum[]
+  }
+
+  /**
+   * LearningTest findMany
+   */
+  export type LearningTestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTest
+     */
+    select?: LearningTestSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTests to fetch.
+     */
+    where?: LearningTestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTests to fetch.
+     */
+    orderBy?: LearningTestOrderByWithRelationInput | LearningTestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LearningTests.
+     */
+    cursor?: LearningTestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTests.
+     */
+    skip?: number
+    distinct?: LearningTestScalarFieldEnum | LearningTestScalarFieldEnum[]
+  }
+
+  /**
+   * LearningTest create
+   */
+  export type LearningTestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTest
+     */
+    select?: LearningTestSelect<ExtArgs> | null
+    /**
+     * The data needed to create a LearningTest.
+     */
+    data: XOR<LearningTestCreateInput, LearningTestUncheckedCreateInput>
+  }
+
+  /**
+   * LearningTest createMany
+   */
+  export type LearningTestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LearningTests.
+     */
+    data: LearningTestCreateManyInput | LearningTestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LearningTest update
+   */
+  export type LearningTestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTest
+     */
+    select?: LearningTestSelect<ExtArgs> | null
+    /**
+     * The data needed to update a LearningTest.
+     */
+    data: XOR<LearningTestUpdateInput, LearningTestUncheckedUpdateInput>
+    /**
+     * Choose, which LearningTest to update.
+     */
+    where: LearningTestWhereUniqueInput
+  }
+
+  /**
+   * LearningTest updateMany
+   */
+  export type LearningTestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LearningTests.
+     */
+    data: XOR<LearningTestUpdateManyMutationInput, LearningTestUncheckedUpdateManyInput>
+    /**
+     * Filter which LearningTests to update
+     */
+    where?: LearningTestWhereInput
+  }
+
+  /**
+   * LearningTest upsert
+   */
+  export type LearningTestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTest
+     */
+    select?: LearningTestSelect<ExtArgs> | null
+    /**
+     * The filter to search for the LearningTest to update in case it exists.
+     */
+    where: LearningTestWhereUniqueInput
+    /**
+     * In case the LearningTest found by the `where` argument doesn't exist, create a new LearningTest with this data.
+     */
+    create: XOR<LearningTestCreateInput, LearningTestUncheckedCreateInput>
+    /**
+     * In case the LearningTest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LearningTestUpdateInput, LearningTestUncheckedUpdateInput>
+  }
+
+  /**
+   * LearningTest delete
+   */
+  export type LearningTestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTest
+     */
+    select?: LearningTestSelect<ExtArgs> | null
+    /**
+     * Filter which LearningTest to delete.
+     */
+    where: LearningTestWhereUniqueInput
+  }
+
+  /**
+   * LearningTest deleteMany
+   */
+  export type LearningTestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LearningTests to delete
+     */
+    where?: LearningTestWhereInput
+  }
+
+  /**
+   * LearningTest without action
+   */
+  export type LearningTestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTest
+     */
+    select?: LearningTestSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model LearningTestQuestion
+   */
+
+  export type AggregateLearningTestQuestion = {
+    _count: LearningTestQuestionCountAggregateOutputType | null
+    _avg: LearningTestQuestionAvgAggregateOutputType | null
+    _sum: LearningTestQuestionSumAggregateOutputType | null
+    _min: LearningTestQuestionMinAggregateOutputType | null
+    _max: LearningTestQuestionMaxAggregateOutputType | null
+  }
+
+  export type LearningTestQuestionAvgAggregateOutputType = {
+    order: number | null
+    points: number | null
+  }
+
+  export type LearningTestQuestionSumAggregateOutputType = {
+    order: number | null
+    points: number | null
+  }
+
+  export type LearningTestQuestionMinAggregateOutputType = {
+    id: string | null
+    testId: string | null
+    order: number | null
+    type: string | null
+    body: string | null
+    explanation: string | null
+    points: number | null
+  }
+
+  export type LearningTestQuestionMaxAggregateOutputType = {
+    id: string | null
+    testId: string | null
+    order: number | null
+    type: string | null
+    body: string | null
+    explanation: string | null
+    points: number | null
+  }
+
+  export type LearningTestQuestionCountAggregateOutputType = {
+    id: number
+    testId: number
+    order: number
+    type: number
+    body: number
+    options: number
+    correct: number
+    explanation: number
+    points: number
+    _all: number
+  }
+
+
+  export type LearningTestQuestionAvgAggregateInputType = {
+    order?: true
+    points?: true
+  }
+
+  export type LearningTestQuestionSumAggregateInputType = {
+    order?: true
+    points?: true
+  }
+
+  export type LearningTestQuestionMinAggregateInputType = {
+    id?: true
+    testId?: true
+    order?: true
+    type?: true
+    body?: true
+    explanation?: true
+    points?: true
+  }
+
+  export type LearningTestQuestionMaxAggregateInputType = {
+    id?: true
+    testId?: true
+    order?: true
+    type?: true
+    body?: true
+    explanation?: true
+    points?: true
+  }
+
+  export type LearningTestQuestionCountAggregateInputType = {
+    id?: true
+    testId?: true
+    order?: true
+    type?: true
+    body?: true
+    options?: true
+    correct?: true
+    explanation?: true
+    points?: true
+    _all?: true
+  }
+
+  export type LearningTestQuestionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LearningTestQuestion to aggregate.
+     */
+    where?: LearningTestQuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTestQuestions to fetch.
+     */
+    orderBy?: LearningTestQuestionOrderByWithRelationInput | LearningTestQuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LearningTestQuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTestQuestions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTestQuestions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LearningTestQuestions
+    **/
+    _count?: true | LearningTestQuestionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LearningTestQuestionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LearningTestQuestionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LearningTestQuestionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LearningTestQuestionMaxAggregateInputType
+  }
+
+  export type GetLearningTestQuestionAggregateType<T extends LearningTestQuestionAggregateArgs> = {
+        [P in keyof T & keyof AggregateLearningTestQuestion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLearningTestQuestion[P]>
+      : GetScalarType<T[P], AggregateLearningTestQuestion[P]>
+  }
+
+
+
+
+  export type LearningTestQuestionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LearningTestQuestionWhereInput
+    orderBy?: LearningTestQuestionOrderByWithAggregationInput | LearningTestQuestionOrderByWithAggregationInput[]
+    by: LearningTestQuestionScalarFieldEnum[] | LearningTestQuestionScalarFieldEnum
+    having?: LearningTestQuestionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LearningTestQuestionCountAggregateInputType | true
+    _avg?: LearningTestQuestionAvgAggregateInputType
+    _sum?: LearningTestQuestionSumAggregateInputType
+    _min?: LearningTestQuestionMinAggregateInputType
+    _max?: LearningTestQuestionMaxAggregateInputType
+  }
+
+  export type LearningTestQuestionGroupByOutputType = {
+    id: string
+    testId: string
+    order: number
+    type: string
+    body: string
+    options: JsonValue
+    correct: JsonValue
+    explanation: string | null
+    points: number
+    _count: LearningTestQuestionCountAggregateOutputType | null
+    _avg: LearningTestQuestionAvgAggregateOutputType | null
+    _sum: LearningTestQuestionSumAggregateOutputType | null
+    _min: LearningTestQuestionMinAggregateOutputType | null
+    _max: LearningTestQuestionMaxAggregateOutputType | null
+  }
+
+  type GetLearningTestQuestionGroupByPayload<T extends LearningTestQuestionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LearningTestQuestionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LearningTestQuestionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LearningTestQuestionGroupByOutputType[P]>
+            : GetScalarType<T[P], LearningTestQuestionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LearningTestQuestionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    testId?: boolean
+    order?: boolean
+    type?: boolean
+    body?: boolean
+    options?: boolean
+    correct?: boolean
+    explanation?: boolean
+    points?: boolean
+  }, ExtArgs["result"]["learningTestQuestion"]>
+
+
+  export type LearningTestQuestionSelectScalar = {
+    id?: boolean
+    testId?: boolean
+    order?: boolean
+    type?: boolean
+    body?: boolean
+    options?: boolean
+    correct?: boolean
+    explanation?: boolean
+    points?: boolean
+  }
+
+
+  export type $LearningTestQuestionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LearningTestQuestion"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      testId: string
+      order: number
+      type: string
+      body: string
+      options: Prisma.JsonValue
+      correct: Prisma.JsonValue
+      explanation: string | null
+      points: number
+    }, ExtArgs["result"]["learningTestQuestion"]>
+    composites: {}
+  }
+
+  type LearningTestQuestionGetPayload<S extends boolean | null | undefined | LearningTestQuestionDefaultArgs> = $Result.GetResult<Prisma.$LearningTestQuestionPayload, S>
+
+  type LearningTestQuestionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<LearningTestQuestionFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: LearningTestQuestionCountAggregateInputType | true
+    }
+
+  export interface LearningTestQuestionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LearningTestQuestion'], meta: { name: 'LearningTestQuestion' } }
+    /**
+     * Find zero or one LearningTestQuestion that matches the filter.
+     * @param {LearningTestQuestionFindUniqueArgs} args - Arguments to find a LearningTestQuestion
+     * @example
+     * // Get one LearningTestQuestion
+     * const learningTestQuestion = await prisma.learningTestQuestion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LearningTestQuestionFindUniqueArgs>(args: SelectSubset<T, LearningTestQuestionFindUniqueArgs<ExtArgs>>): Prisma__LearningTestQuestionClient<$Result.GetResult<Prisma.$LearningTestQuestionPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one LearningTestQuestion that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {LearningTestQuestionFindUniqueOrThrowArgs} args - Arguments to find a LearningTestQuestion
+     * @example
+     * // Get one LearningTestQuestion
+     * const learningTestQuestion = await prisma.learningTestQuestion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LearningTestQuestionFindUniqueOrThrowArgs>(args: SelectSubset<T, LearningTestQuestionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LearningTestQuestionClient<$Result.GetResult<Prisma.$LearningTestQuestionPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first LearningTestQuestion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestQuestionFindFirstArgs} args - Arguments to find a LearningTestQuestion
+     * @example
+     * // Get one LearningTestQuestion
+     * const learningTestQuestion = await prisma.learningTestQuestion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LearningTestQuestionFindFirstArgs>(args?: SelectSubset<T, LearningTestQuestionFindFirstArgs<ExtArgs>>): Prisma__LearningTestQuestionClient<$Result.GetResult<Prisma.$LearningTestQuestionPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first LearningTestQuestion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestQuestionFindFirstOrThrowArgs} args - Arguments to find a LearningTestQuestion
+     * @example
+     * // Get one LearningTestQuestion
+     * const learningTestQuestion = await prisma.learningTestQuestion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LearningTestQuestionFindFirstOrThrowArgs>(args?: SelectSubset<T, LearningTestQuestionFindFirstOrThrowArgs<ExtArgs>>): Prisma__LearningTestQuestionClient<$Result.GetResult<Prisma.$LearningTestQuestionPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more LearningTestQuestions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestQuestionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LearningTestQuestions
+     * const learningTestQuestions = await prisma.learningTestQuestion.findMany()
+     * 
+     * // Get first 10 LearningTestQuestions
+     * const learningTestQuestions = await prisma.learningTestQuestion.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const learningTestQuestionWithIdOnly = await prisma.learningTestQuestion.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LearningTestQuestionFindManyArgs>(args?: SelectSubset<T, LearningTestQuestionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LearningTestQuestionPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a LearningTestQuestion.
+     * @param {LearningTestQuestionCreateArgs} args - Arguments to create a LearningTestQuestion.
+     * @example
+     * // Create one LearningTestQuestion
+     * const LearningTestQuestion = await prisma.learningTestQuestion.create({
+     *   data: {
+     *     // ... data to create a LearningTestQuestion
+     *   }
+     * })
+     * 
+     */
+    create<T extends LearningTestQuestionCreateArgs>(args: SelectSubset<T, LearningTestQuestionCreateArgs<ExtArgs>>): Prisma__LearningTestQuestionClient<$Result.GetResult<Prisma.$LearningTestQuestionPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many LearningTestQuestions.
+     * @param {LearningTestQuestionCreateManyArgs} args - Arguments to create many LearningTestQuestions.
+     * @example
+     * // Create many LearningTestQuestions
+     * const learningTestQuestion = await prisma.learningTestQuestion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LearningTestQuestionCreateManyArgs>(args?: SelectSubset<T, LearningTestQuestionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a LearningTestQuestion.
+     * @param {LearningTestQuestionDeleteArgs} args - Arguments to delete one LearningTestQuestion.
+     * @example
+     * // Delete one LearningTestQuestion
+     * const LearningTestQuestion = await prisma.learningTestQuestion.delete({
+     *   where: {
+     *     // ... filter to delete one LearningTestQuestion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LearningTestQuestionDeleteArgs>(args: SelectSubset<T, LearningTestQuestionDeleteArgs<ExtArgs>>): Prisma__LearningTestQuestionClient<$Result.GetResult<Prisma.$LearningTestQuestionPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one LearningTestQuestion.
+     * @param {LearningTestQuestionUpdateArgs} args - Arguments to update one LearningTestQuestion.
+     * @example
+     * // Update one LearningTestQuestion
+     * const learningTestQuestion = await prisma.learningTestQuestion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LearningTestQuestionUpdateArgs>(args: SelectSubset<T, LearningTestQuestionUpdateArgs<ExtArgs>>): Prisma__LearningTestQuestionClient<$Result.GetResult<Prisma.$LearningTestQuestionPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more LearningTestQuestions.
+     * @param {LearningTestQuestionDeleteManyArgs} args - Arguments to filter LearningTestQuestions to delete.
+     * @example
+     * // Delete a few LearningTestQuestions
+     * const { count } = await prisma.learningTestQuestion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LearningTestQuestionDeleteManyArgs>(args?: SelectSubset<T, LearningTestQuestionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LearningTestQuestions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestQuestionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LearningTestQuestions
+     * const learningTestQuestion = await prisma.learningTestQuestion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LearningTestQuestionUpdateManyArgs>(args: SelectSubset<T, LearningTestQuestionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one LearningTestQuestion.
+     * @param {LearningTestQuestionUpsertArgs} args - Arguments to update or create a LearningTestQuestion.
+     * @example
+     * // Update or create a LearningTestQuestion
+     * const learningTestQuestion = await prisma.learningTestQuestion.upsert({
+     *   create: {
+     *     // ... data to create a LearningTestQuestion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LearningTestQuestion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LearningTestQuestionUpsertArgs>(args: SelectSubset<T, LearningTestQuestionUpsertArgs<ExtArgs>>): Prisma__LearningTestQuestionClient<$Result.GetResult<Prisma.$LearningTestQuestionPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of LearningTestQuestions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestQuestionCountArgs} args - Arguments to filter LearningTestQuestions to count.
+     * @example
+     * // Count the number of LearningTestQuestions
+     * const count = await prisma.learningTestQuestion.count({
+     *   where: {
+     *     // ... the filter for the LearningTestQuestions we want to count
+     *   }
+     * })
+    **/
+    count<T extends LearningTestQuestionCountArgs>(
+      args?: Subset<T, LearningTestQuestionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LearningTestQuestionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LearningTestQuestion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestQuestionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LearningTestQuestionAggregateArgs>(args: Subset<T, LearningTestQuestionAggregateArgs>): Prisma.PrismaPromise<GetLearningTestQuestionAggregateType<T>>
+
+    /**
+     * Group by LearningTestQuestion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestQuestionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LearningTestQuestionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LearningTestQuestionGroupByArgs['orderBy'] }
+        : { orderBy?: LearningTestQuestionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LearningTestQuestionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLearningTestQuestionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LearningTestQuestion model
+   */
+  readonly fields: LearningTestQuestionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LearningTestQuestion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LearningTestQuestionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LearningTestQuestion model
+   */ 
+  interface LearningTestQuestionFieldRefs {
+    readonly id: FieldRef<"LearningTestQuestion", 'String'>
+    readonly testId: FieldRef<"LearningTestQuestion", 'String'>
+    readonly order: FieldRef<"LearningTestQuestion", 'Int'>
+    readonly type: FieldRef<"LearningTestQuestion", 'String'>
+    readonly body: FieldRef<"LearningTestQuestion", 'String'>
+    readonly options: FieldRef<"LearningTestQuestion", 'Json'>
+    readonly correct: FieldRef<"LearningTestQuestion", 'Json'>
+    readonly explanation: FieldRef<"LearningTestQuestion", 'String'>
+    readonly points: FieldRef<"LearningTestQuestion", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LearningTestQuestion findUnique
+   */
+  export type LearningTestQuestionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestQuestion
+     */
+    select?: LearningTestQuestionSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTestQuestion to fetch.
+     */
+    where: LearningTestQuestionWhereUniqueInput
+  }
+
+  /**
+   * LearningTestQuestion findUniqueOrThrow
+   */
+  export type LearningTestQuestionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestQuestion
+     */
+    select?: LearningTestQuestionSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTestQuestion to fetch.
+     */
+    where: LearningTestQuestionWhereUniqueInput
+  }
+
+  /**
+   * LearningTestQuestion findFirst
+   */
+  export type LearningTestQuestionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestQuestion
+     */
+    select?: LearningTestQuestionSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTestQuestion to fetch.
+     */
+    where?: LearningTestQuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTestQuestions to fetch.
+     */
+    orderBy?: LearningTestQuestionOrderByWithRelationInput | LearningTestQuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LearningTestQuestions.
+     */
+    cursor?: LearningTestQuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTestQuestions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTestQuestions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningTestQuestions.
+     */
+    distinct?: LearningTestQuestionScalarFieldEnum | LearningTestQuestionScalarFieldEnum[]
+  }
+
+  /**
+   * LearningTestQuestion findFirstOrThrow
+   */
+  export type LearningTestQuestionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestQuestion
+     */
+    select?: LearningTestQuestionSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTestQuestion to fetch.
+     */
+    where?: LearningTestQuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTestQuestions to fetch.
+     */
+    orderBy?: LearningTestQuestionOrderByWithRelationInput | LearningTestQuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LearningTestQuestions.
+     */
+    cursor?: LearningTestQuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTestQuestions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTestQuestions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningTestQuestions.
+     */
+    distinct?: LearningTestQuestionScalarFieldEnum | LearningTestQuestionScalarFieldEnum[]
+  }
+
+  /**
+   * LearningTestQuestion findMany
+   */
+  export type LearningTestQuestionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestQuestion
+     */
+    select?: LearningTestQuestionSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTestQuestions to fetch.
+     */
+    where?: LearningTestQuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTestQuestions to fetch.
+     */
+    orderBy?: LearningTestQuestionOrderByWithRelationInput | LearningTestQuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LearningTestQuestions.
+     */
+    cursor?: LearningTestQuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTestQuestions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTestQuestions.
+     */
+    skip?: number
+    distinct?: LearningTestQuestionScalarFieldEnum | LearningTestQuestionScalarFieldEnum[]
+  }
+
+  /**
+   * LearningTestQuestion create
+   */
+  export type LearningTestQuestionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestQuestion
+     */
+    select?: LearningTestQuestionSelect<ExtArgs> | null
+    /**
+     * The data needed to create a LearningTestQuestion.
+     */
+    data: XOR<LearningTestQuestionCreateInput, LearningTestQuestionUncheckedCreateInput>
+  }
+
+  /**
+   * LearningTestQuestion createMany
+   */
+  export type LearningTestQuestionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LearningTestQuestions.
+     */
+    data: LearningTestQuestionCreateManyInput | LearningTestQuestionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LearningTestQuestion update
+   */
+  export type LearningTestQuestionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestQuestion
+     */
+    select?: LearningTestQuestionSelect<ExtArgs> | null
+    /**
+     * The data needed to update a LearningTestQuestion.
+     */
+    data: XOR<LearningTestQuestionUpdateInput, LearningTestQuestionUncheckedUpdateInput>
+    /**
+     * Choose, which LearningTestQuestion to update.
+     */
+    where: LearningTestQuestionWhereUniqueInput
+  }
+
+  /**
+   * LearningTestQuestion updateMany
+   */
+  export type LearningTestQuestionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LearningTestQuestions.
+     */
+    data: XOR<LearningTestQuestionUpdateManyMutationInput, LearningTestQuestionUncheckedUpdateManyInput>
+    /**
+     * Filter which LearningTestQuestions to update
+     */
+    where?: LearningTestQuestionWhereInput
+  }
+
+  /**
+   * LearningTestQuestion upsert
+   */
+  export type LearningTestQuestionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestQuestion
+     */
+    select?: LearningTestQuestionSelect<ExtArgs> | null
+    /**
+     * The filter to search for the LearningTestQuestion to update in case it exists.
+     */
+    where: LearningTestQuestionWhereUniqueInput
+    /**
+     * In case the LearningTestQuestion found by the `where` argument doesn't exist, create a new LearningTestQuestion with this data.
+     */
+    create: XOR<LearningTestQuestionCreateInput, LearningTestQuestionUncheckedCreateInput>
+    /**
+     * In case the LearningTestQuestion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LearningTestQuestionUpdateInput, LearningTestQuestionUncheckedUpdateInput>
+  }
+
+  /**
+   * LearningTestQuestion delete
+   */
+  export type LearningTestQuestionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestQuestion
+     */
+    select?: LearningTestQuestionSelect<ExtArgs> | null
+    /**
+     * Filter which LearningTestQuestion to delete.
+     */
+    where: LearningTestQuestionWhereUniqueInput
+  }
+
+  /**
+   * LearningTestQuestion deleteMany
+   */
+  export type LearningTestQuestionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LearningTestQuestions to delete
+     */
+    where?: LearningTestQuestionWhereInput
+  }
+
+  /**
+   * LearningTestQuestion without action
+   */
+  export type LearningTestQuestionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestQuestion
+     */
+    select?: LearningTestQuestionSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model LearningTestResult
+   */
+
+  export type AggregateLearningTestResult = {
+    _count: LearningTestResultCountAggregateOutputType | null
+    _avg: LearningTestResultAvgAggregateOutputType | null
+    _sum: LearningTestResultSumAggregateOutputType | null
+    _min: LearningTestResultMinAggregateOutputType | null
+    _max: LearningTestResultMaxAggregateOutputType | null
+  }
+
+  export type LearningTestResultAvgAggregateOutputType = {
+    attemptNumber: number | null
+    score: number | null
+    maxScore: number | null
+    percent: number | null
+    correctCount: number | null
+    totalQuestions: number | null
+  }
+
+  export type LearningTestResultSumAggregateOutputType = {
+    attemptNumber: number | null
+    score: number | null
+    maxScore: number | null
+    percent: number | null
+    correctCount: number | null
+    totalQuestions: number | null
+  }
+
+  export type LearningTestResultMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    testId: string | null
+    categoryId: string | null
+    attemptNumber: number | null
+    score: number | null
+    maxScore: number | null
+    percent: number | null
+    correctCount: number | null
+    totalQuestions: number | null
+    passed: boolean | null
+    createdAt: Date | null
+  }
+
+  export type LearningTestResultMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    testId: string | null
+    categoryId: string | null
+    attemptNumber: number | null
+    score: number | null
+    maxScore: number | null
+    percent: number | null
+    correctCount: number | null
+    totalQuestions: number | null
+    passed: boolean | null
+    createdAt: Date | null
+  }
+
+  export type LearningTestResultCountAggregateOutputType = {
+    id: number
+    userId: number
+    testId: number
+    categoryId: number
+    attemptNumber: number
+    score: number
+    maxScore: number
+    percent: number
+    correctCount: number
+    totalQuestions: number
+    passed: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type LearningTestResultAvgAggregateInputType = {
+    attemptNumber?: true
+    score?: true
+    maxScore?: true
+    percent?: true
+    correctCount?: true
+    totalQuestions?: true
+  }
+
+  export type LearningTestResultSumAggregateInputType = {
+    attemptNumber?: true
+    score?: true
+    maxScore?: true
+    percent?: true
+    correctCount?: true
+    totalQuestions?: true
+  }
+
+  export type LearningTestResultMinAggregateInputType = {
+    id?: true
+    userId?: true
+    testId?: true
+    categoryId?: true
+    attemptNumber?: true
+    score?: true
+    maxScore?: true
+    percent?: true
+    correctCount?: true
+    totalQuestions?: true
+    passed?: true
+    createdAt?: true
+  }
+
+  export type LearningTestResultMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    testId?: true
+    categoryId?: true
+    attemptNumber?: true
+    score?: true
+    maxScore?: true
+    percent?: true
+    correctCount?: true
+    totalQuestions?: true
+    passed?: true
+    createdAt?: true
+  }
+
+  export type LearningTestResultCountAggregateInputType = {
+    id?: true
+    userId?: true
+    testId?: true
+    categoryId?: true
+    attemptNumber?: true
+    score?: true
+    maxScore?: true
+    percent?: true
+    correctCount?: true
+    totalQuestions?: true
+    passed?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type LearningTestResultAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LearningTestResult to aggregate.
+     */
+    where?: LearningTestResultWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTestResults to fetch.
+     */
+    orderBy?: LearningTestResultOrderByWithRelationInput | LearningTestResultOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LearningTestResultWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTestResults from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTestResults.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LearningTestResults
+    **/
+    _count?: true | LearningTestResultCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LearningTestResultAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LearningTestResultSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LearningTestResultMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LearningTestResultMaxAggregateInputType
+  }
+
+  export type GetLearningTestResultAggregateType<T extends LearningTestResultAggregateArgs> = {
+        [P in keyof T & keyof AggregateLearningTestResult]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLearningTestResult[P]>
+      : GetScalarType<T[P], AggregateLearningTestResult[P]>
+  }
+
+
+
+
+  export type LearningTestResultGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LearningTestResultWhereInput
+    orderBy?: LearningTestResultOrderByWithAggregationInput | LearningTestResultOrderByWithAggregationInput[]
+    by: LearningTestResultScalarFieldEnum[] | LearningTestResultScalarFieldEnum
+    having?: LearningTestResultScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LearningTestResultCountAggregateInputType | true
+    _avg?: LearningTestResultAvgAggregateInputType
+    _sum?: LearningTestResultSumAggregateInputType
+    _min?: LearningTestResultMinAggregateInputType
+    _max?: LearningTestResultMaxAggregateInputType
+  }
+
+  export type LearningTestResultGroupByOutputType = {
+    id: string
+    userId: string
+    testId: string
+    categoryId: string
+    attemptNumber: number
+    score: number
+    maxScore: number
+    percent: number
+    correctCount: number
+    totalQuestions: number
+    passed: boolean
+    createdAt: Date
+    _count: LearningTestResultCountAggregateOutputType | null
+    _avg: LearningTestResultAvgAggregateOutputType | null
+    _sum: LearningTestResultSumAggregateOutputType | null
+    _min: LearningTestResultMinAggregateOutputType | null
+    _max: LearningTestResultMaxAggregateOutputType | null
+  }
+
+  type GetLearningTestResultGroupByPayload<T extends LearningTestResultGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LearningTestResultGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LearningTestResultGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LearningTestResultGroupByOutputType[P]>
+            : GetScalarType<T[P], LearningTestResultGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LearningTestResultSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    testId?: boolean
+    categoryId?: boolean
+    attemptNumber?: boolean
+    score?: boolean
+    maxScore?: boolean
+    percent?: boolean
+    correctCount?: boolean
+    totalQuestions?: boolean
+    passed?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["learningTestResult"]>
+
+
+  export type LearningTestResultSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    testId?: boolean
+    categoryId?: boolean
+    attemptNumber?: boolean
+    score?: boolean
+    maxScore?: boolean
+    percent?: boolean
+    correctCount?: boolean
+    totalQuestions?: boolean
+    passed?: boolean
+    createdAt?: boolean
+  }
+
+
+  export type $LearningTestResultPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LearningTestResult"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      testId: string
+      categoryId: string
+      attemptNumber: number
+      score: number
+      maxScore: number
+      percent: number
+      correctCount: number
+      totalQuestions: number
+      passed: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["learningTestResult"]>
+    composites: {}
+  }
+
+  type LearningTestResultGetPayload<S extends boolean | null | undefined | LearningTestResultDefaultArgs> = $Result.GetResult<Prisma.$LearningTestResultPayload, S>
+
+  type LearningTestResultCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<LearningTestResultFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: LearningTestResultCountAggregateInputType | true
+    }
+
+  export interface LearningTestResultDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LearningTestResult'], meta: { name: 'LearningTestResult' } }
+    /**
+     * Find zero or one LearningTestResult that matches the filter.
+     * @param {LearningTestResultFindUniqueArgs} args - Arguments to find a LearningTestResult
+     * @example
+     * // Get one LearningTestResult
+     * const learningTestResult = await prisma.learningTestResult.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LearningTestResultFindUniqueArgs>(args: SelectSubset<T, LearningTestResultFindUniqueArgs<ExtArgs>>): Prisma__LearningTestResultClient<$Result.GetResult<Prisma.$LearningTestResultPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one LearningTestResult that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {LearningTestResultFindUniqueOrThrowArgs} args - Arguments to find a LearningTestResult
+     * @example
+     * // Get one LearningTestResult
+     * const learningTestResult = await prisma.learningTestResult.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LearningTestResultFindUniqueOrThrowArgs>(args: SelectSubset<T, LearningTestResultFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LearningTestResultClient<$Result.GetResult<Prisma.$LearningTestResultPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first LearningTestResult that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestResultFindFirstArgs} args - Arguments to find a LearningTestResult
+     * @example
+     * // Get one LearningTestResult
+     * const learningTestResult = await prisma.learningTestResult.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LearningTestResultFindFirstArgs>(args?: SelectSubset<T, LearningTestResultFindFirstArgs<ExtArgs>>): Prisma__LearningTestResultClient<$Result.GetResult<Prisma.$LearningTestResultPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first LearningTestResult that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestResultFindFirstOrThrowArgs} args - Arguments to find a LearningTestResult
+     * @example
+     * // Get one LearningTestResult
+     * const learningTestResult = await prisma.learningTestResult.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LearningTestResultFindFirstOrThrowArgs>(args?: SelectSubset<T, LearningTestResultFindFirstOrThrowArgs<ExtArgs>>): Prisma__LearningTestResultClient<$Result.GetResult<Prisma.$LearningTestResultPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more LearningTestResults that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestResultFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LearningTestResults
+     * const learningTestResults = await prisma.learningTestResult.findMany()
+     * 
+     * // Get first 10 LearningTestResults
+     * const learningTestResults = await prisma.learningTestResult.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const learningTestResultWithIdOnly = await prisma.learningTestResult.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LearningTestResultFindManyArgs>(args?: SelectSubset<T, LearningTestResultFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LearningTestResultPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a LearningTestResult.
+     * @param {LearningTestResultCreateArgs} args - Arguments to create a LearningTestResult.
+     * @example
+     * // Create one LearningTestResult
+     * const LearningTestResult = await prisma.learningTestResult.create({
+     *   data: {
+     *     // ... data to create a LearningTestResult
+     *   }
+     * })
+     * 
+     */
+    create<T extends LearningTestResultCreateArgs>(args: SelectSubset<T, LearningTestResultCreateArgs<ExtArgs>>): Prisma__LearningTestResultClient<$Result.GetResult<Prisma.$LearningTestResultPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many LearningTestResults.
+     * @param {LearningTestResultCreateManyArgs} args - Arguments to create many LearningTestResults.
+     * @example
+     * // Create many LearningTestResults
+     * const learningTestResult = await prisma.learningTestResult.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LearningTestResultCreateManyArgs>(args?: SelectSubset<T, LearningTestResultCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a LearningTestResult.
+     * @param {LearningTestResultDeleteArgs} args - Arguments to delete one LearningTestResult.
+     * @example
+     * // Delete one LearningTestResult
+     * const LearningTestResult = await prisma.learningTestResult.delete({
+     *   where: {
+     *     // ... filter to delete one LearningTestResult
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LearningTestResultDeleteArgs>(args: SelectSubset<T, LearningTestResultDeleteArgs<ExtArgs>>): Prisma__LearningTestResultClient<$Result.GetResult<Prisma.$LearningTestResultPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one LearningTestResult.
+     * @param {LearningTestResultUpdateArgs} args - Arguments to update one LearningTestResult.
+     * @example
+     * // Update one LearningTestResult
+     * const learningTestResult = await prisma.learningTestResult.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LearningTestResultUpdateArgs>(args: SelectSubset<T, LearningTestResultUpdateArgs<ExtArgs>>): Prisma__LearningTestResultClient<$Result.GetResult<Prisma.$LearningTestResultPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more LearningTestResults.
+     * @param {LearningTestResultDeleteManyArgs} args - Arguments to filter LearningTestResults to delete.
+     * @example
+     * // Delete a few LearningTestResults
+     * const { count } = await prisma.learningTestResult.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LearningTestResultDeleteManyArgs>(args?: SelectSubset<T, LearningTestResultDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LearningTestResults.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestResultUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LearningTestResults
+     * const learningTestResult = await prisma.learningTestResult.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LearningTestResultUpdateManyArgs>(args: SelectSubset<T, LearningTestResultUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one LearningTestResult.
+     * @param {LearningTestResultUpsertArgs} args - Arguments to update or create a LearningTestResult.
+     * @example
+     * // Update or create a LearningTestResult
+     * const learningTestResult = await prisma.learningTestResult.upsert({
+     *   create: {
+     *     // ... data to create a LearningTestResult
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LearningTestResult we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LearningTestResultUpsertArgs>(args: SelectSubset<T, LearningTestResultUpsertArgs<ExtArgs>>): Prisma__LearningTestResultClient<$Result.GetResult<Prisma.$LearningTestResultPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of LearningTestResults.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestResultCountArgs} args - Arguments to filter LearningTestResults to count.
+     * @example
+     * // Count the number of LearningTestResults
+     * const count = await prisma.learningTestResult.count({
+     *   where: {
+     *     // ... the filter for the LearningTestResults we want to count
+     *   }
+     * })
+    **/
+    count<T extends LearningTestResultCountArgs>(
+      args?: Subset<T, LearningTestResultCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LearningTestResultCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LearningTestResult.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestResultAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LearningTestResultAggregateArgs>(args: Subset<T, LearningTestResultAggregateArgs>): Prisma.PrismaPromise<GetLearningTestResultAggregateType<T>>
+
+    /**
+     * Group by LearningTestResult.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LearningTestResultGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LearningTestResultGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LearningTestResultGroupByArgs['orderBy'] }
+        : { orderBy?: LearningTestResultGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LearningTestResultGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLearningTestResultGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LearningTestResult model
+   */
+  readonly fields: LearningTestResultFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LearningTestResult.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LearningTestResultClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LearningTestResult model
+   */ 
+  interface LearningTestResultFieldRefs {
+    readonly id: FieldRef<"LearningTestResult", 'String'>
+    readonly userId: FieldRef<"LearningTestResult", 'String'>
+    readonly testId: FieldRef<"LearningTestResult", 'String'>
+    readonly categoryId: FieldRef<"LearningTestResult", 'String'>
+    readonly attemptNumber: FieldRef<"LearningTestResult", 'Int'>
+    readonly score: FieldRef<"LearningTestResult", 'Int'>
+    readonly maxScore: FieldRef<"LearningTestResult", 'Int'>
+    readonly percent: FieldRef<"LearningTestResult", 'Int'>
+    readonly correctCount: FieldRef<"LearningTestResult", 'Int'>
+    readonly totalQuestions: FieldRef<"LearningTestResult", 'Int'>
+    readonly passed: FieldRef<"LearningTestResult", 'Boolean'>
+    readonly createdAt: FieldRef<"LearningTestResult", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LearningTestResult findUnique
+   */
+  export type LearningTestResultFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestResult
+     */
+    select?: LearningTestResultSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTestResult to fetch.
+     */
+    where: LearningTestResultWhereUniqueInput
+  }
+
+  /**
+   * LearningTestResult findUniqueOrThrow
+   */
+  export type LearningTestResultFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestResult
+     */
+    select?: LearningTestResultSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTestResult to fetch.
+     */
+    where: LearningTestResultWhereUniqueInput
+  }
+
+  /**
+   * LearningTestResult findFirst
+   */
+  export type LearningTestResultFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestResult
+     */
+    select?: LearningTestResultSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTestResult to fetch.
+     */
+    where?: LearningTestResultWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTestResults to fetch.
+     */
+    orderBy?: LearningTestResultOrderByWithRelationInput | LearningTestResultOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LearningTestResults.
+     */
+    cursor?: LearningTestResultWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTestResults from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTestResults.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningTestResults.
+     */
+    distinct?: LearningTestResultScalarFieldEnum | LearningTestResultScalarFieldEnum[]
+  }
+
+  /**
+   * LearningTestResult findFirstOrThrow
+   */
+  export type LearningTestResultFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestResult
+     */
+    select?: LearningTestResultSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTestResult to fetch.
+     */
+    where?: LearningTestResultWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTestResults to fetch.
+     */
+    orderBy?: LearningTestResultOrderByWithRelationInput | LearningTestResultOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LearningTestResults.
+     */
+    cursor?: LearningTestResultWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTestResults from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTestResults.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LearningTestResults.
+     */
+    distinct?: LearningTestResultScalarFieldEnum | LearningTestResultScalarFieldEnum[]
+  }
+
+  /**
+   * LearningTestResult findMany
+   */
+  export type LearningTestResultFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestResult
+     */
+    select?: LearningTestResultSelect<ExtArgs> | null
+    /**
+     * Filter, which LearningTestResults to fetch.
+     */
+    where?: LearningTestResultWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LearningTestResults to fetch.
+     */
+    orderBy?: LearningTestResultOrderByWithRelationInput | LearningTestResultOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LearningTestResults.
+     */
+    cursor?: LearningTestResultWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LearningTestResults from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LearningTestResults.
+     */
+    skip?: number
+    distinct?: LearningTestResultScalarFieldEnum | LearningTestResultScalarFieldEnum[]
+  }
+
+  /**
+   * LearningTestResult create
+   */
+  export type LearningTestResultCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestResult
+     */
+    select?: LearningTestResultSelect<ExtArgs> | null
+    /**
+     * The data needed to create a LearningTestResult.
+     */
+    data: XOR<LearningTestResultCreateInput, LearningTestResultUncheckedCreateInput>
+  }
+
+  /**
+   * LearningTestResult createMany
+   */
+  export type LearningTestResultCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LearningTestResults.
+     */
+    data: LearningTestResultCreateManyInput | LearningTestResultCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LearningTestResult update
+   */
+  export type LearningTestResultUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestResult
+     */
+    select?: LearningTestResultSelect<ExtArgs> | null
+    /**
+     * The data needed to update a LearningTestResult.
+     */
+    data: XOR<LearningTestResultUpdateInput, LearningTestResultUncheckedUpdateInput>
+    /**
+     * Choose, which LearningTestResult to update.
+     */
+    where: LearningTestResultWhereUniqueInput
+  }
+
+  /**
+   * LearningTestResult updateMany
+   */
+  export type LearningTestResultUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LearningTestResults.
+     */
+    data: XOR<LearningTestResultUpdateManyMutationInput, LearningTestResultUncheckedUpdateManyInput>
+    /**
+     * Filter which LearningTestResults to update
+     */
+    where?: LearningTestResultWhereInput
+  }
+
+  /**
+   * LearningTestResult upsert
+   */
+  export type LearningTestResultUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestResult
+     */
+    select?: LearningTestResultSelect<ExtArgs> | null
+    /**
+     * The filter to search for the LearningTestResult to update in case it exists.
+     */
+    where: LearningTestResultWhereUniqueInput
+    /**
+     * In case the LearningTestResult found by the `where` argument doesn't exist, create a new LearningTestResult with this data.
+     */
+    create: XOR<LearningTestResultCreateInput, LearningTestResultUncheckedCreateInput>
+    /**
+     * In case the LearningTestResult was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LearningTestResultUpdateInput, LearningTestResultUncheckedUpdateInput>
+  }
+
+  /**
+   * LearningTestResult delete
+   */
+  export type LearningTestResultDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestResult
+     */
+    select?: LearningTestResultSelect<ExtArgs> | null
+    /**
+     * Filter which LearningTestResult to delete.
+     */
+    where: LearningTestResultWhereUniqueInput
+  }
+
+  /**
+   * LearningTestResult deleteMany
+   */
+  export type LearningTestResultDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LearningTestResults to delete
+     */
+    where?: LearningTestResultWhereInput
+  }
+
+  /**
+   * LearningTestResult without action
+   */
+  export type LearningTestResultDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LearningTestResult
+     */
+    select?: LearningTestResultSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -40034,6 +44103,73 @@ export namespace Prisma {
   };
 
   export type LeadCallScalarFieldEnum = (typeof LeadCallScalarFieldEnum)[keyof typeof LeadCallScalarFieldEnum]
+
+
+  export const LearningCategoryScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    slug: 'slug',
+    title: 'title',
+    description: 'description',
+    skillTags: 'skillTags',
+    icon: 'icon',
+    order: 'order',
+    generatedBy: 'generatedBy',
+    createdAt: 'createdAt'
+  };
+
+  export type LearningCategoryScalarFieldEnum = (typeof LearningCategoryScalarFieldEnum)[keyof typeof LearningCategoryScalarFieldEnum]
+
+
+  export const LearningTestScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    categoryId: 'categoryId',
+    difficulty: 'difficulty',
+    order: 'order',
+    title: 'title',
+    model: 'model',
+    totalQuestions: 'totalQuestions',
+    maxScore: 'maxScore',
+    passPercent: 'passPercent',
+    generatedAt: 'generatedAt',
+    createdAt: 'createdAt'
+  };
+
+  export type LearningTestScalarFieldEnum = (typeof LearningTestScalarFieldEnum)[keyof typeof LearningTestScalarFieldEnum]
+
+
+  export const LearningTestQuestionScalarFieldEnum: {
+    id: 'id',
+    testId: 'testId',
+    order: 'order',
+    type: 'type',
+    body: 'body',
+    options: 'options',
+    correct: 'correct',
+    explanation: 'explanation',
+    points: 'points'
+  };
+
+  export type LearningTestQuestionScalarFieldEnum = (typeof LearningTestQuestionScalarFieldEnum)[keyof typeof LearningTestQuestionScalarFieldEnum]
+
+
+  export const LearningTestResultScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    testId: 'testId',
+    categoryId: 'categoryId',
+    attemptNumber: 'attemptNumber',
+    score: 'score',
+    maxScore: 'maxScore',
+    percent: 'percent',
+    correctCount: 'correctCount',
+    totalQuestions: 'totalQuestions',
+    passed: 'passed',
+    createdAt: 'createdAt'
+  };
+
+  export type LearningTestResultScalarFieldEnum = (typeof LearningTestResultScalarFieldEnum)[keyof typeof LearningTestResultScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -43202,6 +47338,338 @@ export namespace Prisma {
     endedAt?: DateTimeNullableWithAggregatesFilter<"LeadCall"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"LeadCall"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"LeadCall"> | Date | string
+  }
+
+  export type LearningCategoryWhereInput = {
+    AND?: LearningCategoryWhereInput | LearningCategoryWhereInput[]
+    OR?: LearningCategoryWhereInput[]
+    NOT?: LearningCategoryWhereInput | LearningCategoryWhereInput[]
+    id?: StringFilter<"LearningCategory"> | string
+    userId?: StringFilter<"LearningCategory"> | string
+    slug?: StringFilter<"LearningCategory"> | string
+    title?: StringFilter<"LearningCategory"> | string
+    description?: StringFilter<"LearningCategory"> | string
+    skillTags?: JsonFilter<"LearningCategory">
+    icon?: StringNullableFilter<"LearningCategory"> | string | null
+    order?: IntFilter<"LearningCategory"> | number
+    generatedBy?: StringFilter<"LearningCategory"> | string
+    createdAt?: DateTimeFilter<"LearningCategory"> | Date | string
+  }
+
+  export type LearningCategoryOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    slug?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    skillTags?: SortOrder
+    icon?: SortOrderInput | SortOrder
+    order?: SortOrder
+    generatedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningCategoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_slug?: LearningCategoryUserIdSlugCompoundUniqueInput
+    AND?: LearningCategoryWhereInput | LearningCategoryWhereInput[]
+    OR?: LearningCategoryWhereInput[]
+    NOT?: LearningCategoryWhereInput | LearningCategoryWhereInput[]
+    userId?: StringFilter<"LearningCategory"> | string
+    slug?: StringFilter<"LearningCategory"> | string
+    title?: StringFilter<"LearningCategory"> | string
+    description?: StringFilter<"LearningCategory"> | string
+    skillTags?: JsonFilter<"LearningCategory">
+    icon?: StringNullableFilter<"LearningCategory"> | string | null
+    order?: IntFilter<"LearningCategory"> | number
+    generatedBy?: StringFilter<"LearningCategory"> | string
+    createdAt?: DateTimeFilter<"LearningCategory"> | Date | string
+  }, "id" | "userId_slug">
+
+  export type LearningCategoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    slug?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    skillTags?: SortOrder
+    icon?: SortOrderInput | SortOrder
+    order?: SortOrder
+    generatedBy?: SortOrder
+    createdAt?: SortOrder
+    _count?: LearningCategoryCountOrderByAggregateInput
+    _avg?: LearningCategoryAvgOrderByAggregateInput
+    _max?: LearningCategoryMaxOrderByAggregateInput
+    _min?: LearningCategoryMinOrderByAggregateInput
+    _sum?: LearningCategorySumOrderByAggregateInput
+  }
+
+  export type LearningCategoryScalarWhereWithAggregatesInput = {
+    AND?: LearningCategoryScalarWhereWithAggregatesInput | LearningCategoryScalarWhereWithAggregatesInput[]
+    OR?: LearningCategoryScalarWhereWithAggregatesInput[]
+    NOT?: LearningCategoryScalarWhereWithAggregatesInput | LearningCategoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"LearningCategory"> | string
+    userId?: StringWithAggregatesFilter<"LearningCategory"> | string
+    slug?: StringWithAggregatesFilter<"LearningCategory"> | string
+    title?: StringWithAggregatesFilter<"LearningCategory"> | string
+    description?: StringWithAggregatesFilter<"LearningCategory"> | string
+    skillTags?: JsonWithAggregatesFilter<"LearningCategory">
+    icon?: StringNullableWithAggregatesFilter<"LearningCategory"> | string | null
+    order?: IntWithAggregatesFilter<"LearningCategory"> | number
+    generatedBy?: StringWithAggregatesFilter<"LearningCategory"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"LearningCategory"> | Date | string
+  }
+
+  export type LearningTestWhereInput = {
+    AND?: LearningTestWhereInput | LearningTestWhereInput[]
+    OR?: LearningTestWhereInput[]
+    NOT?: LearningTestWhereInput | LearningTestWhereInput[]
+    id?: StringFilter<"LearningTest"> | string
+    userId?: StringFilter<"LearningTest"> | string
+    categoryId?: StringFilter<"LearningTest"> | string
+    difficulty?: StringFilter<"LearningTest"> | string
+    order?: IntFilter<"LearningTest"> | number
+    title?: StringFilter<"LearningTest"> | string
+    model?: StringNullableFilter<"LearningTest"> | string | null
+    totalQuestions?: IntFilter<"LearningTest"> | number
+    maxScore?: IntFilter<"LearningTest"> | number
+    passPercent?: IntFilter<"LearningTest"> | number
+    generatedAt?: DateTimeNullableFilter<"LearningTest"> | Date | string | null
+    createdAt?: DateTimeFilter<"LearningTest"> | Date | string
+  }
+
+  export type LearningTestOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    categoryId?: SortOrder
+    difficulty?: SortOrder
+    order?: SortOrder
+    title?: SortOrder
+    model?: SortOrderInput | SortOrder
+    totalQuestions?: SortOrder
+    maxScore?: SortOrder
+    passPercent?: SortOrder
+    generatedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningTestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: LearningTestWhereInput | LearningTestWhereInput[]
+    OR?: LearningTestWhereInput[]
+    NOT?: LearningTestWhereInput | LearningTestWhereInput[]
+    userId?: StringFilter<"LearningTest"> | string
+    categoryId?: StringFilter<"LearningTest"> | string
+    difficulty?: StringFilter<"LearningTest"> | string
+    order?: IntFilter<"LearningTest"> | number
+    title?: StringFilter<"LearningTest"> | string
+    model?: StringNullableFilter<"LearningTest"> | string | null
+    totalQuestions?: IntFilter<"LearningTest"> | number
+    maxScore?: IntFilter<"LearningTest"> | number
+    passPercent?: IntFilter<"LearningTest"> | number
+    generatedAt?: DateTimeNullableFilter<"LearningTest"> | Date | string | null
+    createdAt?: DateTimeFilter<"LearningTest"> | Date | string
+  }, "id">
+
+  export type LearningTestOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    categoryId?: SortOrder
+    difficulty?: SortOrder
+    order?: SortOrder
+    title?: SortOrder
+    model?: SortOrderInput | SortOrder
+    totalQuestions?: SortOrder
+    maxScore?: SortOrder
+    passPercent?: SortOrder
+    generatedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: LearningTestCountOrderByAggregateInput
+    _avg?: LearningTestAvgOrderByAggregateInput
+    _max?: LearningTestMaxOrderByAggregateInput
+    _min?: LearningTestMinOrderByAggregateInput
+    _sum?: LearningTestSumOrderByAggregateInput
+  }
+
+  export type LearningTestScalarWhereWithAggregatesInput = {
+    AND?: LearningTestScalarWhereWithAggregatesInput | LearningTestScalarWhereWithAggregatesInput[]
+    OR?: LearningTestScalarWhereWithAggregatesInput[]
+    NOT?: LearningTestScalarWhereWithAggregatesInput | LearningTestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"LearningTest"> | string
+    userId?: StringWithAggregatesFilter<"LearningTest"> | string
+    categoryId?: StringWithAggregatesFilter<"LearningTest"> | string
+    difficulty?: StringWithAggregatesFilter<"LearningTest"> | string
+    order?: IntWithAggregatesFilter<"LearningTest"> | number
+    title?: StringWithAggregatesFilter<"LearningTest"> | string
+    model?: StringNullableWithAggregatesFilter<"LearningTest"> | string | null
+    totalQuestions?: IntWithAggregatesFilter<"LearningTest"> | number
+    maxScore?: IntWithAggregatesFilter<"LearningTest"> | number
+    passPercent?: IntWithAggregatesFilter<"LearningTest"> | number
+    generatedAt?: DateTimeNullableWithAggregatesFilter<"LearningTest"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"LearningTest"> | Date | string
+  }
+
+  export type LearningTestQuestionWhereInput = {
+    AND?: LearningTestQuestionWhereInput | LearningTestQuestionWhereInput[]
+    OR?: LearningTestQuestionWhereInput[]
+    NOT?: LearningTestQuestionWhereInput | LearningTestQuestionWhereInput[]
+    id?: StringFilter<"LearningTestQuestion"> | string
+    testId?: StringFilter<"LearningTestQuestion"> | string
+    order?: IntFilter<"LearningTestQuestion"> | number
+    type?: StringFilter<"LearningTestQuestion"> | string
+    body?: StringFilter<"LearningTestQuestion"> | string
+    options?: JsonFilter<"LearningTestQuestion">
+    correct?: JsonFilter<"LearningTestQuestion">
+    explanation?: StringNullableFilter<"LearningTestQuestion"> | string | null
+    points?: IntFilter<"LearningTestQuestion"> | number
+  }
+
+  export type LearningTestQuestionOrderByWithRelationInput = {
+    id?: SortOrder
+    testId?: SortOrder
+    order?: SortOrder
+    type?: SortOrder
+    body?: SortOrder
+    options?: SortOrder
+    correct?: SortOrder
+    explanation?: SortOrderInput | SortOrder
+    points?: SortOrder
+  }
+
+  export type LearningTestQuestionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: LearningTestQuestionWhereInput | LearningTestQuestionWhereInput[]
+    OR?: LearningTestQuestionWhereInput[]
+    NOT?: LearningTestQuestionWhereInput | LearningTestQuestionWhereInput[]
+    testId?: StringFilter<"LearningTestQuestion"> | string
+    order?: IntFilter<"LearningTestQuestion"> | number
+    type?: StringFilter<"LearningTestQuestion"> | string
+    body?: StringFilter<"LearningTestQuestion"> | string
+    options?: JsonFilter<"LearningTestQuestion">
+    correct?: JsonFilter<"LearningTestQuestion">
+    explanation?: StringNullableFilter<"LearningTestQuestion"> | string | null
+    points?: IntFilter<"LearningTestQuestion"> | number
+  }, "id">
+
+  export type LearningTestQuestionOrderByWithAggregationInput = {
+    id?: SortOrder
+    testId?: SortOrder
+    order?: SortOrder
+    type?: SortOrder
+    body?: SortOrder
+    options?: SortOrder
+    correct?: SortOrder
+    explanation?: SortOrderInput | SortOrder
+    points?: SortOrder
+    _count?: LearningTestQuestionCountOrderByAggregateInput
+    _avg?: LearningTestQuestionAvgOrderByAggregateInput
+    _max?: LearningTestQuestionMaxOrderByAggregateInput
+    _min?: LearningTestQuestionMinOrderByAggregateInput
+    _sum?: LearningTestQuestionSumOrderByAggregateInput
+  }
+
+  export type LearningTestQuestionScalarWhereWithAggregatesInput = {
+    AND?: LearningTestQuestionScalarWhereWithAggregatesInput | LearningTestQuestionScalarWhereWithAggregatesInput[]
+    OR?: LearningTestQuestionScalarWhereWithAggregatesInput[]
+    NOT?: LearningTestQuestionScalarWhereWithAggregatesInput | LearningTestQuestionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"LearningTestQuestion"> | string
+    testId?: StringWithAggregatesFilter<"LearningTestQuestion"> | string
+    order?: IntWithAggregatesFilter<"LearningTestQuestion"> | number
+    type?: StringWithAggregatesFilter<"LearningTestQuestion"> | string
+    body?: StringWithAggregatesFilter<"LearningTestQuestion"> | string
+    options?: JsonWithAggregatesFilter<"LearningTestQuestion">
+    correct?: JsonWithAggregatesFilter<"LearningTestQuestion">
+    explanation?: StringNullableWithAggregatesFilter<"LearningTestQuestion"> | string | null
+    points?: IntWithAggregatesFilter<"LearningTestQuestion"> | number
+  }
+
+  export type LearningTestResultWhereInput = {
+    AND?: LearningTestResultWhereInput | LearningTestResultWhereInput[]
+    OR?: LearningTestResultWhereInput[]
+    NOT?: LearningTestResultWhereInput | LearningTestResultWhereInput[]
+    id?: StringFilter<"LearningTestResult"> | string
+    userId?: StringFilter<"LearningTestResult"> | string
+    testId?: StringFilter<"LearningTestResult"> | string
+    categoryId?: StringFilter<"LearningTestResult"> | string
+    attemptNumber?: IntFilter<"LearningTestResult"> | number
+    score?: IntFilter<"LearningTestResult"> | number
+    maxScore?: IntFilter<"LearningTestResult"> | number
+    percent?: IntFilter<"LearningTestResult"> | number
+    correctCount?: IntFilter<"LearningTestResult"> | number
+    totalQuestions?: IntFilter<"LearningTestResult"> | number
+    passed?: BoolFilter<"LearningTestResult"> | boolean
+    createdAt?: DateTimeFilter<"LearningTestResult"> | Date | string
+  }
+
+  export type LearningTestResultOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    testId?: SortOrder
+    categoryId?: SortOrder
+    attemptNumber?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    percent?: SortOrder
+    correctCount?: SortOrder
+    totalQuestions?: SortOrder
+    passed?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningTestResultWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: LearningTestResultWhereInput | LearningTestResultWhereInput[]
+    OR?: LearningTestResultWhereInput[]
+    NOT?: LearningTestResultWhereInput | LearningTestResultWhereInput[]
+    userId?: StringFilter<"LearningTestResult"> | string
+    testId?: StringFilter<"LearningTestResult"> | string
+    categoryId?: StringFilter<"LearningTestResult"> | string
+    attemptNumber?: IntFilter<"LearningTestResult"> | number
+    score?: IntFilter<"LearningTestResult"> | number
+    maxScore?: IntFilter<"LearningTestResult"> | number
+    percent?: IntFilter<"LearningTestResult"> | number
+    correctCount?: IntFilter<"LearningTestResult"> | number
+    totalQuestions?: IntFilter<"LearningTestResult"> | number
+    passed?: BoolFilter<"LearningTestResult"> | boolean
+    createdAt?: DateTimeFilter<"LearningTestResult"> | Date | string
+  }, "id">
+
+  export type LearningTestResultOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    testId?: SortOrder
+    categoryId?: SortOrder
+    attemptNumber?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    percent?: SortOrder
+    correctCount?: SortOrder
+    totalQuestions?: SortOrder
+    passed?: SortOrder
+    createdAt?: SortOrder
+    _count?: LearningTestResultCountOrderByAggregateInput
+    _avg?: LearningTestResultAvgOrderByAggregateInput
+    _max?: LearningTestResultMaxOrderByAggregateInput
+    _min?: LearningTestResultMinOrderByAggregateInput
+    _sum?: LearningTestResultSumOrderByAggregateInput
+  }
+
+  export type LearningTestResultScalarWhereWithAggregatesInput = {
+    AND?: LearningTestResultScalarWhereWithAggregatesInput | LearningTestResultScalarWhereWithAggregatesInput[]
+    OR?: LearningTestResultScalarWhereWithAggregatesInput[]
+    NOT?: LearningTestResultScalarWhereWithAggregatesInput | LearningTestResultScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"LearningTestResult"> | string
+    userId?: StringWithAggregatesFilter<"LearningTestResult"> | string
+    testId?: StringWithAggregatesFilter<"LearningTestResult"> | string
+    categoryId?: StringWithAggregatesFilter<"LearningTestResult"> | string
+    attemptNumber?: IntWithAggregatesFilter<"LearningTestResult"> | number
+    score?: IntWithAggregatesFilter<"LearningTestResult"> | number
+    maxScore?: IntWithAggregatesFilter<"LearningTestResult"> | number
+    percent?: IntWithAggregatesFilter<"LearningTestResult"> | number
+    correctCount?: IntWithAggregatesFilter<"LearningTestResult"> | number
+    totalQuestions?: IntWithAggregatesFilter<"LearningTestResult"> | number
+    passed?: BoolWithAggregatesFilter<"LearningTestResult"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"LearningTestResult"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -46576,6 +51044,391 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type LearningCategoryCreateInput = {
+    id?: string
+    userId: string
+    slug: string
+    title: string
+    description: string
+    skillTags: JsonNullValueInput | InputJsonValue
+    icon?: string | null
+    order?: number
+    generatedBy: string
+    createdAt?: Date | string
+  }
+
+  export type LearningCategoryUncheckedCreateInput = {
+    id?: string
+    userId: string
+    slug: string
+    title: string
+    description: string
+    skillTags: JsonNullValueInput | InputJsonValue
+    icon?: string | null
+    order?: number
+    generatedBy: string
+    createdAt?: Date | string
+  }
+
+  export type LearningCategoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    skillTags?: JsonNullValueInput | InputJsonValue
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    generatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningCategoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    skillTags?: JsonNullValueInput | InputJsonValue
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    generatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningCategoryCreateManyInput = {
+    id?: string
+    userId: string
+    slug: string
+    title: string
+    description: string
+    skillTags: JsonNullValueInput | InputJsonValue
+    icon?: string | null
+    order?: number
+    generatedBy: string
+    createdAt?: Date | string
+  }
+
+  export type LearningCategoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    skillTags?: JsonNullValueInput | InputJsonValue
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    generatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningCategoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    skillTags?: JsonNullValueInput | InputJsonValue
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    generatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningTestCreateInput = {
+    id?: string
+    userId: string
+    categoryId: string
+    difficulty: string
+    order?: number
+    title: string
+    model?: string | null
+    totalQuestions?: number
+    maxScore?: number
+    passPercent?: number
+    generatedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type LearningTestUncheckedCreateInput = {
+    id?: string
+    userId: string
+    categoryId: string
+    difficulty: string
+    order?: number
+    title: string
+    model?: string | null
+    totalQuestions?: number
+    maxScore?: number
+    passPercent?: number
+    generatedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type LearningTestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    difficulty?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    totalQuestions?: IntFieldUpdateOperationsInput | number
+    maxScore?: IntFieldUpdateOperationsInput | number
+    passPercent?: IntFieldUpdateOperationsInput | number
+    generatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningTestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    difficulty?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    totalQuestions?: IntFieldUpdateOperationsInput | number
+    maxScore?: IntFieldUpdateOperationsInput | number
+    passPercent?: IntFieldUpdateOperationsInput | number
+    generatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningTestCreateManyInput = {
+    id?: string
+    userId: string
+    categoryId: string
+    difficulty: string
+    order?: number
+    title: string
+    model?: string | null
+    totalQuestions?: number
+    maxScore?: number
+    passPercent?: number
+    generatedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type LearningTestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    difficulty?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    totalQuestions?: IntFieldUpdateOperationsInput | number
+    maxScore?: IntFieldUpdateOperationsInput | number
+    passPercent?: IntFieldUpdateOperationsInput | number
+    generatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningTestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    difficulty?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    totalQuestions?: IntFieldUpdateOperationsInput | number
+    maxScore?: IntFieldUpdateOperationsInput | number
+    passPercent?: IntFieldUpdateOperationsInput | number
+    generatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningTestQuestionCreateInput = {
+    id?: string
+    testId: string
+    order: number
+    type: string
+    body: string
+    options: JsonNullValueInput | InputJsonValue
+    correct: JsonNullValueInput | InputJsonValue
+    explanation?: string | null
+    points?: number
+  }
+
+  export type LearningTestQuestionUncheckedCreateInput = {
+    id?: string
+    testId: string
+    order: number
+    type: string
+    body: string
+    options: JsonNullValueInput | InputJsonValue
+    correct: JsonNullValueInput | InputJsonValue
+    explanation?: string | null
+    points?: number
+  }
+
+  export type LearningTestQuestionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    testId?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    options?: JsonNullValueInput | InputJsonValue
+    correct?: JsonNullValueInput | InputJsonValue
+    explanation?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type LearningTestQuestionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    testId?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    options?: JsonNullValueInput | InputJsonValue
+    correct?: JsonNullValueInput | InputJsonValue
+    explanation?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type LearningTestQuestionCreateManyInput = {
+    id?: string
+    testId: string
+    order: number
+    type: string
+    body: string
+    options: JsonNullValueInput | InputJsonValue
+    correct: JsonNullValueInput | InputJsonValue
+    explanation?: string | null
+    points?: number
+  }
+
+  export type LearningTestQuestionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    testId?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    options?: JsonNullValueInput | InputJsonValue
+    correct?: JsonNullValueInput | InputJsonValue
+    explanation?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type LearningTestQuestionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    testId?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    options?: JsonNullValueInput | InputJsonValue
+    correct?: JsonNullValueInput | InputJsonValue
+    explanation?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type LearningTestResultCreateInput = {
+    id?: string
+    userId: string
+    testId: string
+    categoryId: string
+    attemptNumber?: number
+    score: number
+    maxScore: number
+    percent: number
+    correctCount: number
+    totalQuestions: number
+    passed?: boolean
+    createdAt?: Date | string
+  }
+
+  export type LearningTestResultUncheckedCreateInput = {
+    id?: string
+    userId: string
+    testId: string
+    categoryId: string
+    attemptNumber?: number
+    score: number
+    maxScore: number
+    percent: number
+    correctCount: number
+    totalQuestions: number
+    passed?: boolean
+    createdAt?: Date | string
+  }
+
+  export type LearningTestResultUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    testId?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    attemptNumber?: IntFieldUpdateOperationsInput | number
+    score?: IntFieldUpdateOperationsInput | number
+    maxScore?: IntFieldUpdateOperationsInput | number
+    percent?: IntFieldUpdateOperationsInput | number
+    correctCount?: IntFieldUpdateOperationsInput | number
+    totalQuestions?: IntFieldUpdateOperationsInput | number
+    passed?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningTestResultUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    testId?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    attemptNumber?: IntFieldUpdateOperationsInput | number
+    score?: IntFieldUpdateOperationsInput | number
+    maxScore?: IntFieldUpdateOperationsInput | number
+    percent?: IntFieldUpdateOperationsInput | number
+    correctCount?: IntFieldUpdateOperationsInput | number
+    totalQuestions?: IntFieldUpdateOperationsInput | number
+    passed?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningTestResultCreateManyInput = {
+    id?: string
+    userId: string
+    testId: string
+    categoryId: string
+    attemptNumber?: number
+    score: number
+    maxScore: number
+    percent: number
+    correctCount: number
+    totalQuestions: number
+    passed?: boolean
+    createdAt?: Date | string
+  }
+
+  export type LearningTestResultUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    testId?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    attemptNumber?: IntFieldUpdateOperationsInput | number
+    score?: IntFieldUpdateOperationsInput | number
+    maxScore?: IntFieldUpdateOperationsInput | number
+    percent?: IntFieldUpdateOperationsInput | number
+    correctCount?: IntFieldUpdateOperationsInput | number
+    totalQuestions?: IntFieldUpdateOperationsInput | number
+    passed?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LearningTestResultUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    testId?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    attemptNumber?: IntFieldUpdateOperationsInput | number
+    score?: IntFieldUpdateOperationsInput | number
+    maxScore?: IntFieldUpdateOperationsInput | number
+    percent?: IntFieldUpdateOperationsInput | number
+    correctCount?: IntFieldUpdateOperationsInput | number
+    totalQuestions?: IntFieldUpdateOperationsInput | number
+    passed?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[]
@@ -48979,6 +53832,220 @@ export namespace Prisma {
     endedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type LearningCategoryUserIdSlugCompoundUniqueInput = {
+    userId: string
+    slug: string
+  }
+
+  export type LearningCategoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    slug?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    skillTags?: SortOrder
+    icon?: SortOrder
+    order?: SortOrder
+    generatedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningCategoryAvgOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type LearningCategoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    slug?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    icon?: SortOrder
+    order?: SortOrder
+    generatedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningCategoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    slug?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    icon?: SortOrder
+    order?: SortOrder
+    generatedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningCategorySumOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type LearningTestCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    categoryId?: SortOrder
+    difficulty?: SortOrder
+    order?: SortOrder
+    title?: SortOrder
+    model?: SortOrder
+    totalQuestions?: SortOrder
+    maxScore?: SortOrder
+    passPercent?: SortOrder
+    generatedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningTestAvgOrderByAggregateInput = {
+    order?: SortOrder
+    totalQuestions?: SortOrder
+    maxScore?: SortOrder
+    passPercent?: SortOrder
+  }
+
+  export type LearningTestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    categoryId?: SortOrder
+    difficulty?: SortOrder
+    order?: SortOrder
+    title?: SortOrder
+    model?: SortOrder
+    totalQuestions?: SortOrder
+    maxScore?: SortOrder
+    passPercent?: SortOrder
+    generatedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningTestMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    categoryId?: SortOrder
+    difficulty?: SortOrder
+    order?: SortOrder
+    title?: SortOrder
+    model?: SortOrder
+    totalQuestions?: SortOrder
+    maxScore?: SortOrder
+    passPercent?: SortOrder
+    generatedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningTestSumOrderByAggregateInput = {
+    order?: SortOrder
+    totalQuestions?: SortOrder
+    maxScore?: SortOrder
+    passPercent?: SortOrder
+  }
+
+  export type LearningTestQuestionCountOrderByAggregateInput = {
+    id?: SortOrder
+    testId?: SortOrder
+    order?: SortOrder
+    type?: SortOrder
+    body?: SortOrder
+    options?: SortOrder
+    correct?: SortOrder
+    explanation?: SortOrder
+    points?: SortOrder
+  }
+
+  export type LearningTestQuestionAvgOrderByAggregateInput = {
+    order?: SortOrder
+    points?: SortOrder
+  }
+
+  export type LearningTestQuestionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    testId?: SortOrder
+    order?: SortOrder
+    type?: SortOrder
+    body?: SortOrder
+    explanation?: SortOrder
+    points?: SortOrder
+  }
+
+  export type LearningTestQuestionMinOrderByAggregateInput = {
+    id?: SortOrder
+    testId?: SortOrder
+    order?: SortOrder
+    type?: SortOrder
+    body?: SortOrder
+    explanation?: SortOrder
+    points?: SortOrder
+  }
+
+  export type LearningTestQuestionSumOrderByAggregateInput = {
+    order?: SortOrder
+    points?: SortOrder
+  }
+
+  export type LearningTestResultCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    testId?: SortOrder
+    categoryId?: SortOrder
+    attemptNumber?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    percent?: SortOrder
+    correctCount?: SortOrder
+    totalQuestions?: SortOrder
+    passed?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningTestResultAvgOrderByAggregateInput = {
+    attemptNumber?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    percent?: SortOrder
+    correctCount?: SortOrder
+    totalQuestions?: SortOrder
+  }
+
+  export type LearningTestResultMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    testId?: SortOrder
+    categoryId?: SortOrder
+    attemptNumber?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    percent?: SortOrder
+    correctCount?: SortOrder
+    totalQuestions?: SortOrder
+    passed?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningTestResultMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    testId?: SortOrder
+    categoryId?: SortOrder
+    attemptNumber?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    percent?: SortOrder
+    correctCount?: SortOrder
+    totalQuestions?: SortOrder
+    passed?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LearningTestResultSumOrderByAggregateInput = {
+    attemptNumber?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    percent?: SortOrder
+    correctCount?: SortOrder
+    totalQuestions?: SortOrder
   }
 
   export type AuthIdentityCreateNestedManyWithoutUserInput = {
@@ -52245,6 +57312,22 @@ export namespace Prisma {
      * @deprecated Use LeadCallDefaultArgs instead
      */
     export type LeadCallArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LeadCallDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use LearningCategoryDefaultArgs instead
+     */
+    export type LearningCategoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LearningCategoryDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use LearningTestDefaultArgs instead
+     */
+    export type LearningTestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LearningTestDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use LearningTestQuestionDefaultArgs instead
+     */
+    export type LearningTestQuestionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LearningTestQuestionDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use LearningTestResultDefaultArgs instead
+     */
+    export type LearningTestResultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LearningTestResultDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

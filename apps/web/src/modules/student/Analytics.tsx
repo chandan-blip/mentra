@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Activity, ArrowRight, Compass, Flame, Sparkles, Target, TrendingUp } from 'lucide-react';
+import { Activity, ArrowRight, Compass, Flame, GraduationCap, Sparkles, Target, TrendingUp, Trophy } from 'lucide-react';
 import { Badge, Card, StatCard } from '@mentra/ui';
-import type { ActivityEventView } from '@mentra/shared';
 import { PageHeader } from '../../components/PageHeader.js';
 import { ActivityHeatmap } from '../../components/ActivityHeatmap.js';
 import { useDashboardOverview } from '../../lib/dashboard.js';
 import { useRoadmapSummary } from '../../lib/roadmap.js';
-import { useActivityFocus, useActivitySummary, useActivityTimeline } from '../../lib/activity.js';
-import { formatAgo } from '../../lib/community.js';
+import { useLearningProgress } from '../../lib/learning.js';
+import { useActivityFocus, useActivitySummary } from '../../lib/activity.js';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 8 },
@@ -19,6 +18,7 @@ export function AnalyticsPage() {
   const { data, isLoading } = useDashboardOverview();
   const { data: roadmap } = useRoadmapSummary();
   const { data: summary } = useActivitySummary();
+  const { data: learning } = useLearningProgress();
 
   const assignment = data?.assignment;
   const completed = assignment?.status === 'completed';
@@ -43,7 +43,7 @@ export function AnalyticsPage() {
       </motion.div>
 
       {/* Top stats — activity + learning */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         <motion.div variants={fadeUp}>
           <StatCard inverse value={String(summary?.currentStreak ?? 0)} unit="days" label="Activity streak" />
         </motion.div>
@@ -55,6 +55,9 @@ export function AnalyticsPage() {
         </motion.div>
         <motion.div variants={fadeUp}>
           <StatCard value={completed ? `${assignment?.score ?? 0}%` : '—'} label="Assignment score" />
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <StatCard value={String(learning?.testsPassed ?? 0)} label="Tests passed" />
         </motion.div>
       </div>
 
@@ -85,11 +88,8 @@ export function AnalyticsPage() {
         </Card>
       </motion.div>
 
-      {/* Focus + timeline */}
-      <div className="grid grid-cols-12 gap-4">
-        <motion.div className="col-span-12 lg:col-span-6" variants={fadeUp}><FocusCard /></motion.div>
-        <motion.div className="col-span-12 lg:col-span-6" variants={fadeUp}><ActivityTimeline /></motion.div>
-      </div>
+      {/* Focus */}
+      <motion.div variants={fadeUp}><FocusCard /></motion.div>
 
       {/* Roadmap + milestones */}
       <div className="grid grid-cols-12 gap-4">
@@ -121,8 +121,8 @@ export function AnalyticsPage() {
             <div className="space-y-2.5">
               <Milestone icon={<Sparkles className="size-4" />} label="Assignment completed" done={completed} />
               <Milestone icon={<Compass className="size-4" />} label="Roadmap generated" done={Boolean(roadmap?.hasRoadmap)} />
-              <Milestone icon={<TrendingUp className="size-4" />} label="First roadmap item done" done={(roadmap?.completedItems ?? 0) > 0} />
-              <Milestone icon={<Target className="size-4" />} label="Halfway through roadmap" done={(roadmap?.percentComplete ?? 0) >= 50} />
+              <Milestone icon={<GraduationCap className="size-4" />} label="Passed a test" done={(learning?.testsPassed ?? 0) > 0} />
+              <Milestone icon={<Trophy className="size-4" />} label="Completed a test series" done={(learning?.seriesCompleted ?? 0) > 0} />
             </div>
           </Card>
         </motion.div>
@@ -170,38 +170,6 @@ function FocusCard() {
         </>
       )}
     </Card>
-  );
-}
-
-function ActivityTimeline() {
-  const { data, isLoading } = useActivityTimeline(20);
-
-  return (
-    <Card className="h-full">
-      <h3 className="mb-4 flex items-center gap-2 text-sm font-medium text-ink"><Activity className="size-4" /> Recent activity</h3>
-      {isLoading ? (
-        <p className="text-sm text-ink-muted">Loading…</p>
-      ) : (data?.length ?? 0) === 0 ? (
-        <p className="text-sm text-ink-muted">No activity recorded yet — it’ll appear here as you use Mentra.</p>
-      ) : (
-        <div className="-my-1 divide-y divide-border-subtle">
-          {data!.map((e) => (
-            <TimelineRow key={e.id} event={e} />
-          ))}
-        </div>
-      )}
-    </Card>
-  );
-}
-
-function TimelineRow({ event: e }: { event: ActivityEventView }) {
-  return (
-    <div className="flex items-center gap-3 py-2.5">
-      <span className="size-1.5 shrink-0 rounded-full bg-accent-green" />
-      <span className="min-w-0 flex-1 truncate text-sm text-ink">{e.title}</span>
-      {e.source !== 'server' ? <Badge variant="outline" size="sm">{e.source}</Badge> : null}
-      <span className="shrink-0 text-xs text-ink-faint">{formatAgo(e.occurredAt)}</span>
-    </div>
   );
 }
 

@@ -24,6 +24,10 @@ export function registerActivityRecorder(): void {
     record(userId, 'assignment.generated', { assignmentId }));
   on('assignment.completed', ({ userId, assignmentId, score }) =>
     record(userId, 'assignment.completed', { assignmentId, score }));
+  on('learning.test.completed', ({ userId, categoryId, testId, percent, passed }) =>
+    record(userId, 'learning.test.completed', { categoryId, testId, percent, passed }));
+  on('learning.series.completed', ({ userId, categoryId }) =>
+    record(userId, 'learning.series.completed', { categoryId }));
   on('live-session.started', ({ sessionId, mentorId }) =>
     record(mentorId, 'live-session.started', { sessionId }));
   on('live-session.ended', ({ sessionId, mentorId }) =>

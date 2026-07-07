@@ -24,3 +24,12 @@ createRoot(rootEl).render(
     </QueryClientProvider>
   </StrictMode>,
 );
+
+// Register the PWA service worker (production builds only — no SW noise in dev).
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      /* installability is best-effort — ignore registration failures */
+    });
+  });
+}

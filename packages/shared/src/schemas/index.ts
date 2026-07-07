@@ -2,6 +2,7 @@ export * from './common.js';
 export * from './profile.js';
 export * from './assessment.js';
 export * from './roadmap.js';
+export * from './learning.js';
 export * from './assignment.js';
 export * from './live-session.js';
 export * from './mentor.js';

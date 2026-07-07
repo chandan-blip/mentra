@@ -20,6 +20,7 @@ import {
   postFinalizeUpload,
   postJoinToken,
   postLike,
+  postMessage,
   postStart,
   postUpload,
   putWatchProgress,
@@ -52,6 +53,8 @@ liveSessionRouter.get('/sessions/past', student, asyncHandler(getPast));
 // Shared by mentor (owner → publish) and students (→ subscribe). Access + grants
 // are resolved in the service, so no single module gate fits here.
 liveSessionRouter.get('/sessions/:id/messages', asyncHandler(getChatHistory));
+// Post a comment on a recorded / upcoming session — gated behind the student module.
+liveSessionRouter.post('/sessions/:id/messages', student, asyncHandler(postMessage));
 liveSessionRouter.post('/sessions/:id/join-token', asyncHandler(postJoinToken));
 // Like / unlike a session — auth only (any user who can open the watch page).
 liveSessionRouter.post('/sessions/:id/like', asyncHandler(postLike));

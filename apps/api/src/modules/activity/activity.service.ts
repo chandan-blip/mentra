@@ -30,6 +30,7 @@ const MILESTONE_TYPES = [
   'roadmap.item.completed',
   'assignment.completed',
   'live-session.ended',
+  'learning.series.completed',
 ];
 
 const iso = (d: Date | string): string => new Date(d).toISOString();
@@ -50,6 +51,12 @@ function titleFor(type: string, meta: Record<string, unknown> | null): string {
       return 'Started a personalized assignment';
     case 'assignment.completed':
       return typeof meta?.score === 'number' ? `Completed the assignment (${meta.score}%)` : 'Completed the assignment';
+    case 'learning.test.completed':
+      return meta?.passed
+        ? `Passed a test${typeof meta?.percent === 'number' ? ` (${meta.percent}%)` : ''}`
+        : `Attempted a test${typeof meta?.percent === 'number' ? ` (${meta.percent}%)` : ''}`;
+    case 'learning.series.completed':
+      return 'Completed a test series';
     case 'live-session.started':
       return 'Started a live session';
     case 'live-session.ended':

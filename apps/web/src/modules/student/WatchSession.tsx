@@ -1,9 +1,8 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Check, Hand, Heart, MessageSquare, UserPlus, Users, Video } from 'lucide-react';
+import { ArrowLeft, Check, Hand, Heart, MessageSquare, Send, UserPlus, Users, Video } from 'lucide-react';
 import { Avatar } from '@mentra/ui';
 import type { ChatMessageView, JoinTokenResponse, LiveSessionView } from '@mentra/shared';
-import { LiveChat } from '../../components/LiveChat.js';
 import { VideoPlayer } from '../../components/VideoPlayer.js';
 import { LiveStage, MediaControls } from '../../lib/livekit.js';
 import { useLiveSocket } from '../../lib/socket.js';
@@ -11,6 +10,7 @@ import {
   hueOf,
   saveWatchProgress,
   stageBg,
+  useCreateSessionComment,
   useElapsed,
   useJoinToken,
   useLiveSessions,
@@ -23,7 +23,7 @@ import {
 } from '../../lib/live.js';
 import { usePublicProfile, useToggleFollow } from '../../lib/profile.js';
 import { useChrome } from '../../lib/chrome.js';
-import { getStoredUser, resolveAvatarUrl } from '../../lib/auth.js';
+import { resolveAvatarUrl } from '../../lib/auth.js';
 import { VideoCard } from './LiveSessions.js';
 
 /**
@@ -52,7 +52,7 @@ export function WatchSessionPage() {
   if (session.isLoading) {
     return (
       <Frame onBack={back}>
-        <div className="-mx-3 aspect-video w-full animate-pulse bg-surface-sunken sm:mx-0 sm:rounded-lg" />
+        <div className="-mx-3 aspect-video animate-pulse bg-surface-sunken sm:mx-0 sm:rounded-lg" />
         <div className="mt-3 h-5 w-2/3 animate-pulse rounded bg-surface-sunken" />
       </Frame>
     );
@@ -110,6 +110,7 @@ function WatchScaffold({
   media,
   live = false,
   liveViewers,
+  liveLatest,
   comments,
   commentsCount,
   extraActions,
@@ -119,17 +120,25 @@ function WatchScaffold({
   media: ReactNode;
   live?: boolean;
   liveViewers?: number;
+  /** Newest live-chat message body (live only); recordings read it from the history query. */
+  liveLatest?: string | null;
   comments: ReactNode;
   commentsCount: number;
   extraActions?: ReactNode;
 }) {
-  const [openComments, setOpenComments] = useState(false);
+  // Live sessions surface the chat immediately; recordings keep comments collapsed.
+  const [openComments, setOpenComments] = useState(live);
   const views = live ? (liveViewers ?? s.currentViewers) : s.peakViewers;
+
+  // Newest comment for the collapsed-pill preview. Live pulls from the socket (via prop);
+  // recordings/upcoming reuse the same cached history query the comments panel uses.
+  const history = useSessionMessages(s.id, !live);
+  const latestComment = (live ? liveLatest : history.data?.[history.data.length - 1]?.body) ?? null;
 
   return (
     <div className="mx-auto w-full max-w-2xl pb-24">
       {/* Sticky header: back + uploader + follow */}
-      <header className="sticky top-0 z-20 -mx-3 -mt-3 flex items-center gap-2 bg-canvas/85 px-2 py-2 backdrop-blur sm:mx-0 sm:mt-0 sm:bg-transparent sm:px-0 sm:backdrop-blur-none">
+      <header className="sticky -top-3 z-20 -mx-3 -mt-3 flex items-center gap-2 bg-canvas/85 px-2 py-3 backdrop-blur sm:top-0 sm:mx-0 sm:mt-0 sm:bg-transparent sm:px-0 sm:backdrop-blur-none">
         <BackButton onBack={onBack} />
         <Avatar size="sm" src={resolveAvatarUrl(s.mentorAvatarUrl)} name={s.mentorName} />
         <div className="min-w-0 flex-1">
@@ -157,7 +166,7 @@ function WatchScaffold({
         </div>
 
         {/* Action bar: like + comment (+ any state-specific action) */}
-        <div className="mt-3 flex items-center gap-2 border-y border-border-subtle py-2">
+        <div className="mt-3 flex items-center gap-2 border-b border-border-subtle py-2">
           <LikeButton session={s} />
           <button
             type="button"
@@ -166,6 +175,11 @@ function WatchScaffold({
             className={pill(openComments)}
           >
             <MessageSquare className="size-4" /> {compact(commentsCount)}
+            {latestComment && !openComments ? (
+              <span className="max-w-[45vw] truncate text-xs font-normal text-ink-faint sm:max-w-[14rem]">
+                {previewWords(latestComment)}
+              </span>
+            ) : null}
           </button>
           {extraActions}
         </div>
@@ -242,7 +256,6 @@ function FollowPill({ mentorId }: { mentorId: string }) {
 
 function LiveWatch({ session, onBack }: { session: LiveSessionView; onBack: () => void }) {
   const navigate = useNavigate();
-  const selfId = getStoredUser()?.id ?? null;
   const join = useJoinToken();
   const [conn, setConn] = useState<JoinTokenResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -335,16 +348,10 @@ function LiveWatch({ session, onBack }: { session: LiveSessionView; onBack: () =
       media={media}
       live
       liveViewers={viewers}
+      liveLatest={socket.messages[socket.messages.length - 1]?.body ?? null}
       commentsCount={socket.messages.length || session.chatCount}
       extraActions={raiseHand}
-      comments={
-        <LiveChat
-          messages={socket.messages}
-          selfUserId={selfId}
-          onSend={socket.sendMessage}
-          connected={socket.connected}
-        />
-      }
+      comments={<LiveComments messages={socket.messages} onSend={socket.sendMessage} />}
     />
   );
 }
@@ -416,29 +423,111 @@ function PendingWatch({ session: s, onBack }: { session: LiveSessionView; onBack
   );
 }
 
-// --- Comments (persisted chat history, read-only) ---
+// --- Comments (shared surface for live chat + recording history) ---
 
-function CommentsList({ session }: { session: LiveSessionView }) {
-  const messages = useSessionMessages(session.id);
-  const list = messages.data ?? [];
+/**
+ * Shared comments surface: a titled list of avatar comment rows with an optional
+ * composer. Plain (no card / background / radius) so a live session's chat and a
+ * recording's comment history render identically.
+ */
+function CommentsSurface({
+  count,
+  loading,
+  messages,
+  composer,
+}: {
+  count: number;
+  loading?: boolean;
+  messages: ChatMessageView[];
+  composer?: ReactNode;
+}) {
+  const endRef = useRef<HTMLDivElement>(null);
+  // Keep the newest message in view (matters for live; harmless for history).
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [messages.length]);
+
   return (
-    <div className="rounded-xl bg-surface-sunken/50 p-3">
+    <div>
       <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-ink">
         <MessageSquare className="size-4 text-ink-muted" /> Comments
-        <span className="text-ink-faint">{compact(list.length)}</span>
+        <span className="text-ink-faint">{compact(count)}</span>
       </div>
-      {messages.isLoading ? (
+      {loading ? (
         <div className="text-sm text-ink-faint">Loading comments…</div>
-      ) : list.length === 0 ? (
+      ) : messages.length === 0 ? (
         <div className="text-sm text-ink-faint">No comments yet.</div>
       ) : (
         <div className="max-h-[60vh] space-y-4 overflow-y-auto">
-          {list.map((m) => (
+          {messages.map((m) => (
             <CommentRow key={m.id} message={m} />
           ))}
+          <div ref={endRef} />
         </div>
       )}
+      {composer}
     </div>
+  );
+}
+
+/** Comment input shared by the recording (REST) and live (socket) comment surfaces. */
+function CommentComposer({ onSend, pending }: { onSend: (body: string) => void; pending?: boolean }) {
+  const [text, setText] = useState('');
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const body = text.trim();
+        if (!body) return;
+        onSend(body);
+        setText('');
+      }}
+      className="mt-3 flex items-center gap-2"
+    >
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Add a comment…"
+        maxLength={1000}
+        className="auth-input-plain h-9 flex-1"
+      />
+      <button
+        type="submit"
+        disabled={pending}
+        aria-label="Send"
+        className="grid size-9 shrink-0 place-items-center rounded-md bg-surface-inverse text-ink-inverse transition hover:bg-ink disabled:opacity-60"
+      >
+        <Send className="size-4" />
+      </button>
+    </form>
+  );
+}
+
+/** Recording / upcoming comment history (persisted) + a composer to post via REST. */
+function CommentsList({ session }: { session: LiveSessionView }) {
+  const messages = useSessionMessages(session.id);
+  const create = useCreateSessionComment(session.id);
+  const list = messages.data ?? [];
+  return (
+    <CommentsSurface
+      count={list.length}
+      loading={messages.isLoading}
+      messages={list}
+      composer={<CommentComposer onSend={(body) => create.mutate(body)} pending={create.isPending} />}
+    />
+  );
+}
+
+/** Live-session comments — same surface as recordings, with a composer that chats in real time. */
+function LiveComments({
+  messages,
+  onSend,
+}: {
+  messages: ChatMessageView[];
+  onSend: (body: string) => void;
+}) {
+  return (
+    <CommentsSurface count={messages.length} messages={messages} composer={<CommentComposer onSend={onSend} />} />
   );
 }
 
@@ -469,9 +558,9 @@ function RelatedSessions({ currentId }: { currentId: string }) {
   );
   if (all.length === 0) return null;
   return (
-    <section className="mt-8">
-      <h2 className="mb-3 text-sm font-semibold text-ink">More sessions</h2>
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+    <section className="mt-5">
+      {/* <h2 className="mb-3 text-sm font-semibold text-ink">More sessions</h2> */}
+      <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
         {all.slice(0, 8).map((s) => (
           <VideoCard key={s.id} session={s} onOpen={() => navigate(`/live-sessions/${s.id}`)} />
         ))}
@@ -484,6 +573,13 @@ function RelatedSessions({ currentId }: { currentId: string }) {
 
 function compact(n: number): string {
   return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+}
+
+/** First few words of a comment, with an ellipsis if there's more — for the pill preview. */
+function previewWords(text: string, maxWords = 3): string {
+  const words = text.trim().split(/\s+/);
+  const clip = words.slice(0, maxWords).join(' ');
+  return words.length > maxWords ? `${clip}…` : clip;
 }
 
 /** Poster (thumbnail) URL derived from the HLS master URL by convention. */

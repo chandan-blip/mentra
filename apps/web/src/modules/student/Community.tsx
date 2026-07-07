@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MessageSquare, Pin, Pencil, Trash2, Users, X } from 'lucide-react';
@@ -213,9 +213,7 @@ function PostCard({ post: p }: { post: CommunityPostView }) {
         </div>
       ) : (
         <>
-          {p.body ? (
-            <div className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-ink">{renderRichText(p.body)}</div>
-          ) : null}
+          {p.body ? <PostBody body={p.body} /> : null}
           {p.mediaUrl ? <img src={p.mediaUrl} alt="post media" loading="lazy" decoding="async" className="mt-3 max-h-96 rounded-md ring-1 ring-border-subtle" /> : null}
         </>
       )}
@@ -232,6 +230,57 @@ function PostCard({ post: p }: { post: CommunityPostView }) {
 
       {showComments ? <CommentThread postId={p.id} /> : null}
     </Card>
+  );
+}
+
+/** Max rendered height (px) of a collapsed post body before it's clamped with a "Show more". */
+const POST_COLLAPSED_MAX = 320;
+
+/**
+ * Post body that clamps long content to a fixed max height with a fade + "Show more"
+ * toggle. The toggle only appears when the content actually overflows the cap (measured
+ * against the element's full scrollHeight, re-checked on reflow).
+ */
+function PostBody({ body }: { body: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [overflowing, setOverflowing] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // scrollHeight reflects the full content height even while max-height clamps it.
+    const check = () => setOverflowing(el.scrollHeight > POST_COLLAPSED_MAX + 8);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [body]);
+
+  const clamped = overflowing && !expanded;
+
+  return (
+    <div className="mt-2">
+      <div
+        ref={ref}
+        className="relative overflow-hidden whitespace-pre-wrap break-words text-sm leading-6 text-ink"
+        style={{ maxHeight: clamped ? POST_COLLAPSED_MAX : undefined }}
+      >
+        {renderRichText(body)}
+        {clamped ? (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-surface to-transparent" />
+        ) : null}
+      </div>
+      {overflowing ? (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-1 text-xs font-semibold text-ink-muted transition hover:text-ink"
+        >
+          {expanded ? 'Show less' : 'Show more'}
+        </button>
+      ) : null}
+    </div>
   );
 }
 

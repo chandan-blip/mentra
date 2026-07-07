@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import Hls from 'hls.js';
 import {
   Check,
@@ -74,10 +74,24 @@ export function VideoPlayer({
         video.currentTime = startAt;
       }
       setReady(true);
+      // Autoplay for an instant start. Try with sound; if the browser's autoplay policy
+      // blocks it, retry muted so it still plays (the user can unmute from the controls).
+      video.play().catch(() => {
+        video.muted = true;
+        void video.play().catch(() => {});
+      });
     };
 
     if (Hls.isSupported()) {
-      hls = new Hls({ maxBufferLength: 30, startLevel: -1, enableWorker: true });
+      // startLevel is set to the lowest rendition in MANIFEST_PARSED for a near-instant
+      // first frame; hls.js's ABR then climbs to the best level the connection sustains.
+      // A low initial bandwidth estimate keeps the very first segment small.
+      hls = new Hls({
+        maxBufferLength: 30,
+        enableWorker: true,
+        abrEwmaDefaultEstimate: 500_000,
+        startFragPrefetch: true, // fetch the first segment while the level playlist loads
+      });
       hlsRef.current = hls;
       hls.loadSource(src);
       hls.attachMedia(video);
@@ -87,6 +101,10 @@ export function VideoPlayer({
           .map((l, index) => ({ index, height: l.height }))
           .sort((a, b) => b.height - a.height);
         setLevels(ls);
+        // Start on the lowest-bitrate rendition (manifest order isn't guaranteed, so pick
+        // it explicitly); ABR takes over from the second segment onward.
+        const lowest = hls!.levels.reduce((min, l, i, arr) => (l.bitrate < arr[min]!.bitrate ? i : min), 0);
+        hls!.startLevel = lowest;
         seekToStart();
       });
       hls.on(Hls.Events.LEVEL_SWITCHED, (_e, data) => {
@@ -319,7 +337,7 @@ export function VideoPlayer({
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          <Seekbar current={current} duration={duration} buffered={buffered} onSeek={seek} />
+          <Seekbar videoRef={videoRef} duration={duration} buffered={buffered} onSeek={seek} />
           <div className="mt-1 flex items-center gap-3 text-white">
             <button type="button" onClick={togglePlay} aria-label={playing ? 'Pause' : 'Play'} className="flex items-center transition hover:text-white/80">
               {playing ? <Pause className="size-5" /> : <Play className="size-5" />}
@@ -451,50 +469,74 @@ function MenuRow({ label, active, onClick }: { label: string; active: boolean; o
 
 /** Scrubbable seek bar with a buffered track, played fill, and a draggable thumb. */
 function Seekbar({
-  current,
+  videoRef,
   duration,
   buffered,
   onSeek,
 }: {
-  current: number;
+  videoRef: RefObject<HTMLVideoElement | null>;
   duration: number;
   buffered: number;
   onSeek: (seconds: number) => void;
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const played = duration ? Math.min(100, (current / duration) * 100) : 0;
+  // While scrubbing, render from the pointer position (0–1) so the thumb tracks the
+  // finger 1:1 instead of waiting for the video's coarse `timeupdate` to catch up.
+  const [dragPct, setDragPct] = useState<number | null>(null);
+  // rAF-driven playhead so the fill glides at ~60fps during playback rather than
+  // stepping on each timeupdate (~4×/s). setState bails when the time is unchanged
+  // (e.g. paused), so idle frames don't re-render.
+  const [head, setHead] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      const v = videoRef.current;
+      if (v) setHead((prev) => (prev === v.currentTime ? prev : v.currentTime));
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [videoRef]);
+
+  const fraction = dragPct ?? (duration ? Math.min(1, Math.max(0, head / duration)) : 0);
+  const played = fraction * 100;
   const buf = duration ? Math.min(100, (buffered / duration) * 100) : 0;
 
   const seekAt = useCallback(
     (clientX: number) => {
       const track = trackRef.current;
-      if (!track || !duration) return;
+      if (!track || !duration) return 0;
       const rect = track.getBoundingClientRect();
       const pct = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
       onSeek(pct * duration);
+      return pct;
     },
     [duration, onSeek],
   );
 
   const onPointerDown = (e: React.PointerEvent) => {
     e.currentTarget.setPointerCapture(e.pointerId);
-    seekAt(e.clientX);
+    setDragPct(seekAt(e.clientX));
   };
   const onPointerMove = (e: React.PointerEvent) => {
-    if (e.buttons === 1 || e.pressure > 0) seekAt(e.clientX);
+    if (dragPct === null && e.buttons !== 1 && e.pressure === 0) return;
+    setDragPct(seekAt(e.clientX));
   };
+  const endDrag = () => setDragPct(null);
 
   return (
     <div
       ref={trackRef}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
       className="group/sb relative flex h-3.5 cursor-pointer touch-none items-center"
       role="slider"
       aria-label="Seek"
       aria-valuemin={0}
       aria-valuemax={Math.floor(duration)}
-      aria-valuenow={Math.floor(current)}
+      aria-valuenow={Math.floor(fraction * duration)}
       tabIndex={0}
     >
       <div className="relative h-[3px] w-full rounded-full bg-white/25 transition-[height] group-hover/sb:h-[5px]">
@@ -502,7 +544,9 @@ function Seekbar({
         <div className="absolute inset-y-0 left-0 rounded-full bg-accent-red" style={{ width: `${played}%` }} />
       </div>
       <div
-        className="absolute size-3 -translate-x-1/2 rounded-full bg-accent-red opacity-0 shadow transition-opacity group-hover/sb:opacity-100"
+        className={`absolute size-3 -translate-x-1/2 rounded-full bg-accent-red shadow transition-opacity ${
+          dragPct !== null ? 'opacity-100' : 'opacity-0 group-hover/sb:opacity-100'
+        }`}
         style={{ left: `${played}%` }}
       />
     </div>

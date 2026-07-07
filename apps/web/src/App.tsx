@@ -12,6 +12,8 @@ import { SubscriptionsPage } from './modules/student/Subscriptions.js';
 import { AnalyticsPage } from './modules/student/Analytics.js';
 import { SupportPage } from './modules/student/Support.js';
 import { LearningPage } from './modules/student/Learning.js';
+import { LearningCategoryPage } from './modules/student/LearningCategory.js';
+import { LearningTestPage } from './modules/student/LearningTest.js';
 import { ProjectsPage } from './modules/student/Projects.js';
 import { LiveSessionsPage } from './modules/student/LiveSessions.js';
 import { WatchSessionPage } from './modules/student/WatchSession.js';
@@ -60,6 +62,8 @@ export function App() {
         <Route path="/roadmap/history" element={<RoadmapHistoryPage />} />
         <Route path="/roadmap/item/:id" element={<RoadmapItemPage />} />
         <Route path="/learning" element={<LearningPage />} />
+        <Route path="/learning/:categoryId" element={<LearningCategoryPage />} />
+        <Route path="/learning/test/:testId" element={<LearningTestPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/live-sessions" element={<LiveSessionsPage />} />
         <Route path="/live-sessions/:id" element={<WatchSessionPage />} />

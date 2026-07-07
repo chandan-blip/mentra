@@ -786,3 +786,75 @@ model LeadCall {
   @@index([vapiCallId])
   @@index([ownerId])
 }
+
+// --- Learning (test series) ---
+// Categories are AI-generated per student from their roadmap + profile; each category
+// is a Beginner→Intermediate→Advanced ladder of MCQ tests. Detached from roadmap
+// completion — students can take any test regardless of roadmap progress. Runtime
+// queries use mysql2 (see modules/learning), not Prisma Client.
+
+model LearningCategory {
+  id          String   @id @default(cuid())
+  userId      String
+  slug        String
+  title       String
+  description String   @db.Text
+  skillTags   Json
+  icon        String?  @db.VarChar(64)
+  order       Int      @default(0)
+  generatedBy String
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, slug])
+  @@index([userId])
+}
+
+model LearningTest {
+  id             String    @id @default(cuid())
+  userId         String
+  categoryId     String
+  difficulty     String // beginner|intermediate|advanced (ENUM in SQL)
+  order          Int       @default(0)
+  title          String
+  model          String?
+  totalQuestions Int       @default(0)
+  maxScore       Int       @default(0)
+  passPercent    Int       @default(70)
+  generatedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([categoryId])
+  @@index([userId])
+}
+
+model LearningTestQuestion {
+  id          String  @id @default(cuid())
+  testId      String
+  order       Int
+  type        String // single_choice|multi_choice (ENUM in SQL)
+  body        String  @db.Text
+  options     Json
+  correct     Json
+  explanation String? @db.Text
+  points      Int     @default(1)
+
+  @@index([testId])
+}
+
+model LearningTestResult {
+  id             String   @id @default(cuid())
+  userId         String
+  testId         String
+  categoryId     String
+  attemptNumber  Int      @default(1)
+  score          Int
+  maxScore       Int
+  percent        Int
+  correctCount   Int
+  totalQuestions Int
+  passed         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([testId])
+}

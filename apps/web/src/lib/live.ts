@@ -93,6 +93,19 @@ export function useSessionMessages(id: string | null, enabled = true) {
   });
 }
 
+/** Post a comment on a recorded / upcoming session, then refresh its message list. */
+export function useCreateSessionComment(sessionId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: string) =>
+      apiFetch<ChatMessageView>(`${base}/sessions/${sessionId}/messages`, {
+        method: 'POST',
+        body: JSON.stringify({ body }),
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['live', 'messages', sessionId] }),
+  });
+}
+
 export function useMyMentorSessions() {
   return useQuery({
     queryKey: ['live', 'mine'],

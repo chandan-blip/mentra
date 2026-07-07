@@ -55,7 +55,7 @@ export function LiveSessionsPage() {
 
       <motion.div variants={fadeUp}>
         {loading && sessions.length === 0 ? (
-          <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <PlaceholderVideoCard key={i} label="Loading…" />
             ))}
@@ -63,7 +63,7 @@ export function LiveSessionsPage() {
         ) : sessions.length === 0 ? (
           <EmptyVideoGrid label="No sessions yet" />
         ) : (
-          <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {sessions.map((s) => (
               <VideoCard key={s.id} session={s} onOpen={() => openSession(s)} />
             ))}
@@ -104,12 +104,12 @@ export function VideoCard({ session: s, onOpen }: { session: LiveSessionView; on
   const views = isLive ? s.currentViewers : s.peakViewers;
 
   return (
-    <div className="flex flex-col gap-2.5 rounded-[22px] bg-[#101010] p-[5px]">
+    <div className="flex flex-col gap-2.5 rounded-[22px] w-full">
       <button
         type="button"
         onClick={onOpen}
         aria-label={isLive ? `Watch ${s.title} live` : ready ? `Play ${s.title}` : `Open ${s.title}`}
-        className="group relative aspect-video w-full overflow-hidden rounded-lg ring-1 ring-border-subtle"
+        className="group relative -mx-3 aspect-video w-[calc(100%+1.5rem)] overflow-hidden rounded-none ring-1 ring-border-subtle sm:mx-0 sm:w-full sm:rounded-lg"
         style={{ background: stageBg(hueOf(s.id)) }}
       >
         {poster ? (
@@ -164,23 +164,25 @@ export function VideoCard({ session: s, onOpen }: { session: LiveSessionView; on
       </button>
 
       {/* Meta: mentor avatar + title + views·comments */}
-      <div className="flex gap-3">
+      <div className="flex gap-3 p-2">
         <Avatar size="sm" src={resolveAvatarUrl(s.mentorAvatarUrl)} name={s.mentorName} />
         <div className="min-w-0 flex-1">
           <div className="line-clamp-2 text-sm font-semibold leading-snug text-ink">{s.title}</div>
-          <div className="mt-0.5 truncate text-xs text-ink-muted">{s.mentorName}</div>
-          <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-xs text-ink-faint">
-            <span>
+          {/* Uploader + stats + age, all on one line — the name truncates first when tight. */}
+          <div className="mt-0.5 flex items-center gap-x-1.5 overflow-hidden text-xs text-ink-faint">
+            <span className="min-w-0 truncate text-ink-muted">{s.mentorName}</span>
+            <span className="shrink-0">·</span>
+            <span className="shrink-0 whitespace-nowrap">
               {compact(views)} {isLive ? 'watching' : 'views'}
             </span>
-            <span>·</span>
-            <span className="inline-flex items-center gap-1">
+            <span className="shrink-0">·</span>
+            <span className="inline-flex shrink-0 items-center gap-1">
               <MessageSquare className="size-3" /> {compact(s.chatCount)}
             </span>
             {!isLive && s.endedAt ? (
               <>
-                <span>·</span>
-                <span>{formatWhen(s.endedAt)}</span>
+                <span className="shrink-0">·</span>
+                <span className="shrink-0 whitespace-nowrap">{timeAgo(s.endedAt)}</span>
               </>
             ) : null}
           </div>
@@ -214,7 +216,7 @@ function PlaceholderVideoCard({ label }: { label: string }) {
 /** A single-placeholder grid — same columns as a populated section. */
 function EmptyVideoGrid({ label }: { label: string }) {
   return (
-    <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <PlaceholderVideoCard label={label} />
     </div>
   );
@@ -225,6 +227,25 @@ function EmptyVideoGrid({ label }: { label: string }) {
 /** Poster (thumbnail) URL derived from the HLS master URL by convention. */
 function posterFor(recordingUrl: string | null): string | undefined {
   return recordingUrl ? recordingUrl.replace(/\/hls\/master\.m3u8$/, '/thumb.jpg') : undefined;
+}
+
+/** Relative age (YouTube-style): "3 days ago", "2 weeks ago", "5 months ago", "1 year ago". */
+function timeAgo(value: string | null): string {
+  if (!value) return '';
+  const then = new Date(value).getTime();
+  if (Number.isNaN(then)) return '';
+  const secs = Math.max(0, Math.floor((Date.now() - then) / 1000));
+  const rel = (n: number, unit: string) => `${n} ${unit}${n === 1 ? '' : 's'} ago`;
+  const days = Math.floor(secs / 86400);
+  if (days >= 365) return rel(Math.floor(days / 365), 'year');
+  if (days >= 30) return rel(Math.floor(days / 30), 'month');
+  if (days >= 7) return rel(Math.floor(days / 7), 'week');
+  if (days >= 1) return rel(days, 'day');
+  const hours = Math.floor(secs / 3600);
+  if (hours >= 1) return rel(hours, 'hour');
+  const mins = Math.floor(secs / 60);
+  if (mins >= 1) return rel(mins, 'minute');
+  return 'just now';
 }
 
 function formatWhen(value: string | null): string {

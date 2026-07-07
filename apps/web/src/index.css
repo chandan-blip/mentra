@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  /* Paint the page (incl. iOS/Android safe-area regions + overscroll) with the app
+     canvas so the notch/home-indicator areas never flash white in standalone/PWA mode. */
+  html {
+    background-color: #0a0a0a;
+  }
+
   /* Global slim scrollbar — thin white thumb, transparent track, no arrows. */
   * {
     scrollbar-width: thin;

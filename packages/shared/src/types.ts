@@ -506,3 +506,99 @@ export type AdminUser = {
   createdAt: string;
 };
 
+// --- Learning (test series) ---
+// `LearningDifficulty` / `LearningTestQuestionType` are exported from schemas/learning
+// (derived from their Zod enums); the view types below reference the unions inline to
+// avoid a duplicate export.
+
+/** One test in a category's ladder, summarized for the category/list views. */
+export type LearningTestSummary = {
+  id: string;
+  categoryId: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  order: number;
+  title: string;
+  totalQuestions: number;
+  passPercent: number;
+  /** True once the questions have been AI-generated (first start). */
+  generated: boolean;
+  attempts: number;
+  bestPercent: number | null;
+  passed: boolean;
+};
+
+export type LearningCategoryView = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  skillTags: string[];
+  icon: string | null;
+  order: number;
+  tests: LearningTestSummary[];
+  /** True when every test in the ladder has a passing attempt. */
+  seriesCompleted: boolean;
+};
+
+/** A question as sent to the client — never includes the correct answer. */
+export type LearningTestQuestionView = {
+  id: string;
+  order: number;
+  type: 'single_choice' | 'multi_choice';
+  body: string;
+  options: string[];
+  points: number;
+};
+
+export type LearningTestView = {
+  id: string;
+  categoryId: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  title: string;
+  totalQuestions: number;
+  maxScore: number;
+  passPercent: number;
+  questions: LearningTestQuestionView[];
+};
+
+/** Marks for one learning-test attempt. */
+export type LearningTestResultView = {
+  id: string;
+  testId: string;
+  categoryId: string;
+  attemptNumber: number;
+  score: number;
+  maxScore: number;
+  percent: number;
+  correctCount: number;
+  totalQuestions: number;
+  passed: boolean;
+  createdAt: string;
+};
+
+/** Per-question grading detail returned right after a submission. */
+export type LearningTestGradedQuestion = {
+  questionId: string;
+  correct: number[];
+  selected: number[];
+  isCorrect: boolean;
+  pointsAwarded: number;
+  points: number;
+  explanation: string | null;
+};
+
+export type LearningTestSubmitResult = {
+  result: LearningTestResultView;
+  graded: LearningTestGradedQuestion[];
+  /** True if this attempt just completed the whole category ladder. */
+  seriesCompleted: boolean;
+};
+
+/** Aggregate learning stats for a student — surfaced in progress / achievements. */
+export type LearningProgressView = {
+  categoriesCount: number;
+  testsPassed: number;
+  seriesCompleted: number;
+  averageBestPercent: number;
+};
+

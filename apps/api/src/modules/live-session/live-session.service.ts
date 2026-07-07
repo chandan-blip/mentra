@@ -286,6 +286,17 @@ export async function getMessages(userId: string, id: string): Promise<ChatMessa
   return rows.map(toMessageView);
 }
 
+/**
+ * Post a comment on a recorded / upcoming session over REST. (Live sessions still chat
+ * over Socket.IO for realtime fan-out.) Same attend gate as reading the history.
+ */
+export async function addMessage(userId: string, id: string, body: string): Promise<ChatMessageView> {
+  const session = await repo.findById(id);
+  if (!session) throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
+  await resolveAttend(userId, session);
+  return persistChatMessage({ sessionId: id, userId, body });
+}
+
 export async function getJoinToken(userId: string, id: string): Promise<JoinTokenResponse> {
   const session = await repo.findById(id);
   if (!session) throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
