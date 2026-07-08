@@ -435,6 +435,7 @@ function Broadcaster({ session, onEnd }: { session: LiveSessionView; onEnd: () =
               publish
               mentorId={session.mentorId}
               mentorName={session.mentorName}
+              onMuteStudent={socket.muteParticipant}
               placeholderBg={stageBg(hueOf(session.id))}
               overlay={
                 <>

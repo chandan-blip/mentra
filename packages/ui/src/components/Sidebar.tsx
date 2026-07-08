@@ -22,12 +22,22 @@ export function Sidebar({ brand, footer, children, className, expanded }: Sideba
   const align = expanded ? 'items-stretch' : 'items-center';
   return (
     <aside className={cn('flex h-full flex-col gap-6 px-3 py-6', align, className)}>
-      {/* Nav scrolls when it's taller than the rail/drawer; footer stays pinned. */}
-      <div className={cn('flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto', align)}>
-        {brand && <div className="mb-2">{brand}</div>}
+      {/* Brand stays pinned at the top; only the nav list below it scrolls. */}
+      {brand && <div className="shrink-0">{brand}</div>}
+      {/* Nav scrolls vertically when its items are taller than the rail/drawer; brand + footer
+          stay pinned. `overscroll-contain` keeps wheel momentum from bubbling to the page; the
+          thin scrollbar keeps the collapsed rail from feeling cramped. The collapsed rail's hover
+          tooltips render in a body-level portal (see RailTooltip), so they don't add horizontal
+          overflow here and there's no stray x-scrollbar. */}
+      <div
+        className={cn(
+          'flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain [scrollbar-width:thin]',
+          align,
+        )}
+      >
         {children}
       </div>
-      {footer && <div className={cn('flex flex-col gap-2', align)}>{footer}</div>}
+      {footer && <div className={cn('flex shrink-0 flex-col gap-2', align)}>{footer}</div>}
     </aside>
   );
 }

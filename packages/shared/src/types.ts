@@ -40,6 +40,8 @@ export type StudentProfileView = {
   city: string | null;
   timezone: string;
   educationLevel: string | null;
+  academicProgram: string | null;
+  academicSemester: number | null;
   collegeName: string | null;
   graduationYear: number | null;
   experienceLevel: string | null;
@@ -117,6 +119,10 @@ export type PublicProfileCardView = {
   techStack: string[];
   followers: number;
   isFollowedByViewer: boolean;
+  githubUrl: string | null;
+  linkedinUrl: string | null;
+  portfolioUrl: string | null;
+  twitterUrl: string | null;
 };
 
 /** Returned by follow / unfollow — lets the client update the button + count in place. */

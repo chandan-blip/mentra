@@ -69,6 +69,28 @@ systemctl daemon-reload
 systemctl enable mentra-worker
 systemctl restart mentra-worker
 
+# LiveKit Egress (session recording → R2) — same self-healing pattern as the worker.
+# Session recording needs the native Egress service running next to the SFU on the SAME
+# Redis; without it startEgress() throws and nothing reaches R2 (mentor uploads still work,
+# which is why R2 looks "fine"). The egress binary is built from source ONCE (heavy: Chrome
+# + GStreamer + Go) by provision-egress.sh, so auto-run that only when it's missing; on
+# every deploy just refresh the runner + unit and restart (cheap). Best-effort by design —
+# an egress build/start failure must NEVER fail the core redeploy. Skip with SKIP_EGRESS=1.
+if [ "${SKIP_EGRESS:-0}" = "1" ]; then
+  echo "▸ Egress: skipped (SKIP_EGRESS=1)"
+elif [ ! -x /usr/local/bin/egress ]; then
+  echo "▸ Egress: binary missing — provisioning once (slow: builds Chrome/GStreamer/Go from source)…"
+  bash "$APP/provision-egress.sh" \
+    || echo "⚠️  Egress provisioning failed — recording stays off (mentor uploads unaffected). See: journalctl -u mentra-egress"
+else
+  install -m 0755 "$APP/egress-run.sh" /usr/local/bin/egress-run.sh
+  install -m 0644 "$APP/mentra-egress.service" /etc/systemd/system/mentra-egress.service
+  systemctl daemon-reload
+  systemctl enable mentra-egress >/dev/null 2>&1 || true
+  systemctl restart mentra-egress \
+    || echo "⚠️  mentra-egress failed to (re)start — recording stays off. See: journalctl -u mentra-egress"
+fi
+
 systemctl reload nginx
 echo "✅ Redeployed. $PUBLIC_URL"
-echo "   Worker: $(systemctl is-active mentra-worker)  ·  API: $(systemctl is-active mentra-api)"
+echo "   API: $(systemctl is-active mentra-api)  ·  Worker: $(systemctl is-active mentra-worker)  ·  Egress: $(systemctl is-active mentra-egress 2>/dev/null || echo n/a)"

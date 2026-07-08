@@ -4,6 +4,7 @@ import type { AdminModule, AdminRole, ModulePlacement } from '@mentra/shared';
 import { useAdminModules, useAdminRoles, useDeleteModule, useSaveModule } from '../../lib/admin.js';
 import { MODULE_ICON_NAMES, moduleIcon } from '../../lib/moduleIcons.js';
 import { AdminPageShell } from './AdminPageShell.js';
+import { Switch } from '../../components/Switch.js';
 
 const PLACEMENTS: { value: ModulePlacement; label: string; hint: string }[] = [
   { value: 'sidebar', label: 'Sidebar', hint: 'Shows in the navigation rail' },
@@ -114,10 +115,10 @@ export function AdminModulesPage() {
                 </td>
                 <td className="px-4 py-2 text-center text-ink-muted">{m.sortOrder}</td>
                 <td className="px-4 py-2 text-center">
-                  <input
-                    type="checkbox"
+                  <Switch
                     checked={m.active}
-                    onChange={(e) => save.mutate({ ...m, active: e.target.checked })}
+                    onChange={(next) => save.mutate({ ...m, active: next })}
+                    aria-label={`Toggle ${m.label} active`}
                   />
                 </td>
                 <td className="px-4 py-2">
@@ -310,10 +311,13 @@ function ModuleForm({
             </select>
           </Field>
 
-          <label className="flex items-center gap-2 text-sm text-ink sm:col-span-2">
-            <input type="checkbox" checked={form.active} onChange={(e) => set('active', e.target.checked)} />
-            Active (visible across the app)
-          </label>
+          <div className="sm:col-span-2">
+            <Switch
+              checked={form.active}
+              onChange={(next) => set('active', next)}
+              label="Active (visible across the app)"
+            />
+          </div>
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-3">

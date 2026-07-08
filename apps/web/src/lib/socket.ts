@@ -15,6 +15,8 @@ export type LiveSocket = {
   sendMessage: (body: string) => void;
   raiseHand: () => void;
   approveHand: (targetUserId: string) => void;
+  /** Mentor force-mutes an approved/speaking student's mic (owner-only, server-enforced). */
+  muteParticipant: (targetUserId: string) => void;
   /** Register a callback for when a mentor promotes you to publish. */
   onPromoted: (cb: (grant: JoinTokenResponse) => void) => void;
 };
@@ -99,9 +101,26 @@ export function useLiveSocket(sessionId: string | null): LiveSocket {
     [sessionId],
   );
 
+  const muteParticipant = useCallback(
+    (targetUserId: string) => {
+      socketRef.current?.emit('participant:mute', { sessionId, targetUserId });
+    },
+    [sessionId],
+  );
+
   const onPromoted = useCallback((cb: (grant: JoinTokenResponse) => void) => {
     promotedCb.current = cb;
   }, []);
 
-  return { messages, viewerCount, hands, connected, sendMessage, raiseHand, approveHand, onPromoted };
+  return {
+    messages,
+    viewerCount,
+    hands,
+    connected,
+    sendMessage,
+    raiseHand,
+    approveHand,
+    muteParticipant,
+    onPromoted,
+  };
 }

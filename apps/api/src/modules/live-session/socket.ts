@@ -3,7 +3,8 @@ import { logger } from '../../logger.js';
 import type { AppIo, AppSocket } from '../../core/realtime.js';
 import { assertCanAttend, isSessionOwner, mintPublishToken } from './live-session.service.js';
 import { bufferChatMessage } from './chat-buffer.js';
-import { findUserById } from './live-session.repository.js';
+import { findById, findUserById } from './live-session.repository.js';
+import { muteParticipantMic } from '../../core/livekit.js';
 
 const room = (sessionId: string) => `session:${sessionId}`;
 const mentorRoom = (sessionId: string) => `session:${sessionId}:mentor`;
@@ -87,6 +88,25 @@ export function registerLiveSessionSocket(io: AppIo): void {
         io.in(userRoom(targetUserId)).emit('live:promoted', grant);
       } catch (err) {
         logger.error({ err, sessionId, targetUserId }, 'hand:approve failed');
+      }
+    });
+
+    // Mentor force-mutes an approved/speaking student's mic (owner-only, same guard as
+    // hand:approve). Mutes at the SFU via LiveKit; the student's client reflects it.
+    socket.on('participant:mute', async (payload: { sessionId?: string; targetUserId?: string }) => {
+      const sessionId = String(payload?.sessionId ?? '');
+      const targetUserId = String(payload?.targetUserId ?? '');
+      if (!sessionId || !targetUserId) return;
+      if (!(await isSessionOwner(userId, sessionId))) {
+        socket.emit('live:error', { code: 'NOT_OWNER', message: 'Only the mentor can mute participants' });
+        return;
+      }
+      try {
+        const session = await findById(sessionId);
+        if (!session) return;
+        await muteParticipantMic(session.livekitRoom, targetUserId);
+      } catch (err) {
+        logger.error({ err, sessionId, targetUserId }, 'participant:mute failed');
       }
     });
   });

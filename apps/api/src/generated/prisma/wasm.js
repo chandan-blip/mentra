@@ -324,6 +324,8 @@ exports.Prisma.StudentProfileScalarFieldEnum = {
   city: 'city',
   timezone: 'timezone',
   educationLevel: 'educationLevel',
+  academicProgram: 'academicProgram',
+  academicSemester: 'academicSemester',
   collegeName: 'collegeName',
   graduationYear: 'graduationYear',
   experienceLevel: 'experienceLevel',

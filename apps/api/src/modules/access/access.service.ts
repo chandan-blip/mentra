@@ -11,6 +11,7 @@ import type {
 import {
   type ModuleRow,
   deleteModule,
+  clearDefaultPlanExcept,
   findModule,
   findRole,
   findUserAccess,
@@ -237,6 +238,7 @@ export async function adminSavePlan(input: {
   description: string | null;
   priceCents: number;
   active: boolean;
+  isDefault: boolean;
   roleId: string | null;
   moduleKeys: string[];
 }): Promise<void> {
@@ -249,8 +251,11 @@ export async function adminSavePlan(input: {
     description: input.description,
     priceCents: input.priceCents,
     active: input.active,
+    isDefault: input.isDefault,
     roleId: input.roleId,
   });
+  // The default plan is a singleton — demote every other plan when this one becomes default.
+  if (input.isDefault) await clearDefaultPlanExcept(input.id);
   await setPlanModules(input.id, input.moduleKeys);
 }
 

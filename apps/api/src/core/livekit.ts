@@ -5,6 +5,8 @@ import {
   EncodedFileType,
   RoomServiceClient,
   S3Upload,
+  TrackSource,
+  TrackType,
   WebhookReceiver,
   type VideoGrant,
 } from 'livekit-server-sdk';
@@ -80,6 +82,24 @@ export async function endRoom(name: string): Promise<void> {
   } catch (err) {
     logger.warn({ err, room: name }, 'endRoom failed (room may already be gone)');
   }
+}
+
+/**
+ * Force-mute a participant's microphone at the SFU — used by the mentor to mute an
+ * approved/speaking student. Resolves the student's mic track server-side so callers only
+ * need the participant identity (= userId). No-op if they have no published mic track.
+ * (The student may re-enable their mic afterwards; the mentor can mute again.)
+ */
+export async function muteParticipantMic(room: string, identity: string): Promise<void> {
+  const participant = await roomService.getParticipant(room, identity);
+  const mic = participant.tracks.find(
+    (t) => t.source === TrackSource.MICROPHONE || t.type === TrackType.AUDIO,
+  );
+  if (!mic) {
+    logger.debug({ room, identity }, 'muteParticipantMic: participant has no mic track');
+    return;
+  }
+  await roomService.mutePublishedTrack(room, identity, mic.sid, true);
 }
 
 /**

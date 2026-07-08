@@ -12,6 +12,22 @@ export const EducationLevelSchema = z.enum([
 ]);
 export type EducationLevel = z.infer<typeof EducationLevelSchema>;
 
+/**
+ * Current academic program (India-focused engineering/CS tracks) captured at onboarding,
+ * alongside the coarse educationLevel. `academicSemester` (1-based) pairs with the programs
+ * that run in semesters; it stays null for working_professional / other.
+ */
+export const AcademicProgramSchema = z.enum([
+  'btech',
+  'diploma',
+  'bca',
+  'mca',
+  'bsc_cs',
+  'working_professional',
+  'other',
+]);
+export type AcademicProgram = z.infer<typeof AcademicProgramSchema>;
+
 export const ExperienceLevelSchema = z.enum([
   'none',
   'intern',
@@ -92,6 +108,8 @@ export const profilePatchSchema = z
     timezone: z.string().trim().min(1).max(64),
 
     educationLevel: EducationLevelSchema.nullable(),
+    academicProgram: AcademicProgramSchema.nullable(),
+    academicSemester: z.number().int().min(1).max(8).nullable(),
     collegeName: z.string().trim().max(200).nullable(),
     graduationYear: z.number().int().min(1970).max(currentYear + 10).nullable(),
 
@@ -125,6 +143,8 @@ export const onboardingStepSchemas = {
   }),
   2: z.object({
     educationLevel: EducationLevelSchema,
+    academicProgram: AcademicProgramSchema.nullable().optional(),
+    academicSemester: z.number().int().min(1).max(8).nullable().optional(),
     collegeName: z.string().trim().max(200).optional(),
     graduationYear: z.number().int().min(1970).max(currentYear + 10).optional(),
     experienceLevel: ExperienceLevelSchema,

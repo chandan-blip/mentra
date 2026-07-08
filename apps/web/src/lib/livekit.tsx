@@ -70,6 +70,8 @@ export function LiveStage({
   placeholderBg,
   overlay,
   onLeft,
+  onMuteStudent,
+  showRoster = true,
   className,
 }: {
   token: string;
@@ -89,6 +91,18 @@ export function LiveStage({
   /** Rendered over the video (LIVE badge, viewer count, publisher controls). */
   overlay?: ReactNode;
   onLeft?: () => void;
+  /**
+   * Mentor-only: force-mute a student's mic by identity (= userId). When provided, the
+   * roster shows a mute button next to each student who is currently speaking. Omit for
+   * the student's own view (no moderation controls).
+   */
+  onMuteStudent?: (identity: string) => void;
+  /**
+   * Show the "In the room" participant roster below the video. On by default (mentor view).
+   * The student view passes `false` so the live player looks like a plain video (edge-to-edge,
+   * no roster strip) — audio still plays via RoomAudioRenderer regardless.
+   */
+  showRoster?: boolean;
   className?: string;
 }) {
   const [err, setErr] = useState<string | null>(null);
@@ -152,7 +166,7 @@ export function LiveStage({
           </div>
         ) : null}
       </div>
-      <ParticipantRoster mentorId={mentorId} />
+      {showRoster ? <ParticipantRoster mentorId={mentorId} onMute={onMuteStudent} /> : null}
       <RoomAudioRenderer />
     </LiveKitRoom>
   );
@@ -282,8 +296,9 @@ function MentorStage({ mentorId, mentorName }: { mentorId: string; mentorName?: 
   );
 }
 
-/** Students currently in the room, shown as avatar + name (no video tiles). */
-function ParticipantRoster({ mentorId }: { mentorId: string }) {
+/** Students currently in the room, shown as avatar + name (no video tiles). When `onMute`
+ *  is provided (mentor view), each currently-speaking student gets a mute button. */
+function ParticipantRoster({ mentorId, onMute }: { mentorId: string; onMute?: (identity: string) => void }) {
   const participants = useParticipants();
   const students = participants.filter((p) => p.identity !== mentorId);
 
@@ -301,6 +316,17 @@ function ParticipantRoster({ mentorId }: { mentorId: string }) {
             <div key={p.identity} className="flex items-center gap-2">
               <Avatar name={p.name || 'Student'} size="sm" online={p.isMicrophoneEnabled} />
               <span className="text-sm text-ink">{p.name || 'Student'}</span>
+              {onMute && p.isMicrophoneEnabled ? (
+                <button
+                  type="button"
+                  onClick={() => onMute(p.identity)}
+                  title={`Mute ${p.name || 'student'}`}
+                  aria-label={`Mute ${p.name || 'student'}`}
+                  className="grid size-6 place-items-center rounded-md text-ink-faint ring-1 ring-border-subtle transition hover:text-accent-red hover:ring-border-strong"
+                >
+                  <MicOff className="size-3.5" />
+                </button>
+              ) : null}
             </div>
           ))}
         </div>

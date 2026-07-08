@@ -113,7 +113,7 @@ function ProfileBody({ profile, isSelf }: { profile: PublicProfileView; isSelf: 
   const experience = profile.experienceLevel ? EXPERIENCE_LABELS[profile.experienceLevel] : undefined;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
       {/* Left: portrait hero */}
       <motion.div variants={fadeUp} className="lg:sticky lg:top-0 lg:h-fit">
         <ProfileHero

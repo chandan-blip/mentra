@@ -305,6 +305,7 @@ function LiveWatch({ session, onBack }: { session: LiveSessionView; onBack: () =
       mentorId={session.mentorId}
       mentorName={session.mentorName}
       placeholderBg={stageBg(hueOf(session.id))}
+      showRoster={false}
       overlay={
         <>
           {badges}

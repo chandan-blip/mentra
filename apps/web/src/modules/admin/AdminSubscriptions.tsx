@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { AdminModule, AdminRole } from '@mentra/shared';
 import { useAdminModules, useAdminPlans, useAdminRoles, useSavePlan } from '../../lib/admin.js';
 import { AdminPageShell } from './AdminPageShell.js';
+import { Switch } from '../../components/Switch.js';
 
 /** Admin-only management modules — never offered as part of a subscription plan. */
 function isAdminModule(m: AdminModule): boolean {
@@ -26,6 +27,7 @@ export function AdminSubscriptionsPage() {
     description: null as string | null,
     priceCents: 0,
     active: true,
+    isDefault: false,
     roleId: null as string | null,
     moduleKeys: [] as string[],
   };
@@ -84,6 +86,7 @@ type PlanForm = {
   description: string | null;
   priceCents: number;
   active: boolean;
+  isDefault: boolean;
   roleId: string | null;
   moduleKeys: string[];
 };
@@ -104,6 +107,7 @@ function PlanEditor({
   const [name, setName] = useState(plan.name);
   const [price, setPrice] = useState(String(Math.round(plan.priceCents / 100)));
   const [active, setActive] = useState(plan.active);
+  const [isDefault, setIsDefault] = useState(plan.isDefault);
   const [roleId, setRoleId] = useState<string | null>(plan.roleId);
   const [picked, setPicked] = useState<string[]>(plan.moduleKeys);
 
@@ -124,9 +128,9 @@ function PlanEditor({
           <span className="mb-1 block text-xs text-ink-muted">Price (₹)</span>
           <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="auth-input-plain h-10" />
         </label>
-        <label className="flex items-end gap-2 pb-2 text-sm text-ink">
-          <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active
-        </label>
+        <div className="flex items-end pb-2">
+          <Switch checked={active} onChange={setActive} label="Active" />
+        </div>
         <label className="col-span-2 block">
           <span className="mb-1 block text-xs text-ink-muted">Available to role</span>
           <select
@@ -145,6 +149,21 @@ function PlanEditor({
             Only accounts with this role will see this subscription. Choose “All roles” to show it to everyone.
           </span>
         </label>
+        <div className="col-span-2 flex items-start gap-3 rounded-md bg-surface-sunken px-3 py-2.5 ring-1 ring-border-subtle">
+          <Switch
+            checked={isDefault}
+            onChange={setIsDefault}
+            className="mt-0.5"
+            aria-label="Default plan for new students"
+          />
+          <span className="text-sm text-ink">
+            Default plan for new students
+            <span className="mt-0.5 block text-xs text-ink-faint">
+              New sign-ups are automatically assigned this plan. Only one plan can be the default —
+              turning this on removes it from every other plan.
+            </span>
+          </span>
+        </div>
       </div>
 
       <div className="mt-4">
@@ -156,10 +175,13 @@ function PlanEditor({
         ) : (
           <div className="grid max-h-56 grid-cols-2 gap-1 overflow-auto">
             {modules.map((m) => (
-              <label key={m.key} className="flex items-center gap-2 rounded px-2 py-1 text-sm">
-                <input type="checkbox" checked={picked.includes(m.key)} onChange={() => toggle(m.key)} />
-                <span className={m.parentKey ? 'pl-3 text-ink-muted' : 'text-ink'}>{m.label}</span>
-              </label>
+              <Switch
+                key={m.key}
+                checked={picked.includes(m.key)}
+                onChange={() => toggle(m.key)}
+                className="rounded px-2 py-1"
+                label={<span className={m.parentKey ? 'pl-3 text-ink-muted' : 'text-ink'}>{m.label}</span>}
+              />
             ))}
           </div>
         )}
@@ -174,6 +196,7 @@ function PlanEditor({
             description: null,
             priceCents: Math.round(Number(price) * 100),
             active,
+            isDefault,
             roleId,
             // Persist only sellable (non-admin) modules — strips any admin module
             // that may have been linked to the plan previously.

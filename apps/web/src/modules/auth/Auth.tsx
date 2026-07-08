@@ -1,5 +1,6 @@
 import { type FormEvent, useMemo, useState } from 'react';
-import { ArrowRight, Github, GraduationCap, Lock, Mail, UserRound } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Check, Github, GraduationCap, Linkedin, Lock, Mail, UserRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getApiBaseUrl, storeAuthSession } from '../../lib/auth.js';
 
@@ -124,29 +125,39 @@ export function AuthPage() {
             </div>
 
             <div className="mb-8">
-              <div className="mb-4 inline-grid grid-cols-2 rounded-md bg-surface-sunken p-1 ring-1 ring-border-subtle">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('signin');
-                    setStatus('idle');
-                    setError('');
-                  }}
-                  className={tabClass(mode === 'signin')}
-                >
-                  Sign in
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('signup');
-                    setStatus('idle');
-                    setError('');
-                  }}
-                  className={tabClass(mode === 'signup')}
-                >
-                  Sign up
-                </button>
+              <div className="mb-4 grid w-full grid-cols-2 rounded-md bg-surface-sunken p-1 ring-1 ring-border-subtle sm:inline-grid sm:w-auto">
+                {(['signin', 'signup'] as const).map((tab) => {
+                  const active = mode === tab;
+                  return (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => {
+                        setMode(tab);
+                        setStatus('idle');
+                        setError('');
+                      }}
+                      className="relative h-9 rounded-sm px-4 text-sm font-medium"
+                    >
+                      {/* Shared indicator: framer animates it across tabs (layoutId), so the
+                          highlight glides left↔right like water instead of snapping. */}
+                      {active ? (
+                        <motion.span
+                          layoutId="auth-tab-indicator"
+                          className="absolute inset-0 rounded-sm bg-surface-inverse"
+                          transition={{ type: 'spring', stiffness: 260, damping: 26, mass: 0.9 }}
+                        />
+                      ) : null}
+                      <span
+                        className={`relative z-10 transition-colors ${
+                          active ? 'text-ink-inverse' : 'text-ink-muted hover:text-ink'
+                        }`}
+                      >
+                        {tab === 'signin' ? 'Sign in' : 'Sign up'}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
               <h1 className="text-display-md tracking-normal text-ink">{title}</h1>
               <p className="mt-3 max-w-sm text-sm leading-6 text-ink-muted">
@@ -156,7 +167,7 @@ export function AuthPage() {
 
             {!isForgot && !isReset ? (
               <>
-                <div className="mb-5 grid grid-cols-2 gap-3">
+                <div className="mb-5 grid grid-cols-3 gap-3">
                   <button type="button" className="auth-social-button">
                     <Github className="size-4" />
                     GitHub
@@ -164,6 +175,10 @@ export function AuthPage() {
                   <button type="button" className="auth-social-button">
                     <GoogleMark />
                     Google
+                  </button>
+                  <button type="button" className="auth-social-button">
+                    <Linkedin className="size-4 text-[#0A66C2]" />
+                    LinkedIn
                   </button>
                 </div>
 
@@ -267,15 +282,30 @@ export function AuthPage() {
               {!isSignup ? (
                 <div className="flex items-center justify-between text-sm">
                   {mode === 'signin' ? (
-                    <label className="flex items-center gap-2 text-ink-muted">
-                    <input
-                      checked={remember}
-                      onChange={(event) => setRemember(event.target.checked)}
-                      type="checkbox"
-                      className="h-4 w-4 rounded-sm border-border bg-surface-sunken text-ink focus:ring-border-strong"
-                    />
-                    Remember me
-                  </label>
+                    <label className="group inline-flex cursor-pointer select-none items-center gap-2.5 text-ink-muted">
+                      <input
+                        checked={remember}
+                        onChange={(event) => setRemember(event.target.checked)}
+                        type="checkbox"
+                        className="peer sr-only"
+                      />
+                      <span
+                        aria-hidden
+                        className={`grid size-5 place-items-center rounded-md ring-1 transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-ink peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface ${
+                          remember
+                            ? 'bg-surface-inverse ring-surface-inverse'
+                            : 'bg-surface-sunken ring-border group-hover:ring-border-strong'
+                        }`}
+                      >
+                        <Check
+                          className={`size-3.5 text-ink-inverse transition-all duration-150 ${
+                            remember ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
+                          }`}
+                          strokeWidth={3}
+                        />
+                      </span>
+                      <span className="transition-colors group-hover:text-ink">Remember me</span>
+                    </label>
                   ) : <span />}
                   <button
                     type="button"
@@ -482,12 +512,6 @@ function getSubtitle(mode: AuthPanel) {
   return 'Continue to your assessment, roadmap, and progress dashboard.';
 }
 
-function tabClass(active: boolean) {
-  return [
-    'h-9 rounded-sm px-4 text-sm font-medium transition',
-    active ? 'bg-surface-inverse text-ink-inverse' : 'text-ink-muted hover:text-ink',
-  ].join(' ');
-}
 
 function Metric({ value, label }: { value: string; label: string }) {
   return (

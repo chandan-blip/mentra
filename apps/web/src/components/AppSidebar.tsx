@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import type { ModuleEntitlement } from '@mentra/shared';
@@ -49,7 +50,7 @@ export function SidebarLink({
         type="button"
         onClick={onClick}
         aria-label={label}
-        className={`flex h-11 w-full items-center gap-3 rounded-md px-3 text-sm font-medium transition [&_svg]:size-5 ${
+        className={`flex h-11 w-full shrink-0 items-center gap-3 rounded-md px-3 text-sm font-medium transition [&_svg]:size-5 ${
           active
             ? 'bg-surface-raised text-ink ring-1 ring-border-subtle'
             : danger
@@ -64,7 +65,7 @@ export function SidebarLink({
   }
 
   return (
-    <div className="group relative flex h-11 w-11 items-center justify-center">
+    <RailTooltip label={label}>
       {active ? (
         <motion.span
           layoutId="sidebar-active-indicator"
@@ -75,16 +76,56 @@ export function SidebarLink({
       <IconButton variant="dark" size="md" active={active} label={label} onClick={onClick} className={dim ? 'opacity-40' : ''}>
         {icon}
       </IconButton>
-      <span
-        role="tooltip"
-        className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 -translate-x-1 whitespace-nowrap rounded-md bg-surface-inverse px-2.5 py-1.5 text-xs font-medium text-ink-inverse opacity-0 shadow-lg ring-1 ring-border-strong/60 transition duration-150 ease-out group-hover:translate-x-0 group-hover:opacity-100 group-focus-within:translate-x-0 group-focus-within:opacity-100"
-      >
-        {label}
-        <span
-          aria-hidden
-          className="absolute right-full top-1/2 h-0 w-0 -translate-y-1/2 border-y-4 border-r-4 border-y-transparent border-r-surface-inverse"
-        />
-      </span>
+    </RailTooltip>
+  );
+}
+
+/**
+ * Hover/focus label for a collapsed-rail icon. The tooltip floats to the right of the 72px
+ * rail, over the page content — so it must escape the nav's vertical scroll container. We render
+ * it into a body-level portal with fixed positioning (measured from the anchor on reveal) rather
+ * than as an absolutely-positioned child. A child tooltip would extend past the rail and, because
+ * the scroll container's `overflow-y: auto` forces `overflow-x` to `auto` too, trigger a stray
+ * horizontal scrollbar. The portal sidesteps that entirely while keeping the label visible.
+ */
+function RailTooltip({ label, children }: { label: string; children: ReactNode }) {
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+
+  const reveal = () => {
+    const el = anchorRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setPos({ top: r.top + r.height / 2, left: r.right + 12 });
+  };
+  const hide = () => setPos(null);
+
+  return (
+    <div
+      ref={anchorRef}
+      onMouseEnter={reveal}
+      onMouseLeave={hide}
+      onFocus={reveal}
+      onBlur={hide}
+      className="relative flex h-11 w-11 shrink-0 items-center justify-center"
+    >
+      {children}
+      {pos
+        ? createPortal(
+            <span
+              role="tooltip"
+              style={{ position: 'fixed', top: pos.top, left: pos.left }}
+              className="pointer-events-none z-[100] -translate-y-1/2 whitespace-nowrap rounded-md bg-surface-inverse px-2.5 py-1.5 text-xs font-medium text-ink-inverse shadow-lg ring-1 ring-border-strong/60"
+            >
+              {label}
+              <span
+                aria-hidden
+                className="absolute right-full top-1/2 h-0 w-0 -translate-y-1/2 border-y-4 border-r-4 border-y-transparent border-r-surface-inverse"
+              />
+            </span>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }

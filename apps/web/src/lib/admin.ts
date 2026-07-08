@@ -83,6 +83,7 @@ export function useSavePlan() {
       description: string | null;
       priceCents: number;
       active: boolean;
+      isDefault: boolean;
       roleId: string | null;
       moduleKeys: string[];
     }) => apiFetch(`${base}/plans`, { method: 'POST', body: JSON.stringify(p) }),

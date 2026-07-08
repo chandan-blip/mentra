@@ -56,6 +56,8 @@ export function mapProfile(row: ProfileRow): StudentProfileView {
     city: row.city,
     timezone: row.timezone,
     educationLevel: row.educationLevel,
+    academicProgram: row.academicProgram,
+    academicSemester: row.academicSemester,
     collegeName: row.collegeName,
     graduationYear: row.graduationYear,
     experienceLevel: row.experienceLevel,
@@ -188,6 +190,10 @@ function mapDirectoryRow(row: DirectoryRow): PublicProfileCardView {
     techStack: toArray(row.techStack).slice(0, 5),
     followers: Number(row.followers ?? 0),
     isFollowedByViewer: row.isFollowedByViewer === 1,
+    githubUrl: row.githubUrl,
+    linkedinUrl: row.linkedinUrl,
+    portfolioUrl: row.portfolioUrl,
+    twitterUrl: row.twitterUrl,
   };
 }
 

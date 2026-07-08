@@ -64,10 +64,10 @@ export function AppShell({
   }, [topBar]);
 
   return (
-    <div className={cn('flex h-full min-h-screen w-full bg-canvas text-ink', className)}>
+    <div className={cn('flex h-full min-h-dvh w-full bg-canvas text-ink', className)}>
       {/* Desktop rail */}
       <div
-        className="sticky top-0 hidden h-screen shrink-0 border-r border-border-subtle transition-[width] duration-200 ease-out md:block"
+        className="sticky top-0 hidden h-dvh shrink-0 border-r border-border-subtle transition-[width] duration-200 ease-out md:block"
         style={{ width: sidebarWidth }}
       >
         {sidebar}
@@ -121,7 +121,12 @@ export function AppShell({
         )}
         <main
           id="app-scroll-root"
-          className={cn('flex-1 overflow-y-auto p-3 md:p-8', bottomNav && 'pb-24 md:pb-8')}
+          className={cn(
+            // `overscroll-y-contain` keeps iOS rubber-band from chaining to the body (which makes
+            // the whole app bounce and feel disconnected during momentum scroll).
+            'flex-1 overflow-y-auto overscroll-y-contain p-3 md:p-8',
+            bottomNav && 'pb-24 md:pb-8',
+          )}
         >
           {children}
         </main>

@@ -44,11 +44,36 @@ const COMPANY_TYPES = [
 
 const TARGET_ROLES = ['frontend', 'backend', 'fullstack', 'mobile', 'devops', 'data', 'ml', 'qa'];
 
+// Current academic program options (value must match AcademicProgramSchema in @mentra/shared).
+const PROGRAM_OPTIONS = [
+  ['btech', 'B.Tech'],
+  ['diploma', 'Diploma'],
+  ['bca', 'BCA'],
+  ['mca', 'MCA'],
+  ['bsc_cs', 'B.Sc (CS)'],
+  ['working_professional', 'Working professional'],
+  ['other', 'Other'],
+] as const;
+
+/** Semesters each program runs (0 = no semester picker, e.g. working professional / other). */
+const PROGRAM_SEMESTERS: Record<string, number> = {
+  btech: 8,
+  diploma: 6,
+  bca: 6,
+  mca: 4,
+  bsc_cs: 6,
+  working_professional: 0,
+  other: 0,
+};
+const semestersFor = (program: string): number => PROGRAM_SEMESTERS[program] ?? 0;
+
 type Draft = {
   timezone: string;
   city: string;
   country: string;
   educationLevel: string;
+  academicProgram: string;
+  academicSemester: number | null;
   collegeName: string;
   graduationYear: string;
   experienceLevel: string;
@@ -66,6 +91,8 @@ const emptyDraft: Draft = {
   city: '',
   country: '',
   educationLevel: '',
+  academicProgram: '',
+  academicSemester: null,
   collegeName: '',
   graduationYear: '',
   experienceLevel: '',
@@ -102,6 +129,8 @@ export function OnboardingPage() {
         city: profile.city ?? '',
         country: profile.country ?? '',
         educationLevel: profile.educationLevel ?? '',
+        academicProgram: profile.academicProgram ?? '',
+        academicSemester: profile.academicSemester ?? null,
         collegeName: profile.collegeName ?? '',
         graduationYear: profile.graduationYear ? String(profile.graduationYear) : '',
         experienceLevel: profile.experienceLevel ?? '',
@@ -141,9 +170,15 @@ export function OnboardingPage() {
       };
     }
     if (s === 2) {
+      const semCount = draft.academicProgram ? semestersFor(draft.academicProgram) : 0;
       return {
         educationLevel: draft.educationLevel,
         experienceLevel: draft.experienceLevel,
+        // Send the program when chosen; pair the semester only for programs that have one
+        // (null clears a stale semester if the user switches to e.g. "working professional").
+        ...(draft.academicProgram
+          ? { academicProgram: draft.academicProgram, academicSemester: semCount > 0 ? draft.academicSemester : null }
+          : {}),
         ...(draft.collegeName.trim() ? { collegeName: draft.collegeName.trim() } : {}),
         ...(draft.graduationYear ? { graduationYear: Number(draft.graduationYear) } : {}),
         ...(draft.currentRole.trim() ? { currentRole: draft.currentRole.trim() } : {}),
@@ -234,6 +269,30 @@ export function OnboardingPage() {
                 <StepShell title="Your background" subtitle="Helps us calibrate the assessment difficulty.">
                   <Field label="Education level">
                     <Choices options={EDUCATION} value={draft.educationLevel} onChange={(v) => set('educationLevel', v)} />
+                  </Field>
+                  <Field label="Current program (optional)">
+                    <Choices
+                      options={PROGRAM_OPTIONS}
+                      value={draft.academicProgram}
+                      // Switching program clears any previously picked semester.
+                      onChange={(v) => setDraft((d) => ({ ...d, academicProgram: v, academicSemester: null }))}
+                    />
+                    {semestersFor(draft.academicProgram) > 0 ? (
+                      <div className="mt-3">
+                        <div className="mb-2 text-xs text-ink-faint">Current semester</div>
+                        <div className="flex flex-wrap gap-2">
+                          {Array.from({ length: semestersFor(draft.academicProgram) }, (_, i) => i + 1).map((sem) => (
+                            <Chip
+                              key={sem}
+                              active={draft.academicSemester === sem}
+                              onClick={() => set('academicSemester', sem)}
+                            >
+                              {`Sem ${sem}`}
+                            </Chip>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
                   </Field>
                   <Field label="Experience level">
                     <Choices options={EXPERIENCE} value={draft.experienceLevel} onChange={(v) => set('experienceLevel', v)} />

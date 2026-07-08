@@ -17,7 +17,7 @@ export function AssignmentPage() {
 
   return (
     <div className="mx-auto w-full max-w-8xl">
-      <div className="max-w-3xl">
+      <div className="max-w-4xl mx-auto">
         <PageHeader
           icon={<Sparkles />}
           title="Your assignment"

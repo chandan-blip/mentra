@@ -203,13 +203,30 @@ export async function upsertPlan(input: {
   description: string | null;
   priceCents: number;
   active: boolean;
+  isDefault: boolean;
   roleId: string | null;
 }): Promise<void> {
   await db.execute<ResultSetHeader>(
-    'INSERT INTO `Plan` (`id`, `name`, `description`, `priceCents`, `active`, `roleId`) ' +
-      'VALUES (:id, :name, :description, :priceCents, :active, :roleId) ' +
-      'ON DUPLICATE KEY UPDATE `name`=:name, `description`=:description, `priceCents`=:priceCents, `active`=:active, `roleId`=:roleId',
+    'INSERT INTO `Plan` (`id`, `name`, `description`, `priceCents`, `active`, `isDefault`, `roleId`) ' +
+      'VALUES (:id, :name, :description, :priceCents, :active, :isDefault, :roleId) ' +
+      'ON DUPLICATE KEY UPDATE `name`=:name, `description`=:description, `priceCents`=:priceCents, ' +
+      '`active`=:active, `isDefault`=:isDefault, `roleId`=:roleId',
     input,
+  );
+}
+
+/** Keep the default flag a singleton — clear it on every plan except the given one. */
+export async function clearDefaultPlanExcept(planId: string): Promise<void> {
+  await db.execute<ResultSetHeader>('UPDATE `Plan` SET `isDefault` = false WHERE `id` <> :planId', {
+    planId,
+  });
+}
+
+/** Assign a plan to a user only if they have none yet (used to seed the default at signup). */
+export async function assignPlanIfUnset(userId: string, planId: string): Promise<void> {
+  await db.execute<ResultSetHeader>(
+    'UPDATE `User` SET `planId` = :planId WHERE `id` = :userId AND `planId` IS NULL',
+    { userId, planId },
   );
 }
 

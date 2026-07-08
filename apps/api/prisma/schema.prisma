@@ -316,6 +316,8 @@ model StudentProfile {
   timezone             String           @default("Asia/Kolkata") @db.VarChar(64)
 
   educationLevel       EducationLevel?
+  academicProgram      String?          @db.VarChar(32)
+  academicSemester     Int?
   collegeName          String?          @db.VarChar(200)
   graduationYear       Int?
 

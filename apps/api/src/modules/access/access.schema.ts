@@ -37,6 +37,9 @@ export const planUpsertSchema = z.object({
   description: z.string().trim().max(500).nullable().default(null),
   priceCents: z.number().int().min(0).default(0),
   active: z.boolean().default(true),
+  // When true, this is THE default plan new users are assigned on signup. Enforced as a
+  // singleton — saving a plan with isDefault=true clears the flag on every other plan.
+  isDefault: z.boolean().default(false),
   // Target role this plan is offered to; null = available to every role.
   roleId: slug.nullable().default(null),
   moduleKeys: z.array(slug).max(200).default([]),

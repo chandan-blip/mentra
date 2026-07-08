@@ -77,7 +77,7 @@ export function SettingsPage() {
         </div>
 
         {/* Content */}
-        <div className="min-w-0 max-w-3xl">
+        <div className="min-w-0">
           {isLoading || !data ? (
             <div className="text-sm text-ink-muted">Loading…</div>
           ) : tab === 'profile' ? (

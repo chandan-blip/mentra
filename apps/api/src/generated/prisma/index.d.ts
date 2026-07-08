@@ -19176,12 +19176,14 @@ export namespace Prisma {
   }
 
   export type StudentProfileAvgAggregateOutputType = {
+    academicSemester: number | null
     graduationYear: number | null
     studyHoursPerDay: number | null
     onboardingStep: number | null
   }
 
   export type StudentProfileSumAggregateOutputType = {
+    academicSemester: number | null
     graduationYear: number | null
     studyHoursPerDay: number | null
     onboardingStep: number | null
@@ -19196,6 +19198,8 @@ export namespace Prisma {
     city: string | null
     timezone: string | null
     educationLevel: $Enums.EducationLevel | null
+    academicProgram: string | null
+    academicSemester: number | null
     collegeName: string | null
     graduationYear: number | null
     experienceLevel: $Enums.ExperienceLevel | null
@@ -19225,6 +19229,8 @@ export namespace Prisma {
     city: string | null
     timezone: string | null
     educationLevel: $Enums.EducationLevel | null
+    academicProgram: string | null
+    academicSemester: number | null
     collegeName: string | null
     graduationYear: number | null
     experienceLevel: $Enums.ExperienceLevel | null
@@ -19254,6 +19260,8 @@ export namespace Prisma {
     city: number
     timezone: number
     educationLevel: number
+    academicProgram: number
+    academicSemester: number
     collegeName: number
     graduationYear: number
     experienceLevel: number
@@ -19280,12 +19288,14 @@ export namespace Prisma {
 
 
   export type StudentProfileAvgAggregateInputType = {
+    academicSemester?: true
     graduationYear?: true
     studyHoursPerDay?: true
     onboardingStep?: true
   }
 
   export type StudentProfileSumAggregateInputType = {
+    academicSemester?: true
     graduationYear?: true
     studyHoursPerDay?: true
     onboardingStep?: true
@@ -19300,6 +19310,8 @@ export namespace Prisma {
     city?: true
     timezone?: true
     educationLevel?: true
+    academicProgram?: true
+    academicSemester?: true
     collegeName?: true
     graduationYear?: true
     experienceLevel?: true
@@ -19329,6 +19341,8 @@ export namespace Prisma {
     city?: true
     timezone?: true
     educationLevel?: true
+    academicProgram?: true
+    academicSemester?: true
     collegeName?: true
     graduationYear?: true
     experienceLevel?: true
@@ -19358,6 +19372,8 @@ export namespace Prisma {
     city?: true
     timezone?: true
     educationLevel?: true
+    academicProgram?: true
+    academicSemester?: true
     collegeName?: true
     graduationYear?: true
     experienceLevel?: true
@@ -19477,6 +19493,8 @@ export namespace Prisma {
     city: string | null
     timezone: string
     educationLevel: $Enums.EducationLevel | null
+    academicProgram: string | null
+    academicSemester: number | null
     collegeName: string | null
     graduationYear: number | null
     experienceLevel: $Enums.ExperienceLevel | null
@@ -19528,6 +19546,8 @@ export namespace Prisma {
     city?: boolean
     timezone?: boolean
     educationLevel?: boolean
+    academicProgram?: boolean
+    academicSemester?: boolean
     collegeName?: boolean
     graduationYear?: boolean
     experienceLevel?: boolean
@@ -19562,6 +19582,8 @@ export namespace Prisma {
     city?: boolean
     timezone?: boolean
     educationLevel?: boolean
+    academicProgram?: boolean
+    academicSemester?: boolean
     collegeName?: boolean
     graduationYear?: boolean
     experienceLevel?: boolean
@@ -19603,6 +19625,8 @@ export namespace Prisma {
       city: string | null
       timezone: string
       educationLevel: $Enums.EducationLevel | null
+      academicProgram: string | null
+      academicSemester: number | null
       collegeName: string | null
       graduationYear: number | null
       experienceLevel: $Enums.ExperienceLevel | null
@@ -20002,6 +20026,8 @@ export namespace Prisma {
     readonly city: FieldRef<"StudentProfile", 'String'>
     readonly timezone: FieldRef<"StudentProfile", 'String'>
     readonly educationLevel: FieldRef<"StudentProfile", 'EducationLevel'>
+    readonly academicProgram: FieldRef<"StudentProfile", 'String'>
+    readonly academicSemester: FieldRef<"StudentProfile", 'Int'>
     readonly collegeName: FieldRef<"StudentProfile", 'String'>
     readonly graduationYear: FieldRef<"StudentProfile", 'Int'>
     readonly experienceLevel: FieldRef<"StudentProfile", 'ExperienceLevel'>
@@ -43764,6 +43790,8 @@ export namespace Prisma {
     city: 'city',
     timezone: 'timezone',
     educationLevel: 'educationLevel',
+    academicProgram: 'academicProgram',
+    academicSemester: 'academicSemester',
     collegeName: 'collegeName',
     graduationYear: 'graduationYear',
     experienceLevel: 'experienceLevel',
@@ -45584,6 +45612,8 @@ export namespace Prisma {
     city?: StringNullableFilter<"StudentProfile"> | string | null
     timezone?: StringFilter<"StudentProfile"> | string
     educationLevel?: EnumEducationLevelNullableFilter<"StudentProfile"> | $Enums.EducationLevel | null
+    academicProgram?: StringNullableFilter<"StudentProfile"> | string | null
+    academicSemester?: IntNullableFilter<"StudentProfile"> | number | null
     collegeName?: StringNullableFilter<"StudentProfile"> | string | null
     graduationYear?: IntNullableFilter<"StudentProfile"> | number | null
     experienceLevel?: EnumExperienceLevelNullableFilter<"StudentProfile"> | $Enums.ExperienceLevel | null
@@ -45617,6 +45647,8 @@ export namespace Prisma {
     city?: SortOrderInput | SortOrder
     timezone?: SortOrder
     educationLevel?: SortOrderInput | SortOrder
+    academicProgram?: SortOrderInput | SortOrder
+    academicSemester?: SortOrderInput | SortOrder
     collegeName?: SortOrderInput | SortOrder
     graduationYear?: SortOrderInput | SortOrder
     experienceLevel?: SortOrderInput | SortOrder
@@ -45653,6 +45685,8 @@ export namespace Prisma {
     city?: StringNullableFilter<"StudentProfile"> | string | null
     timezone?: StringFilter<"StudentProfile"> | string
     educationLevel?: EnumEducationLevelNullableFilter<"StudentProfile"> | $Enums.EducationLevel | null
+    academicProgram?: StringNullableFilter<"StudentProfile"> | string | null
+    academicSemester?: IntNullableFilter<"StudentProfile"> | number | null
     collegeName?: StringNullableFilter<"StudentProfile"> | string | null
     graduationYear?: IntNullableFilter<"StudentProfile"> | number | null
     experienceLevel?: EnumExperienceLevelNullableFilter<"StudentProfile"> | $Enums.ExperienceLevel | null
@@ -45686,6 +45720,8 @@ export namespace Prisma {
     city?: SortOrderInput | SortOrder
     timezone?: SortOrder
     educationLevel?: SortOrderInput | SortOrder
+    academicProgram?: SortOrderInput | SortOrder
+    academicSemester?: SortOrderInput | SortOrder
     collegeName?: SortOrderInput | SortOrder
     graduationYear?: SortOrderInput | SortOrder
     experienceLevel?: SortOrderInput | SortOrder
@@ -45726,6 +45762,8 @@ export namespace Prisma {
     city?: StringNullableWithAggregatesFilter<"StudentProfile"> | string | null
     timezone?: StringWithAggregatesFilter<"StudentProfile"> | string
     educationLevel?: EnumEducationLevelNullableWithAggregatesFilter<"StudentProfile"> | $Enums.EducationLevel | null
+    academicProgram?: StringNullableWithAggregatesFilter<"StudentProfile"> | string | null
+    academicSemester?: IntNullableWithAggregatesFilter<"StudentProfile"> | number | null
     collegeName?: StringNullableWithAggregatesFilter<"StudentProfile"> | string | null
     graduationYear?: IntNullableWithAggregatesFilter<"StudentProfile"> | number | null
     experienceLevel?: EnumExperienceLevelNullableWithAggregatesFilter<"StudentProfile"> | $Enums.ExperienceLevel | null
@@ -49047,6 +49085,8 @@ export namespace Prisma {
     city?: string | null
     timezone?: string
     educationLevel?: $Enums.EducationLevel | null
+    academicProgram?: string | null
+    academicSemester?: number | null
     collegeName?: string | null
     graduationYear?: number | null
     experienceLevel?: $Enums.ExperienceLevel | null
@@ -49080,6 +49120,8 @@ export namespace Prisma {
     city?: string | null
     timezone?: string
     educationLevel?: $Enums.EducationLevel | null
+    academicProgram?: string | null
+    academicSemester?: number | null
     collegeName?: string | null
     graduationYear?: number | null
     experienceLevel?: $Enums.ExperienceLevel | null
@@ -49111,6 +49153,8 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     timezone?: StringFieldUpdateOperationsInput | string
     educationLevel?: NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+    academicProgram?: NullableStringFieldUpdateOperationsInput | string | null
+    academicSemester?: NullableIntFieldUpdateOperationsInput | number | null
     collegeName?: NullableStringFieldUpdateOperationsInput | string | null
     graduationYear?: NullableIntFieldUpdateOperationsInput | number | null
     experienceLevel?: NullableEnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel | null
@@ -49144,6 +49188,8 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     timezone?: StringFieldUpdateOperationsInput | string
     educationLevel?: NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+    academicProgram?: NullableStringFieldUpdateOperationsInput | string | null
+    academicSemester?: NullableIntFieldUpdateOperationsInput | number | null
     collegeName?: NullableStringFieldUpdateOperationsInput | string | null
     graduationYear?: NullableIntFieldUpdateOperationsInput | number | null
     experienceLevel?: NullableEnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel | null
@@ -49176,6 +49222,8 @@ export namespace Prisma {
     city?: string | null
     timezone?: string
     educationLevel?: $Enums.EducationLevel | null
+    academicProgram?: string | null
+    academicSemester?: number | null
     collegeName?: string | null
     graduationYear?: number | null
     experienceLevel?: $Enums.ExperienceLevel | null
@@ -49207,6 +49255,8 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     timezone?: StringFieldUpdateOperationsInput | string
     educationLevel?: NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+    academicProgram?: NullableStringFieldUpdateOperationsInput | string | null
+    academicSemester?: NullableIntFieldUpdateOperationsInput | number | null
     collegeName?: NullableStringFieldUpdateOperationsInput | string | null
     graduationYear?: NullableIntFieldUpdateOperationsInput | number | null
     experienceLevel?: NullableEnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel | null
@@ -49239,6 +49289,8 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     timezone?: StringFieldUpdateOperationsInput | string
     educationLevel?: NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+    academicProgram?: NullableStringFieldUpdateOperationsInput | string | null
+    academicSemester?: NullableIntFieldUpdateOperationsInput | number | null
     collegeName?: NullableStringFieldUpdateOperationsInput | string | null
     graduationYear?: NullableIntFieldUpdateOperationsInput | number | null
     experienceLevel?: NullableEnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel | null
@@ -52614,6 +52666,8 @@ export namespace Prisma {
     city?: SortOrder
     timezone?: SortOrder
     educationLevel?: SortOrder
+    academicProgram?: SortOrder
+    academicSemester?: SortOrder
     collegeName?: SortOrder
     graduationYear?: SortOrder
     experienceLevel?: SortOrder
@@ -52638,6 +52692,7 @@ export namespace Prisma {
   }
 
   export type StudentProfileAvgOrderByAggregateInput = {
+    academicSemester?: SortOrder
     graduationYear?: SortOrder
     studyHoursPerDay?: SortOrder
     onboardingStep?: SortOrder
@@ -52652,6 +52707,8 @@ export namespace Prisma {
     city?: SortOrder
     timezone?: SortOrder
     educationLevel?: SortOrder
+    academicProgram?: SortOrder
+    academicSemester?: SortOrder
     collegeName?: SortOrder
     graduationYear?: SortOrder
     experienceLevel?: SortOrder
@@ -52681,6 +52738,8 @@ export namespace Prisma {
     city?: SortOrder
     timezone?: SortOrder
     educationLevel?: SortOrder
+    academicProgram?: SortOrder
+    academicSemester?: SortOrder
     collegeName?: SortOrder
     graduationYear?: SortOrder
     experienceLevel?: SortOrder
@@ -52702,6 +52761,7 @@ export namespace Prisma {
   }
 
   export type StudentProfileSumOrderByAggregateInput = {
+    academicSemester?: SortOrder
     graduationYear?: SortOrder
     studyHoursPerDay?: SortOrder
     onboardingStep?: SortOrder
@@ -55394,6 +55454,8 @@ export namespace Prisma {
     city?: string | null
     timezone?: string
     educationLevel?: $Enums.EducationLevel | null
+    academicProgram?: string | null
+    academicSemester?: number | null
     collegeName?: string | null
     graduationYear?: number | null
     experienceLevel?: $Enums.ExperienceLevel | null
@@ -55425,6 +55487,8 @@ export namespace Prisma {
     city?: string | null
     timezone?: string
     educationLevel?: $Enums.EducationLevel | null
+    academicProgram?: string | null
+    academicSemester?: number | null
     collegeName?: string | null
     graduationYear?: number | null
     experienceLevel?: $Enums.ExperienceLevel | null
@@ -55558,6 +55622,8 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     timezone?: StringFieldUpdateOperationsInput | string
     educationLevel?: NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+    academicProgram?: NullableStringFieldUpdateOperationsInput | string | null
+    academicSemester?: NullableIntFieldUpdateOperationsInput | number | null
     collegeName?: NullableStringFieldUpdateOperationsInput | string | null
     graduationYear?: NullableIntFieldUpdateOperationsInput | number | null
     experienceLevel?: NullableEnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel | null
@@ -55589,6 +55655,8 @@ export namespace Prisma {
     city?: NullableStringFieldUpdateOperationsInput | string | null
     timezone?: StringFieldUpdateOperationsInput | string
     educationLevel?: NullableEnumEducationLevelFieldUpdateOperationsInput | $Enums.EducationLevel | null
+    academicProgram?: NullableStringFieldUpdateOperationsInput | string | null
+    academicSemester?: NullableIntFieldUpdateOperationsInput | number | null
     collegeName?: NullableStringFieldUpdateOperationsInput | string | null
     graduationYear?: NullableIntFieldUpdateOperationsInput | number | null
     experienceLevel?: NullableEnumExperienceLevelFieldUpdateOperationsInput | $Enums.ExperienceLevel | null

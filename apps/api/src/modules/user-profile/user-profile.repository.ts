@@ -13,6 +13,8 @@ export type ProfileRow = {
   city: string | null;
   timezone: string;
   educationLevel: string | null;
+  academicProgram: string | null;
+  academicSemester: number | null;
   collegeName: string | null;
   graduationYear: number | null;
   experienceLevel: string | null;
@@ -51,6 +53,7 @@ export type PrefsRow = {
 // exist on both tables, so every reference must be qualified.
 const PROFILE_COLUMNS = [
   'id', 'userId', 'avatarUrl', 'bio', 'country', 'city', 'timezone', 'educationLevel',
+  'academicProgram', 'academicSemester',
   'collegeName', 'graduationYear', 'experienceLevel', 'currentRole', 'currentCompany', 'goal',
   'preferredCompanyType', 'targetRoles', 'studyHoursPerDay', 'techStack', 'githubUrl',
   'linkedinUrl', 'portfolioUrl', 'twitterUrl', 'resumeFileKey', 'resumeUploadedAt',
@@ -70,6 +73,8 @@ const WRITABLE_COLUMNS = new Set([
   'city',
   'timezone',
   'educationLevel',
+  'academicProgram',
+  'academicSemester',
   'collegeName',
   'graduationYear',
   'experienceLevel',
@@ -226,6 +231,10 @@ export type DirectoryRow = {
   city: string | null;
   country: string | null;
   techStack: string[] | null;
+  githubUrl: string | null;
+  linkedinUrl: string | null;
+  portfolioUrl: string | null;
+  twitterUrl: string | null;
   followers: number;
   isFollowedByViewer: 0 | 1;
 };
@@ -288,6 +297,7 @@ export async function listDirectory(args: {
   const [rows] = await db.execute<(DirectoryRow & RowDataPacket)[]>(
     'SELECT p.`userId`, u.`name` AS `name`, p.`avatarUrl`, p.`currentRole`, p.`currentCompany`, ' +
       'p.`goal`, p.`city`, p.`country`, p.`techStack`, ' +
+      'p.`githubUrl`, p.`linkedinUrl`, p.`portfolioUrl`, p.`twitterUrl`, ' +
       '(SELECT COUNT(*) FROM `Follow` f WHERE f.`followeeId` = p.`userId`) AS `followers`, ' +
       'EXISTS(SELECT 1 FROM `Follow` f2 WHERE f2.`followeeId` = p.`userId` AND f2.`followerId` = :viewerId) AS `isFollowedByViewer` ' +
       'FROM `StudentProfile` p JOIN `User` u ON u.`id` = p.`userId` ' +

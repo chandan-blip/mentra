@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useAdminModules, useAdminRoles, useRolePermissions, useSaveRole, useSetRolePermission } from '../../lib/admin.js';
 import { AdminPageShell } from './AdminPageShell.js';
+import { Switch } from '../../components/Switch.js';
 
 export function AdminRolesPage() {
   const { data: roles } = useAdminRoles();
@@ -55,10 +56,10 @@ export function AdminRolesPage() {
                       <span className="ml-2 text-xs text-ink-faint">{m.key}</span>
                     </td>
                     <td className="px-4 py-2 text-center">
-                      <input type="checkbox" checked={canRead} onChange={(e) => setPerm.mutate({ moduleKey: m.key, canRead: e.target.checked, canWrite: e.target.checked ? canWrite : false })} />
+                      <Switch aria-label={`${m.label}: can read`} checked={canRead} onChange={(next) => setPerm.mutate({ moduleKey: m.key, canRead: next, canWrite: next ? canWrite : false })} />
                     </td>
                     <td className="px-4 py-2 text-center">
-                      <input type="checkbox" checked={canWrite} onChange={(e) => setPerm.mutate({ moduleKey: m.key, canRead: canRead || e.target.checked, canWrite: e.target.checked })} />
+                      <Switch aria-label={`${m.label}: can write`} checked={canWrite} onChange={(next) => setPerm.mutate({ moduleKey: m.key, canRead: canRead || next, canWrite: next })} />
                     </td>
                   </tr>
                 );
