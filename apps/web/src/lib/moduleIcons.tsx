@@ -12,6 +12,7 @@ import {
   Calendar,
   CalendarDays,
   Camera,
+  Clapperboard,
   ClipboardCheck,
   Clock,
   Cloud,
@@ -127,6 +128,7 @@ export const MODULE_ICONS: Record<string, ReactNode> = {
   Video: <Video />,
   Mic: <Mic />,
   Camera: <Camera />,
+  Clapperboard: <Clapperboard />,
   Headphones: <Headphones />,
   // Scheduling
   Calendar: <Calendar />,

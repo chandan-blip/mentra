@@ -69,6 +69,20 @@ systemctl daemon-reload
 systemctl enable mentra-worker
 systemctl restart mentra-worker
 
+# LiveKit SFU config: recording egress is dispatched to the egress worker over Redis, so
+# the SFU config MUST carry a `redis:` block — without it LiveKit runs single-node and
+# startEgress() times out (~22s) with "failed to start recording egress", so recording
+# never starts while live sessions/media keep working (which masks the bug). The live
+# /etc/mentra/livekit.yaml is hand-tuned per host (node_ip / use_external_ip), so we must
+# NOT overwrite it from the repo copy — only ensure the redis block exists (idempotent).
+LK_CFG=/etc/mentra/livekit.yaml
+if [ -f "$LK_CFG" ] && ! grep -qE '^redis:' "$LK_CFG"; then
+  echo "▸ LiveKit: adding missing redis block to $LK_CFG (required for egress dispatch)"
+  printf '\nredis:\n  address: 127.0.0.1:6379\n' >> "$LK_CFG"
+  systemctl restart livekit \
+    || echo "⚠️  livekit failed to restart after redis fix — check: journalctl -u livekit"
+fi
+
 # LiveKit Egress (session recording → R2) — same self-healing pattern as the worker.
 # Session recording needs the native Egress service running next to the SFU on the SAME
 # Redis; without it startEgress() throws and nothing reaches R2 (mentor uploads still work,

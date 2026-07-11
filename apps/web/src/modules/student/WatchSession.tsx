@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Check, Hand, Heart, MessageSquare, Send, UserPlus, Users, Video } from 'lucide-react';
+import { ArrowLeft, Check, Hand, Heart, MessageSquare, Send, Share2, UserPlus, Users, Video } from 'lucide-react';
 import { Avatar } from '@mentra/ui';
 import type { ChatMessageView, JoinTokenResponse, LiveSessionView } from '@mentra/shared';
 import { VideoPlayer } from '../../components/VideoPlayer.js';
@@ -168,6 +168,7 @@ function WatchScaffold({
         {/* Action bar: like + comment (+ any state-specific action) */}
         <div className="mt-3 flex items-center gap-2 border-b border-border-subtle py-2">
           <LikeButton session={s} />
+          {s.isPublic ? <ShareButton session={s} /> : null}
           <button
             type="button"
             onClick={() => setOpenComments((v) => !v)}
@@ -218,6 +219,40 @@ function LikeButton({ session: s }: { session: LiveSessionView }) {
       }`}
     >
       <Heart className={`size-4 ${liked ? 'fill-current' : ''}`} /> {compact(s.likeCount)}
+    </button>
+  );
+}
+
+/** Share the video — native share sheet where available, else copy the public /watch link. */
+function ShareButton({ session: s }: { session: LiveSessionView }) {
+  const [copied, setCopied] = useState(false);
+  const url = typeof window !== 'undefined' ? `${window.location.origin}/watch/${s.id}` : `/watch/${s.id}`;
+  const share = async () => {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: s.title, url });
+        return;
+      } catch {
+        /* user cancelled — fall through to copy */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard blocked — ignore */
+    }
+  };
+  return (
+    <button
+      type="button"
+      onClick={share}
+      aria-label="Share"
+      className="inline-flex items-center gap-1.5 rounded-full bg-surface-sunken px-3 py-1.5 text-sm font-medium text-ink ring-1 ring-border-subtle transition hover:ring-border-strong"
+    >
+      {copied ? <Check className="size-4 text-accent-green" /> : <Share2 className="size-4" />}
+      <span className="hidden sm:inline">{copied ? 'Copied' : 'Share'}</span>
     </button>
   );
 }
@@ -304,7 +339,6 @@ function LiveWatch({ session, onBack }: { session: LiveSessionView; onBack: () =
       publishVideo={false}
       mentorId={session.mentorId}
       mentorName={session.mentorName}
-      placeholderBg={stageBg(hueOf(session.id))}
       showRoster={false}
       overlay={
         <>
@@ -315,7 +349,7 @@ function LiveWatch({ session, onBack }: { session: LiveSessionView; onBack: () =
       onLeft={() => navigate('/live-sessions')}
     />
   ) : (
-    <div className="relative aspect-video" style={{ background: stageBg(hueOf(session.id)) }}>
+    <div className="relative aspect-video bg-black">
       {badges}
       <div className="grid h-full place-items-center text-sm text-white/70">
         {error ?? 'Connecting to the live stream…'}

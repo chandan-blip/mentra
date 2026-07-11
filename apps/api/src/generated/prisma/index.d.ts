@@ -31606,6 +31606,8 @@ export namespace Prisma {
     source: string | null
     recordingStatus: string | null
     recordingUrl: string | null
+    thumbnailUrl: string | null
+    visible: boolean | null
     egressId: string | null
     durationSeconds: number | null
     createdAt: Date | null
@@ -31627,6 +31629,8 @@ export namespace Prisma {
     source: string | null
     recordingStatus: string | null
     recordingUrl: string | null
+    thumbnailUrl: string | null
+    visible: boolean | null
     egressId: string | null
     durationSeconds: number | null
     createdAt: Date | null
@@ -31648,6 +31652,8 @@ export namespace Prisma {
     source: number
     recordingStatus: number
     recordingUrl: number
+    thumbnailUrl: number
+    visible: number
     egressId: number
     durationSeconds: number
     createdAt: number
@@ -31683,6 +31689,8 @@ export namespace Prisma {
     source?: true
     recordingStatus?: true
     recordingUrl?: true
+    thumbnailUrl?: true
+    visible?: true
     egressId?: true
     durationSeconds?: true
     createdAt?: true
@@ -31704,6 +31712,8 @@ export namespace Prisma {
     source?: true
     recordingStatus?: true
     recordingUrl?: true
+    thumbnailUrl?: true
+    visible?: true
     egressId?: true
     durationSeconds?: true
     createdAt?: true
@@ -31725,6 +31735,8 @@ export namespace Prisma {
     source?: true
     recordingStatus?: true
     recordingUrl?: true
+    thumbnailUrl?: true
+    visible?: true
     egressId?: true
     durationSeconds?: true
     createdAt?: true
@@ -31833,6 +31845,8 @@ export namespace Prisma {
     source: string
     recordingStatus: string | null
     recordingUrl: string | null
+    thumbnailUrl: string | null
+    visible: boolean
     egressId: string | null
     durationSeconds: number | null
     createdAt: Date
@@ -31873,6 +31887,8 @@ export namespace Prisma {
     source?: boolean
     recordingStatus?: boolean
     recordingUrl?: boolean
+    thumbnailUrl?: boolean
+    visible?: boolean
     egressId?: boolean
     durationSeconds?: boolean
     createdAt?: boolean
@@ -31895,6 +31911,8 @@ export namespace Prisma {
     source?: boolean
     recordingStatus?: boolean
     recordingUrl?: boolean
+    thumbnailUrl?: boolean
+    visible?: boolean
     egressId?: boolean
     durationSeconds?: boolean
     createdAt?: boolean
@@ -31920,6 +31938,8 @@ export namespace Prisma {
       source: string
       recordingStatus: string | null
       recordingUrl: string | null
+      thumbnailUrl: string | null
+      visible: boolean
       egressId: string | null
       durationSeconds: number | null
       createdAt: Date
@@ -32307,6 +32327,8 @@ export namespace Prisma {
     readonly source: FieldRef<"LiveSession", 'String'>
     readonly recordingStatus: FieldRef<"LiveSession", 'String'>
     readonly recordingUrl: FieldRef<"LiveSession", 'String'>
+    readonly thumbnailUrl: FieldRef<"LiveSession", 'String'>
+    readonly visible: FieldRef<"LiveSession", 'Boolean'>
     readonly egressId: FieldRef<"LiveSession", 'String'>
     readonly durationSeconds: FieldRef<"LiveSession", 'Int'>
     readonly createdAt: FieldRef<"LiveSession", 'DateTime'>
@@ -43995,6 +44017,8 @@ export namespace Prisma {
     source: 'source',
     recordingStatus: 'recordingStatus',
     recordingUrl: 'recordingUrl',
+    thumbnailUrl: 'thumbnailUrl',
+    visible: 'visible',
     egressId: 'egressId',
     durationSeconds: 'durationSeconds',
     createdAt: 'createdAt',
@@ -46648,6 +46672,8 @@ export namespace Prisma {
     source?: StringFilter<"LiveSession"> | string
     recordingStatus?: StringNullableFilter<"LiveSession"> | string | null
     recordingUrl?: StringNullableFilter<"LiveSession"> | string | null
+    thumbnailUrl?: StringNullableFilter<"LiveSession"> | string | null
+    visible?: BoolFilter<"LiveSession"> | boolean
     egressId?: StringNullableFilter<"LiveSession"> | string | null
     durationSeconds?: IntNullableFilter<"LiveSession"> | number | null
     createdAt?: DateTimeFilter<"LiveSession"> | Date | string
@@ -46669,6 +46695,8 @@ export namespace Prisma {
     source?: SortOrder
     recordingStatus?: SortOrderInput | SortOrder
     recordingUrl?: SortOrderInput | SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    visible?: SortOrder
     egressId?: SortOrderInput | SortOrder
     durationSeconds?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -46693,6 +46721,8 @@ export namespace Prisma {
     source?: StringFilter<"LiveSession"> | string
     recordingStatus?: StringNullableFilter<"LiveSession"> | string | null
     recordingUrl?: StringNullableFilter<"LiveSession"> | string | null
+    thumbnailUrl?: StringNullableFilter<"LiveSession"> | string | null
+    visible?: BoolFilter<"LiveSession"> | boolean
     egressId?: StringNullableFilter<"LiveSession"> | string | null
     durationSeconds?: IntNullableFilter<"LiveSession"> | number | null
     createdAt?: DateTimeFilter<"LiveSession"> | Date | string
@@ -46714,6 +46744,8 @@ export namespace Prisma {
     source?: SortOrder
     recordingStatus?: SortOrderInput | SortOrder
     recordingUrl?: SortOrderInput | SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    visible?: SortOrder
     egressId?: SortOrderInput | SortOrder
     durationSeconds?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -46743,6 +46775,8 @@ export namespace Prisma {
     source?: StringWithAggregatesFilter<"LiveSession"> | string
     recordingStatus?: StringNullableWithAggregatesFilter<"LiveSession"> | string | null
     recordingUrl?: StringNullableWithAggregatesFilter<"LiveSession"> | string | null
+    thumbnailUrl?: StringNullableWithAggregatesFilter<"LiveSession"> | string | null
+    visible?: BoolWithAggregatesFilter<"LiveSession"> | boolean
     egressId?: StringNullableWithAggregatesFilter<"LiveSession"> | string | null
     durationSeconds?: IntNullableWithAggregatesFilter<"LiveSession"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"LiveSession"> | Date | string
@@ -50229,6 +50263,8 @@ export namespace Prisma {
     source?: string
     recordingStatus?: string | null
     recordingUrl?: string | null
+    thumbnailUrl?: string | null
+    visible?: boolean
     egressId?: string | null
     durationSeconds?: number | null
     createdAt?: Date | string
@@ -50250,6 +50286,8 @@ export namespace Prisma {
     source?: string
     recordingStatus?: string | null
     recordingUrl?: string | null
+    thumbnailUrl?: string | null
+    visible?: boolean
     egressId?: string | null
     durationSeconds?: number | null
     createdAt?: Date | string
@@ -50271,6 +50309,8 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     recordingStatus?: NullableStringFieldUpdateOperationsInput | string | null
     recordingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    visible?: BoolFieldUpdateOperationsInput | boolean
     egressId?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50292,6 +50332,8 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     recordingStatus?: NullableStringFieldUpdateOperationsInput | string | null
     recordingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    visible?: BoolFieldUpdateOperationsInput | boolean
     egressId?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50313,6 +50355,8 @@ export namespace Prisma {
     source?: string
     recordingStatus?: string | null
     recordingUrl?: string | null
+    thumbnailUrl?: string | null
+    visible?: boolean
     egressId?: string | null
     durationSeconds?: number | null
     createdAt?: Date | string
@@ -50334,6 +50378,8 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     recordingStatus?: NullableStringFieldUpdateOperationsInput | string | null
     recordingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    visible?: BoolFieldUpdateOperationsInput | boolean
     egressId?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50355,6 +50401,8 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     recordingStatus?: NullableStringFieldUpdateOperationsInput | string | null
     recordingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    visible?: BoolFieldUpdateOperationsInput | boolean
     egressId?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53489,6 +53537,8 @@ export namespace Prisma {
     source?: SortOrder
     recordingStatus?: SortOrder
     recordingUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    visible?: SortOrder
     egressId?: SortOrder
     durationSeconds?: SortOrder
     createdAt?: SortOrder
@@ -53516,6 +53566,8 @@ export namespace Prisma {
     source?: SortOrder
     recordingStatus?: SortOrder
     recordingUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    visible?: SortOrder
     egressId?: SortOrder
     durationSeconds?: SortOrder
     createdAt?: SortOrder
@@ -53537,6 +53589,8 @@ export namespace Prisma {
     source?: SortOrder
     recordingStatus?: SortOrder
     recordingUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    visible?: SortOrder
     egressId?: SortOrder
     durationSeconds?: SortOrder
     createdAt?: SortOrder

@@ -636,6 +636,13 @@ model LiveSession {
   // Recording: status + public HLS URL + LiveKit egress id (null for uploads).
   recordingStatus String?   @db.VarChar(32)
   recordingUrl    String?   @db.Text
+  // AI-designed cover (Groq copy → Puppeteer render → R2). Preferred over the ffmpeg
+  // frame-grab poster on cards; null until the thumbnail worker fills it.
+  thumbnailUrl    String?   @db.Text
+  // Managed in the Videos module: false hides the video from student feeds/watch pages.
+  visible         Boolean   @default(true)
+  // Public videos are watchable by anyone (even logged-out) at /watch/:id.
+  isPublic        Boolean   @default(false)
   egressId        String?
   // Playback duration (seconds), filled by the transcode worker via ffprobe.
   durationSeconds Int?

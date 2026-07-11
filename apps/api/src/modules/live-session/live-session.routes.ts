@@ -11,6 +11,7 @@ import {
   getLive,
   getMine,
   getPast,
+  getPublicById,
   getSessionSummary,
   getUpcoming,
   getWatchProgress,
@@ -27,6 +28,13 @@ import {
 } from './live-session.controller.js';
 
 export const liveSessionRouter: Router = Router();
+
+/**
+ * Public, UN-authenticated router (mounted at /api/v1/public) for shareable videos.
+ * Only exposes videos the owner marked public — the service 404s everything else.
+ */
+export const liveSessionPublicRouter: Router = Router();
+liveSessionPublicRouter.get('/videos/:id', asyncHandler(getPublicById));
 
 liveSessionRouter.use(requireAuth);
 

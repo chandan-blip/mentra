@@ -40,6 +40,7 @@ const APP_MODULE_ROUTES: { prefix: string; key: string }[] = [
   { prefix: '/jobs', key: 'jobs' },
   { prefix: '/mentor-live-sessions', key: 'mentor-live-sessions' },
   { prefix: '/mentor-mentors', key: 'mentor-mentors' },
+  { prefix: '/manage-videos', key: 'manage-videos' },
   { prefix: '/hr-jobs', key: 'hr-jobs' },
   { prefix: '/mentors', key: 'mentors' },
   // /community is intentionally NOT listed — it's shared by every role and gated by

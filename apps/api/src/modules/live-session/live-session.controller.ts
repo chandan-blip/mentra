@@ -11,6 +11,7 @@ import {
   getMessages,
   getOne,
   getProgress,
+  getPublicVideo,
   getSummary,
   likeSession,
   listLive,
@@ -36,6 +37,11 @@ export async function postCreate(req: Request, res: Response): Promise<void> {
 
 export async function getMine(req: Request, res: Response): Promise<void> {
   res.json({ data: await listMine(uid(req)) });
+}
+
+/** Public (no-auth) single video for the shareable /watch/:id page. */
+export async function getPublicById(req: Request, res: Response): Promise<void> {
+  res.json({ data: await getPublicVideo(id(req)) });
 }
 
 export async function postUpload(req: Request, res: Response): Promise<void> {

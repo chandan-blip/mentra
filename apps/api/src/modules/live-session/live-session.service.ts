@@ -22,6 +22,7 @@ import { tryGetIo } from '../../core/realtime.js';
 import { getEffectivePermission, isUserAdmin } from '../access/access.service.js';
 import { LiveSessionError } from './live-session.errors.js';
 import { enqueueTranscode } from './recording.queue.js';
+import { enqueueThumbnail } from './thumbnail.queue.js';
 import * as repo from './live-session.repository.js';
 
 /** Module keys gating the two surfaces (match the frontend AppLayout guard). */
@@ -29,6 +30,18 @@ export const STUDENT_MODULE = 'live-sessions';
 export const MENTOR_MODULE = 'mentor-live-sessions';
 
 const iso = (d: Date | null): string | null => (d ? d.toISOString() : null);
+
+/**
+ * Fire-and-forget AI cover generation. Best-effort: never blocks or fails the request,
+ * and needs R2 to store the rendered PNG. 'create' uses title+topic; 'end' also folds in
+ * the session's chat comments. On failure the card falls back to the frame-grab poster.
+ */
+function requestThumbnail(sessionId: string, phase: 'create' | 'end'): void {
+  if (!r2Enabled()) return;
+  void enqueueThumbnail(sessionId, phase).catch((err) =>
+    logger.warn({ err, sessionId, phase }, 'failed to enqueue thumbnail generation'),
+  );
+}
 
 function toView(
   row: repo.LiveSessionRow,
@@ -55,6 +68,9 @@ function toView(
     isOwner: row.mentorId === requesterId,
     recordingStatus: row.recordingStatus,
     recordingUrl: row.recordingUrl,
+    thumbnailUrl: row.thumbnailUrl,
+    visible: Boolean(row.visible),
+    isPublic: Boolean(row.isPublic),
     durationSeconds: row.durationSeconds,
     source: row.source,
     likeCount,
@@ -63,7 +79,7 @@ function toView(
   };
 }
 
-async function toViews(rows: repo.LiveSessionRow[], requesterId: string): Promise<LiveSessionView[]> {
+export async function toViews(rows: repo.LiveSessionRow[], requesterId: string): Promise<LiveSessionView[]> {
   const ids = rows.map((r) => r.id);
   const [cards, counts, likeCounts, liked] = await Promise.all([
     repo.findUserCards([...new Set(rows.map((r) => r.mentorId))]),
@@ -123,6 +139,7 @@ export async function createSession(
     scheduledFor: input.scheduledFor ? new Date(input.scheduledFor) : null,
     startedAt: null,
   });
+  requestThumbnail(row.id, 'create');
   const me = await repo.findUserById(userId);
   return toView(row, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
 }
@@ -174,6 +191,8 @@ export async function endSession(userId: string, id: string): Promise<LiveSessio
   await repo.closeAllIntervals(id);
   await endRoom(session.livekitRoom);
   emit('live-session.ended', { sessionId: id, mentorId: session.mentorId });
+  // Refresh the cover now that chat comments exist (best-effort).
+  requestThumbnail(id, 'end');
   const updated = await repo.findById(id);
   const me = await repo.findUserById(userId);
   return toView(updated!, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
@@ -193,6 +212,7 @@ export async function createUpload(userId: string, input: CreateUploadInput): Pr
     throw new LiveSessionError('UPLOAD_DISABLED', 'Uploads are not available right now', 400);
   }
   const row = await repo.createUpload({ mentorId: userId, title: input.title, topic: input.topic });
+  requestThumbnail(row.id, 'create');
   const uploadUrl = await presignPut(uploadKey(row.id), input.contentType);
   const me = await repo.findUserById(userId);
   return {
@@ -243,6 +263,10 @@ export async function listPast(requesterId: string): Promise<LiveSessionView[]> 
 export async function getOne(userId: string, id: string): Promise<LiveSessionView> {
   const row = await repo.findById(id);
   if (!row) throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
+  // Hidden videos are visible only to their owner and admins (managers use the Videos module).
+  if (!row.visible && row.mentorId !== userId && !(await isUserAdmin(userId))) {
+    throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
+  }
   const [cards, counts, likeCount, liked] = await Promise.all([
     repo.findUserCards([row.mentorId]),
     repo.countMessagesForSessions([row.id]),
@@ -257,6 +281,32 @@ export async function getOne(userId: string, id: string): Promise<LiveSessionVie
     userId,
     likeCount,
     liked,
+  );
+}
+
+/**
+ * Public (no-auth) fetch for a shared video. Only a PUBLIC, visible, fully-transcoded
+ * recording is exposed; anything else 404s so private/processing videos never leak. Maps
+ * with an empty requester (isOwner/likedByViewer false) — no private fields are returned.
+ */
+export async function getPublicVideo(id: string): Promise<LiveSessionView> {
+  const row = await repo.findById(id);
+  if (!row || !row.isPublic || !row.visible || row.recordingStatus !== 'ready' || !row.recordingUrl) {
+    throw new LiveSessionError('VIDEO_NOT_FOUND', 'Video not found', 404);
+  }
+  const [cards, counts, likeCount] = await Promise.all([
+    repo.findUserCards([row.mentorId]),
+    repo.countMessagesForSessions([row.id]),
+    repo.countLikes(row.id),
+  ]);
+  const card = cards.get(row.mentorId);
+  return toView(
+    row,
+    { name: card?.name ?? 'Mentor', avatarUrl: card?.avatarUrl ?? null },
+    counts.get(row.id) ?? 0,
+    '',
+    likeCount,
+    false,
   );
 }
 

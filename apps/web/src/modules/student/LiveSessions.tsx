@@ -98,7 +98,9 @@ export function VideoCard({ session: s, onOpen }: { session: LiveSessionView; on
   const isUpcoming = s.status === 'scheduled';
   const ready = s.recordingStatus === 'ready' && Boolean(s.recordingUrl);
   const processing = s.recordingStatus === 'recording' || s.recordingStatus === 'processing';
-  const poster = ready ? posterFor(s.recordingUrl) : undefined;
+  // Prefer the AI-designed cover (present for any status); fall back to the recording's
+  // frame-grab poster once it's transcoded.
+  const poster = s.thumbnailUrl ?? (ready ? posterFor(s.recordingUrl) : undefined);
   // Prefer the exact transcoded duration; fall back to wall-clock for older rows.
   const duration = s.durationSeconds ? formatDuration(s.durationSeconds) : durationOf(s.startedAt, s.endedAt);
   const views = isLive ? s.currentViewers : s.peakViewers;

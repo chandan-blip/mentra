@@ -1,0 +1,1 @@
+ALTER TABLE `LiveSession` ADD COLUMN `isPublic` TINYINT(1) NOT NULL DEFAULT 0 AFTER `visible`;

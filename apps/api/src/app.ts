@@ -14,7 +14,8 @@ import { dashboardRouter } from './modules/dashboard/index.js';
 import { roadmapRouter } from './modules/roadmap/index.js';
 import { learningRouter } from './modules/learning/index.js';
 import { assignmentRouter } from './modules/assignment/index.js';
-import { liveSessionRouter, liveSessionWebhookRouter } from './modules/live-session/index.js';
+import { liveSessionRouter, liveSessionPublicRouter, liveSessionWebhookRouter } from './modules/live-session/index.js';
+import { videoAdminRouter } from './modules/video-admin/video-admin.routes.js';
 import { mentorRouter } from './modules/mentor/index.js';
 import { transactionRouter } from './modules/transaction/index.js';
 import { communityRouter } from './modules/community/index.js';
@@ -71,6 +72,8 @@ export function createApp(): Express {
   app.use('/readyz', healthRouter);
   app.use('/api/v1/health', healthRouter);
   app.use('/api/v1/auth', authRouter);
+  // Public (no-auth) shareable videos → /api/v1/public/videos/:id.
+  app.use('/api/v1/public', liveSessionPublicRouter);
   // Public avatar serving (no auth) must be registered before the authed profile
   // router, which gates everything with requireAuth.
   app.use('/api/v1/profile', userProfilePublicRouter);
@@ -82,6 +85,7 @@ export function createApp(): Express {
   app.use('/api/v1/learning', learningRouter);
   app.use('/api/v1/assignment', assignmentRouter);
   app.use('/api/v1/live-session', liveSessionRouter);
+  app.use('/api/v1/videos', videoAdminRouter);
   app.use('/api/v1/mentor', mentorRouter);
   app.use('/api/v1/transaction', transactionRouter);
   app.use('/api/v1/community', communityRouter);

@@ -13,6 +13,45 @@ import {
 } from 'lucide-react';
 
 /**
+ * Best-effort screen lock to landscape (mobile, while fullscreen). Modern Screen
+ * Orientation API + legacy Android fallbacks. No-op / silent reject on desktop and iOS
+ * Safari, which don't support programmatic rotation (physical rotation still works there).
+ */
+function lockLandscape(): void {
+  const scr = screen as unknown as {
+    orientation?: { lock?: (o: string) => Promise<void> };
+    lockOrientation?: (o: string) => boolean;
+    mozLockOrientation?: (o: string) => boolean;
+    msLockOrientation?: (o: string) => boolean;
+  };
+  if (scr.orientation?.lock) {
+    scr.orientation.lock('landscape').catch(() => {});
+    return;
+  }
+  const legacy = scr.lockOrientation ?? scr.mozLockOrientation ?? scr.msLockOrientation;
+  try {
+    legacy?.call(scr, 'landscape');
+  } catch {
+    /* unsupported */
+  }
+}
+
+function unlockOrientation(): void {
+  const scr = screen as unknown as {
+    orientation?: { unlock?: () => void };
+    unlockOrientation?: () => void;
+    mozUnlockOrientation?: () => void;
+    msUnlockOrientation?: () => void;
+  };
+  try {
+    if (scr.orientation?.unlock) scr.orientation.unlock();
+    else (scr.unlockOrientation ?? scr.mozUnlockOrientation ?? scr.msUnlockOrientation)?.call(scr);
+  } catch {
+    /* unsupported */
+  }
+}
+
+/**
  * HLS video-on-demand player for session recordings, with a custom YouTube-style
  * control bar (play/pause, scrubbable seek bar, quality + speed menu, fullscreen).
  *
@@ -177,13 +216,10 @@ export function VideoPlayer({
     const sync = () => {
       const fs = Boolean(document.fullscreenElement || (document as { webkitFullscreenElement?: Element | null }).webkitFullscreenElement);
       setFullscreen(fs);
-      if (!fs) {
-        try {
-          (screen.orientation as unknown as { unlock?: () => void })?.unlock?.();
-        } catch {
-          /* not supported */
-        }
-      }
+      // Rotate to landscape when we actually enter fullscreen (fires however it was
+      // triggered), and release the lock on exit.
+      if (fs) lockLandscape();
+      else unlockOrientation();
     };
     const onIosBegin = () => setFullscreen(true);
     const onIosEnd = () => setFullscreen(false);
@@ -209,8 +245,9 @@ export function VideoPlayer({
   const wake = useCallback(() => {
     setControlsShown(true);
     if (hideTimer.current) clearTimeout(hideTimer.current);
-    hideTimer.current = setTimeout(() => setControlsShown(false), 2600);
-  }, []);
+    // Only auto-hide while playing — a paused video keeps its controls up.
+    if (playing) hideTimer.current = setTimeout(() => setControlsShown(false), 2600);
+  }, [playing]);
   useEffect(() => {
     if (!playing) {
       if (hideTimer.current) clearTimeout(hideTimer.current);
@@ -267,11 +304,7 @@ export function VideoPlayer({
       } catch {
         video?.webkitEnterFullscreen?.();
       }
-      try {
-        await (screen.orientation as unknown as { lock?: (o: string) => Promise<void> })?.lock?.('landscape');
-      } catch {
-        /* orientation lock unsupported (e.g. iOS) — physical rotation still works */
-      }
+      lockLandscape();
     } else {
       try {
         if (document.exitFullscreen) await document.exitFullscreen();
@@ -279,11 +312,7 @@ export function VideoPlayer({
       } catch {
         /* ignore */
       }
-      try {
-        (screen.orientation as unknown as { unlock?: () => void })?.unlock?.();
-      } catch {
-        /* ignore */
-      }
+      unlockOrientation();
     }
   };
 
@@ -294,17 +323,20 @@ export function VideoPlayer({
     <div
       ref={wrapRef}
       className={`group relative w-full max-w-full select-none overflow-hidden bg-black ${
-        fullscreen ? 'flex h-full items-center justify-center' : 'aspect-video rounded-lg'
+        fullscreen ? 'flex h-full items-center justify-center' : 'aspect-video'
       } ${!controlsShown && playing ? 'cursor-none' : ''} ${className ?? ''}`}
       onPointerMove={wake}
       onPointerLeave={() => playing && setControlsShown(false)}
     >
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      {/* Clicking/tapping the video only REVEALS the controls (wake) — it never toggles
+          play/pause. Play/pause is exclusively the icon buttons (center + control bar).
+          This is what brings controls back on touch, where there's no pointer-move. */}
       <video
         ref={videoRef}
         poster={poster}
         playsInline
-        onClick={togglePlay}
+        onClick={wake}
         className={fullscreen ? 'max-h-full max-w-full object-contain' : 'h-full w-full object-contain'}
       />
 
@@ -315,7 +347,9 @@ export function VideoPlayer({
           onClick={togglePlay}
           aria-label={playing ? 'Pause' : 'Play'}
           className={`absolute left-1/2 top-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-white backdrop-blur transition ${
-            playing ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'
+            playing
+              ? 'pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100'
+              : 'opacity-100'
           }`}
         >
           {playing ? <Pause className="size-7" /> : <Play className="size-7 translate-x-0.5" />}

@@ -20,6 +20,12 @@ export type LiveSessionRow = {
   recordingStatus: 'recording' | 'processing' | 'ready' | 'failed' | null;
   /** Public CDN URL of the HLS master playlist, set when status = 'ready'. */
   recordingUrl: string | null;
+  /** Public URL of the AI-designed cover image (thumbnails/<id>.png in R2), or null. */
+  thumbnailUrl: string | null;
+  /** Managed in the Videos module — false hides the video from student feeds/watch pages. */
+  visible: boolean;
+  /** Public videos are watchable by anyone (even logged-out) at /watch/:id. */
+  isPublic: boolean;
   /** LiveKit egress id of the in-flight/completed composite recording. */
   egressId: string | null;
   /** Playback duration in seconds (ffprobe), filled by the transcode worker. */
@@ -28,7 +34,7 @@ export type LiveSessionRow = {
 };
 
 const COLS =
-  '`id`, `mentorId`, `title`, `topic`, `status`, `scheduledFor`, `startedAt`, `endedAt`, `livekitRoom`, `currentViewers`, `peakViewers`, `source`, `recordingStatus`, `recordingUrl`, `egressId`, `durationSeconds`, `createdAt`';
+  '`id`, `mentorId`, `title`, `topic`, `status`, `scheduledFor`, `startedAt`, `endedAt`, `livekitRoom`, `currentViewers`, `peakViewers`, `source`, `recordingStatus`, `recordingUrl`, `thumbnailUrl`, `visible`, `isPublic`, `egressId`, `durationSeconds`, `createdAt`';
 
 // --- Sessions ---
 
@@ -79,24 +85,81 @@ export async function findByRoom(room: string): Promise<LiveSessionRow | null> {
 
 export async function listLive(): Promise<LiveSessionRow[]> {
   const [rows] = await db.execute<(LiveSessionRow & RowDataPacket)[]>(
-    `SELECT ${COLS} FROM \`LiveSession\` WHERE \`status\` = 'live' ORDER BY \`startedAt\` DESC`,
+    `SELECT ${COLS} FROM \`LiveSession\` WHERE \`status\` = 'live' AND \`visible\` = 1 ORDER BY \`startedAt\` DESC`,
   );
   return rows;
 }
 
 export async function listUpcoming(): Promise<LiveSessionRow[]> {
+  // Every scheduled (visible) session is "upcoming" until the mentor starts it (→ live) or
+  // cancels it — we do NOT drop sessions whose scheduled time has merely passed, otherwise
+  // a session scheduled for earlier today disappears before it's ever run. Undated (NULL)
+  // sessions sort last. Ordered soonest-first.
   const [rows] = await db.execute<(LiveSessionRow & RowDataPacket)[]>(
-    `SELECT ${COLS} FROM \`LiveSession\` WHERE \`status\` = 'scheduled' AND (\`scheduledFor\` IS NULL OR \`scheduledFor\` >= NOW(3)) ORDER BY \`scheduledFor\` ASC`,
+    `SELECT ${COLS} FROM \`LiveSession\` WHERE \`status\` = 'scheduled' AND \`visible\` = 1 ORDER BY \`scheduledFor\` IS NULL, \`scheduledFor\` ASC`,
   );
   return rows;
 }
 
 export async function listPast(limit = 50): Promise<LiveSessionRow[]> {
   const [rows] = await db.query<(LiveSessionRow & RowDataPacket)[]>(
-    `SELECT ${COLS} FROM \`LiveSession\` WHERE \`status\` = 'ended' ORDER BY \`endedAt\` DESC LIMIT ?`,
+    `SELECT ${COLS} FROM \`LiveSession\` WHERE \`status\` = 'ended' AND \`visible\` = 1 ORDER BY \`endedAt\` DESC LIMIT ?`,
     [limit],
   );
   return rows;
+}
+
+// --- Videos management (role-gated 'manage-videos' module) ---
+
+/**
+ * ALL sessions for the management surface — scheduled, live, ended, and uploads alike (not
+ * just ones with a recording). Ignores `visible` (managers see hidden ones too). Optional
+ * case-insensitive title/topic search.
+ */
+export async function listManagedVideos(search?: string, limit = 200): Promise<LiveSessionRow[]> {
+  if (search && search.trim()) {
+    const like = `%${search.trim()}%`;
+    const [rows] = await db.query<(LiveSessionRow & RowDataPacket)[]>(
+      `SELECT ${COLS} FROM \`LiveSession\` WHERE (\`title\` LIKE ? OR \`topic\` LIKE ?) ORDER BY \`createdAt\` DESC LIMIT ?`,
+      [like, like, limit],
+    );
+    return rows;
+  }
+  const [rows] = await db.query<(LiveSessionRow & RowDataPacket)[]>(
+    `SELECT ${COLS} FROM \`LiveSession\` ORDER BY \`createdAt\` DESC LIMIT ?`,
+    [limit],
+  );
+  return rows;
+}
+
+/** Toggle a video's visibility to students. */
+export async function setVisible(id: string, visible: boolean): Promise<void> {
+  await db.execute<ResultSetHeader>(
+    'UPDATE `LiveSession` SET `visible` = :visible WHERE `id` = :id',
+    { id, visible: visible ? 1 : 0 },
+  );
+}
+
+/** Toggle whether a video is publicly watchable (logged-out) at /watch/:id. */
+export async function setPublic(id: string, isPublic: boolean): Promise<void> {
+  await db.execute<ResultSetHeader>(
+    'UPDATE `LiveSession` SET `isPublic` = :isPublic WHERE `id` = :id',
+    { id, isPublic: isPublic ? 1 : 0 },
+  );
+}
+
+/** Edit a video's title/topic (management edit — no status guard). */
+export async function setVideoMeta(id: string, fields: { title?: string; topic?: string }): Promise<void> {
+  await updateScheduled(id, { title: fields.title, topic: fields.topic });
+}
+
+/** Hard-delete a video and its dependent rows (no FKs, so clean them explicitly). */
+export async function deleteVideoCascade(id: string): Promise<void> {
+  await db.execute<ResultSetHeader>('DELETE FROM `ChatMessage` WHERE `sessionId` = :id', { id });
+  await db.execute<ResultSetHeader>('DELETE FROM `WatchProgress` WHERE `sessionId` = :id', { id });
+  await db.execute<ResultSetHeader>('DELETE FROM `SessionLike` WHERE `sessionId` = :id', { id });
+  await db.execute<ResultSetHeader>('DELETE FROM `SessionParticipant` WHERE `sessionId` = :id', { id });
+  await db.execute<ResultSetHeader>('DELETE FROM `LiveSession` WHERE `id` = :id', { id });
 }
 
 export async function listByMentor(mentorId: string): Promise<LiveSessionRow[]> {
@@ -205,6 +268,25 @@ export async function setRecordingStatus(
     'UPDATE `LiveSession` SET `recordingStatus` = :status, `recordingUrl` = :url WHERE `id` = :id',
     { id, status, url },
   );
+}
+
+/** Store the AI-designed cover URL (thumbnail worker calls this after render + upload). */
+export async function setThumbnail(id: string, url: string): Promise<void> {
+  await db.execute<ResultSetHeader>(
+    'UPDATE `LiveSession` SET `thumbnailUrl` = :url WHERE `id` = :id',
+    { id, url },
+  );
+}
+
+/** Most-recent chat comment bodies (chronological), used as extra context for the
+ * end-of-session thumbnail. Empty for sessions with no chat (e.g. uploads). */
+export async function topComments(sessionId: string, limit = 40): Promise<string[]> {
+  const [rows] = await db.query<({ body: string } & RowDataPacket)[]>(
+    'SELECT `body` FROM (SELECT `body`, `createdAt` FROM `ChatMessage` ' +
+      'WHERE `sessionId` = ? ORDER BY `createdAt` DESC LIMIT ?) AS recent ORDER BY `createdAt` ASC',
+    [sessionId, limit],
+  );
+  return rows.map((r) => r.body);
 }
 
 // --- Watch progress (resume) ---

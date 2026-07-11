@@ -71,6 +71,22 @@ EGRESS_TAG="${EGRESS_TAG:-$(curl -fsSL https://api.github.com/repos/livekit/egre
 echo "    building egress ${EGRESS_TAG:-main}"
 rm -rf "$SRC"
 git clone --depth 1 ${EGRESS_TAG:+--branch "$EGRESS_TAG"} https://github.com/livekit/egress "$SRC"
+
+# Ubuntu's gstreamer1.0-plugins-bad ships NO `faac` AAC encoder, and there is no apt
+# package that provides the `faac` GStreamer element (the faac/libfaac0 packages are only
+# the CLI + lib). LiveKit egress hardcodes `faac` for the MP4 audio track, so every
+# recording dies instantly at pipeline build with "could not create element: faac" (and
+# crashes the egress process). Swap it for `voaacenc` (from gstreamer1.0-plugins-bad,
+# installed in step 1) — it accepts S16LE raw audio exactly like faac and takes the same
+# `bitrate` (bits/sec) property, so it links to egress's fixed S16LE capsfilter as a true
+# drop-in. NOTE: do NOT use ffmpeg's `avenc_aac` here — it wants FLTP (float-planar) input
+# and fails with "failed to link capsfilter0 to avenc_aac0" against that capsfilter.
+AUDIO_GO="$SRC/pkg/pipeline/builder/audio.go"
+if [ -f "$AUDIO_GO" ] && grep -q 'gst.NewElement("faac")' "$AUDIO_GO"; then
+  echo "    patching egress audio encoder: faac → voaacenc (Ubuntu lacks the faac gst element)"
+  sed -i 's/gst\.NewElement("faac")/gst.NewElement("voaacenc")/' "$AUDIO_GO"
+fi
+
 cd "$SRC/template-default"
 # Build the room-composite template with npm, NOT pnpm. pnpm 11's supply-chain gate keeps
 # blocking esbuild's build script and exiting non-zero (breaking every pnpm command incl.

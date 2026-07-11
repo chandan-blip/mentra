@@ -24,6 +24,8 @@ import { StudentProfilePage } from './modules/student/StudentProfile.js';
 import { ManifestoPage } from './modules/student/Manifesto.js';
 import { JobsPage } from './modules/student/Jobs.js';
 import { MentorLiveSessionsPage } from './modules/mentor/MentorLiveSessions.js';
+import { ManageVideosPage } from './modules/manager/ManageVideos.js';
+import { PublicWatchPage } from './modules/public/PublicWatch.js';
 import { MentorMentorshipPage } from './modules/mentor/MentorMentorship.js';
 import { HrJobsPage } from './modules/hr/HrJobs.js';
 import { TransactionsPage } from './modules/accountant/Transactions.js';
@@ -49,6 +51,8 @@ export function App() {
       {/* Full-screen (no app shell) */}
       <Route path="/" element={<PublicOnlyRoute element={<AuthPage />} />} />
       <Route path="/auth" element={<PublicOnlyRoute element={<AuthPage />} />} />
+      {/* Public shareable video — no auth, no shell; anyone with the link can watch. */}
+      <Route path="/watch/:id" element={<PublicWatchPage />} />
       <Route path="/onboarding" element={<ProtectedRoute element={<OnboardingPage />} />} />
       <Route path="/manifesto" element={<ProtectedRoute element={<ManifestoPage />} />} />
 
@@ -77,6 +81,7 @@ export function App() {
         <Route path="/subscriptions" element={<SubscriptionsPage />} />
         <Route path="/mentor-live-sessions" element={<MentorLiveSessionsPage />} />
         <Route path="/mentor-mentors" element={<MentorMentorshipPage />} />
+        <Route path="/manage-videos" element={<ManageVideosPage />} />
         <Route path="/hr-jobs" element={<HrJobsPage />} />
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/connect-profile" element={<ConnectProfilePage />} />

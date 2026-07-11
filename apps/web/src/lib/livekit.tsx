@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   GridLayout,
   LiveKitRoom,
@@ -8,6 +8,8 @@ import {
   useLocalParticipant,
   useParticipants,
   useTracks,
+  VideoTrack,
+  type TrackReference,
 } from '@livekit/components-react';
 import { Track, VideoPresets, type RoomOptions } from 'livekit-client';
 import { Maximize2, Mic, MicOff, Minimize2, Video as VideoIcon, VideoOff } from 'lucide-react';
@@ -108,6 +110,72 @@ export function LiveStage({
   const [err, setErr] = useState<string | null>(null);
   const [deviceErr, setDeviceErr] = useState<string | null>(null);
   const [maximized, setMaximized] = useState(false);
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  // Keep `maximized` in sync with the real Fullscreen API and drop the orientation lock
+  // when leaving fullscreen (Esc / Android back / iOS gesture).
+  useEffect(() => {
+    const sync = () => {
+      const fs = Boolean(
+        document.fullscreenElement ||
+          (document as { webkitFullscreenElement?: Element | null }).webkitFullscreenElement,
+      );
+      setMaximized(fs);
+      if (!fs) {
+        try {
+          (screen.orientation as unknown as { unlock?: () => void })?.unlock?.();
+        } catch {
+          /* unsupported */
+        }
+      }
+    };
+    document.addEventListener('fullscreenchange', sync);
+    document.addEventListener('webkitfullscreenchange', sync);
+    return () => {
+      document.removeEventListener('fullscreenchange', sync);
+      document.removeEventListener('webkitfullscreenchange', sync);
+    };
+  }, []);
+
+  // Expand: request real fullscreen (which lets us lock the screen to landscape/16:9 on
+  // mobile), with a CSS-only fallback where element fullscreen is unsupported (iOS Safari
+  // — physical rotation still applies). Collapse: exit fullscreen + unlock orientation.
+  const toggleMaximize = async () => {
+    const el = stageRef.current as (HTMLElement & { webkitRequestFullscreen?: () => void }) | null;
+    const doc = document as Document & {
+      webkitFullscreenElement?: Element | null;
+      webkitExitFullscreen?: () => void;
+    };
+    const inFs = Boolean(document.fullscreenElement || doc.webkitFullscreenElement);
+
+    if (!maximized && !inFs) {
+      try {
+        if (el?.requestFullscreen) await el.requestFullscreen();
+        else if (el?.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        else setMaximized(true); // no element fullscreen (iOS) → CSS fallback
+      } catch {
+        setMaximized(true);
+      }
+      try {
+        await (screen.orientation as unknown as { lock?: (o: string) => Promise<void> })?.lock?.('landscape');
+      } catch {
+        /* orientation lock unsupported — physical rotation still works */
+      }
+    } else {
+      try {
+        if (document.exitFullscreen) await document.exitFullscreen();
+        else doc.webkitExitFullscreen?.();
+      } catch {
+        /* ignore */
+      }
+      try {
+        (screen.orientation as unknown as { unlock?: () => void })?.unlock?.();
+      } catch {
+        /* ignore */
+      }
+      setMaximized(false);
+    }
+  };
   return (
     <LiveKitRoom
       serverUrl={wsUrl}
@@ -136,6 +204,7 @@ export function LiveStage({
       className={`!h-auto ${className ?? ''}`}
     >
       <div
+        ref={stageRef}
         className={
           maximized
             ? 'fixed inset-0 z-[70] bg-black'
@@ -151,7 +220,7 @@ export function LiveStage({
           label="🔊 Tap to enable sound"
           className="absolute inset-x-0 bottom-14 z-20 mx-auto w-fit rounded-full bg-black/70 px-4 py-2 text-xs font-semibold text-white ring-1 ring-white/20 backdrop-blur transition hover:bg-black/80"
         />
-        <MaximizeButton maximized={maximized} onToggle={() => setMaximized((m) => !m)} />
+        <MaximizeButton maximized={maximized} onToggle={toggleMaximize} />
         {err ? (
           <div className="absolute inset-0 z-20 grid place-items-center bg-black/70 p-4 text-center text-sm text-white">
             <div>
@@ -289,10 +358,18 @@ function MentorStage({ mentorId, mentorName }: { mentorId: string; mentorName?: 
       </div>
     );
   }
+  // Render the mentor's raw video track (prefer a screen share over the camera) as a
+  // clean, full-bleed <video> — like the recording player — instead of a LiveKit
+  // ParticipantTile, which adds a name tag, rounded tile card, and background chrome.
+  const track = tracks.find((t) => t.source === Track.Source.ScreenShare) ?? tracks[0]!;
   return (
-    <GridLayout tracks={tracks} style={{ height: '100%' }}>
-      <ParticipantTile />
-    </GridLayout>
+    <VideoTrack
+      trackRef={track as TrackReference}
+      className="h-full w-full bg-black object-contain"
+      // Inline fit beats LiveKit's stylesheet (load-order independent) so the video fills
+      // the frame like the recording player instead of the tile's default cover/letterbox.
+      style={{ objectFit: 'contain' }}
+    />
   );
 }
 

@@ -34,6 +34,9 @@ export const SEED_FEATURE_MODULES: FeatureModule[] = [
   { key: 'mentor-live-sessions', label: 'My Live Sessions', icon: 'Video', route: '/mentor-live-sessions', sortOrder: 20 },
   { key: 'mentor-mentors', label: 'Mentorship', icon: 'Users', route: '/mentor-mentors', sortOrder: 21 },
 
+  // Content management — role-gated video library (edit/delete/visibility/thumbnail).
+  { key: 'manage-videos', label: 'Manage Videos', icon: 'Clapperboard', route: '/manage-videos', sortOrder: 22 },
+
   // HR
   { key: 'hr-jobs', label: 'Job Postings', icon: 'Building2', route: '/hr-jobs', sortOrder: 25 },
 

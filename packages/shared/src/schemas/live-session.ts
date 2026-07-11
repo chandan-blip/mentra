@@ -69,6 +69,13 @@ export type LiveSessionView = {
   recordingStatus: 'recording' | 'processing' | 'ready' | 'failed' | null;
   /** HLS master playlist URL (CDN-served) — present only when recordingStatus is 'ready'. */
   recordingUrl: string | null;
+  /** AI-designed cover image URL (Groq + Puppeteer), or null until generated. Preferred
+   * over the recording frame-grab poster on cards. */
+  thumbnailUrl: string | null;
+  /** Managed in the Videos module — false hides the video from student feeds/watch pages. */
+  visible: boolean;
+  /** Public videos are watchable by anyone (even logged-out) at /watch/:id. */
+  isPublic: boolean;
   /** Playback duration in seconds (recordings/uploads), or null until transcoded. */
   durationSeconds: number | null;
   /** 'live' (recorded broadcast) or 'upload' (mentor-uploaded video). */
