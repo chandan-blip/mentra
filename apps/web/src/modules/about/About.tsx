@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { StickyRevealBar } from '../../components/StickyRevealBar.js';
 import {
   BadgeCheck,
   FileText,
@@ -34,40 +35,19 @@ const NAV: { id: SectionId; label: string; icon: ReactNode }[] = [
 
 export function AboutPage() {
   const [section, setSection] = useState<SectionId>('about');
-  const navRefs = useRef<Partial<Record<SectionId, HTMLButtonElement | null>>>({});
-
-  // Keep the active section centered in the horizontal nav on mobile.
-  useEffect(() => {
-    navRefs.current[section]?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
-  }, [section]);
 
   return (
-    <div className="mx-auto w-full max-w-9xl">
+    <div className="mx-auto pt-3 w-full max-w-9xl">
       <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-        {/* Left: title + description + nav — sticky together */}
+        {/* Left: title + description + nav — sticky together on desktop; on mobile the nav
+            reveals a floating copy from the top on scroll (hidden on lg, where it's sticky). */}
         <div className="min-w-0 lg:sticky lg:top-0 lg:h-fit">
           <h1 className="text-display-md tracking-normal">About Mentra</h1>
           <p className="mt-1 text-sm text-ink-muted">Who we are, and the policies that keep things fair.</p>
 
-          <nav className="mt-5 flex snap-x snap-mandatory flex-row gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] lg:flex-col lg:snap-none [&::-webkit-scrollbar]:hidden">
-            {NAV.map((n) => (
-              <button
-                key={n.id}
-                ref={(el) => {
-                  navRefs.current[n.id] = el;
-                }}
-                type="button"
-                onClick={() => setSection(n.id)}
-                className={[
-                  'flex shrink-0 snap-center items-center gap-2 whitespace-nowrap rounded-md px-3 py-2.5 text-left text-sm font-medium transition',
-                  n.id === section ? 'bg-surface-inverse text-ink-inverse' : 'text-ink-muted hover:bg-surface-sunken hover:text-ink',
-                ].join(' ')}
-              >
-                {n.icon}
-                {n.label}
-              </button>
-            ))}
-          </nav>
+          <StickyRevealBar className="mt-5" barClassName="lg:hidden">
+            <AboutNav section={section} onChange={setSection} />
+          </StickyRevealBar>
         </div>
 
         {/* Full-width content */}
@@ -86,6 +66,46 @@ export function AboutPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+/** Section nav — horizontal + scrollable on mobile, vertical list on desktop. Owns its own
+ *  refs so it can be safely rendered twice (in-flow + the floating StickyRevealBar copy). */
+function AboutNav({ section, onChange }: { section: SectionId; onChange: (s: SectionId) => void }) {
+  const refs = useRef<Partial<Record<SectionId, HTMLButtonElement | null>>>({});
+
+  // Center the active item HORIZONTALLY only (mobile) — never scrollIntoView, which would
+  // jump the page vertically when the off-screen floating copy mounts.
+  useEffect(() => {
+    const btn = refs.current[section];
+    const container = btn?.parentElement;
+    if (!btn || !container) return;
+    const cr = container.getBoundingClientRect();
+    const br = btn.getBoundingClientRect();
+    const target = container.scrollLeft + (br.left - cr.left) - (container.clientWidth - btn.clientWidth) / 2;
+    container.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+  }, [section]);
+
+  return (
+    <nav className="flex snap-x snap-mandatory flex-row gap-1 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] lg:flex-col lg:snap-none [&::-webkit-scrollbar]:hidden">
+      {NAV.map((n) => (
+        <button
+          key={n.id}
+          ref={(el) => {
+            refs.current[n.id] = el;
+          }}
+          type="button"
+          onClick={() => onChange(n.id)}
+          className={[
+            'flex shrink-0 snap-center items-center gap-2 whitespace-nowrap rounded-md px-3 py-2.5 text-left text-sm font-medium transition',
+            n.id === section ? 'bg-surface-inverse text-ink-inverse' : 'text-ink-muted hover:bg-surface-sunken hover:text-ink',
+          ].join(' ')}
+        >
+          {n.icon}
+          {n.label}
+        </button>
+      ))}
+    </nav>
   );
 }
 

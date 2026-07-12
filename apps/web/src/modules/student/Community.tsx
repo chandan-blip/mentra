@@ -55,7 +55,7 @@ export function CommunityPage() {
       initial="hidden"
       animate="visible"
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
-      className="mx-auto flex h-[calc(100%+6rem)] w-full max-w-2xl flex-col -mb-24 md:h-full md:mb-0"
+      className="mx-auto pt-3 flex h-[calc(100%+6rem)] w-full max-w-2xl flex-col -mb-24 md:h-full md:mb-0"
     >
       {/* Fixed header */}
       <motion.div variants={fadeUp} className="shrink-0">

@@ -124,7 +124,7 @@ export function AppShell({
           className={cn(
             // `overscroll-y-contain` keeps iOS rubber-band from chaining to the body (which makes
             // the whole app bounce and feel disconnected during momentum scroll).
-            'flex-1 overflow-y-auto overscroll-y-contain p-3 md:p-8',
+            'flex-1 overflow-y-auto overscroll-y-contain px-3 md:p-8',
             bottomNav && 'pb-24 md:pb-8',
           )}
         >

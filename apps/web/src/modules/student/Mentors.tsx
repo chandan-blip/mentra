@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeft,
   CalendarClock,
@@ -81,12 +81,42 @@ export function MentorsPage() {
   const [call, setCall] = useState<ActiveCall | null>(null);
   const [feedback, setFeedback] = useState<MentorBookingView | null>(null);
 
+  // Reveal a floating copy of the tabs at the top once the in-flow tabs scroll out of view.
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [stuck, setStuck] = useState(false);
+  useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    const root = document.getElementById('app-scroll-root');
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry) setStuck(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+      },
+      { root, threshold: 0 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // Switching tabs scrolls back to the tab strip (smooth) so the new tab starts at its top
+  // with the tabs visible — instead of the scroll clamping up and the floating copy vanishing.
+  const changeTab = (t: Tab) => {
+    setTab(t);
+    const root = document.getElementById('app-scroll-root');
+    const el = tabsRef.current;
+    if (root && el) {
+      const target = root.scrollTop + (el.getBoundingClientRect().top - root.getBoundingClientRect().top) - 8;
+      root.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    }
+  };
+
   return (
     <motion.div
       initial="hidden"
       animate="visible"
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
-      className="mx-auto w-full max-w-8xl"
+      className="mx-auto w-full max-w-8xl pt-3 sm:space-y-6"
     >
       <motion.div variants={fadeUp}>
         <PageHeader
@@ -96,9 +126,35 @@ export function MentorsPage() {
         />
       </motion.div>
 
-      <motion.div variants={fadeUp}>
-        <TabBar tab={tab} onChange={setTab} />
-      </motion.div>
+      {/* In-flow tabs — scroll away with the header/content. Mobile-only bottom gap since the
+          page's sm:space-y-6 doesn't apply below the sm breakpoint (tabs would glue to content). */}
+      <div ref={tabsRef} className="mb-2 sm:mb-0">
+        <TabBar tab={tab} onChange={changeTab} />
+      </div>
+
+      {/* Floating duplicate — a full-width bar fixed to the viewport top that slides down
+          once the in-flow tabs scroll past. Portaled to <body> so no transformed/will-change
+          ancestor (framer-motion adds these) traps the fixed positioning or its stacking
+          context. framer-motion animates its own y for a smooth slide. */}
+      {createPortal(
+        <AnimatePresence>
+          {stuck ? (
+            <motion.div
+              key="floating-tabs"
+              initial={{ y: '-100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '-100%' }}
+              transition={{ type: 'spring', stiffness: 420, damping: 38, mass: 0.6 }}
+              className="fixed left-0 top-0 z-40 w-full bg-canvas px-4 pb-3 pt-2 shadow-sm"
+            >
+              <div className="mx-auto w-full max-w-8xl">
+                <TabBar tab={tab} onChange={changeTab} />
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>,
+        document.body,
+      )}
 
       {tab === 'find' ? (
         <FindTab onBook={(m) => setCheckout({ mentor: m })} onAsk={setDoubtMentor} />
@@ -153,11 +209,19 @@ function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
   const refs = useRef<Partial<Record<Tab, HTMLButtonElement | null>>>({});
 
   useEffect(() => {
-    refs.current[tab]?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+    const btn = refs.current[tab];
+    const container = btn?.parentElement;
+    if (!btn || !container) return;
+    // Center the active tab HORIZONTALLY only — never scrollIntoView (which would jump the
+    // page vertically to reveal the off-screen floating duplicate).
+    const cr = container.getBoundingClientRect();
+    const br = btn.getBoundingClientRect();
+    const target = container.scrollLeft + (br.left - cr.left) - (container.clientWidth - btn.clientWidth) / 2;
+    container.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
   }, [tab]);
 
   return (
-    <div className="flex mb-3 snap-x snap-mandatory gap-1 overflow-x-auto rounded-lg bg-surface-sunken p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="flex snap-x snap-mandatory gap-1 overflow-x-auto rounded-lg bg-surface-sunken p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {TABS.map((t) => {
         const active = tab === t.id;
         return (

@@ -136,9 +136,9 @@ function WatchScaffold({
   const latestComment = (live ? liveLatest : history.data?.[history.data.length - 1]?.body) ?? null;
 
   return (
-    <div className="mx-auto w-full max-w-2xl pb-24">
+    <div className="mx-auto w-full pt-3 max-w-2xl pb-24">
       {/* Sticky header: back + uploader + follow */}
-      <header className="sticky -top-3 z-20 -mx-3 -mt-3 flex items-center gap-2 bg-canvas/85 px-2 py-3 backdrop-blur sm:top-0 sm:mx-0 sm:mt-0 sm:bg-transparent sm:px-0 sm:backdrop-blur-none">
+      <header className="sticky top-0 z-20 -mx-3 -mt-3 flex items-center gap-2 bg-canvas/85 px-2 py-3 backdrop-blur sm:top-0 sm:mx-0 sm:mt-0 sm:bg-transparent sm:px-0 sm:backdrop-blur-none">
         <BackButton onBack={onBack} />
         <Avatar size="sm" src={resolveAvatarUrl(s.mentorAvatarUrl)} name={s.mentorName} />
         <div className="min-w-0 flex-1">

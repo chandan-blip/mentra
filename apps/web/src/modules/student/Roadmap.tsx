@@ -6,6 +6,7 @@ import { Card } from '@mentra/ui';
 import { PageHeader } from '../../components/PageHeader.js';
 import { RoadmapItemCard } from '../../components/roadmap/RoadmapItemCard.js';
 import { RoadmapTabs } from '../../components/roadmap/RoadmapTabs.js';
+import { StickyRevealBar } from '../../components/StickyRevealBar.js';
 import { useRoadmap, useRoadmapItemAction } from '../../lib/roadmap.js';
 
 export function RoadmapPage() {
@@ -50,46 +51,50 @@ export function RoadmapPage() {
         subtitle={`${data.totalWeeks} weeks · ${data.completedItems}/${data.totalItems} items complete`}
       />
 
-      <RoadmapTabs />
+      {/* Tabs + progress + week switcher (pagination) — reveal a fixed copy from the top on
+          scroll, so the controls stay reachable while browsing a week's items. */}
+      <StickyRevealBar>
+        <RoadmapTabs />
 
-      {/* Progress */}
-      <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-surface-sunken">
-        <div className="h-full rounded-full bg-accent-green transition-all" style={{ width: `${data.percentComplete}%` }} />
-      </div>
-
-      {/* Week switcher */}
-      <div className="mt-6 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => setWeek(Math.max(1, current - 1))}
-          disabled={current <= 1}
-          className="flex size-9 items-center justify-center rounded-md bg-surface-sunken text-ink ring-1 ring-border-subtle disabled:opacity-40"
-        >
-          <ChevronLeft className="size-4" />
-        </button>
-        <div className="flex items-center gap-2">
-          {data.weeks.map((w) => (
-            <button
-              key={w.id}
-              type="button"
-              onClick={() => setWeek(w.weekNumber)}
-              className={[
-                'size-2.5 rounded-full transition',
-                w.weekNumber === current ? 'bg-surface-inverse' : 'bg-surface-sunken ring-1 ring-border-subtle',
-              ].join(' ')}
-              aria-label={`Week ${w.weekNumber}`}
-            />
-          ))}
+        {/* Progress */}
+        <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-surface-sunken">
+          <div className="h-full rounded-full bg-accent-green transition-all" style={{ width: `${data.percentComplete}%` }} />
         </div>
-        <button
-          type="button"
-          onClick={() => setWeek(Math.min(data.totalWeeks, current + 1))}
-          disabled={current >= data.totalWeeks}
-          className="flex size-9 items-center justify-center rounded-md bg-surface-sunken text-ink ring-1 ring-border-subtle disabled:opacity-40"
-        >
-          <ChevronRight className="size-4" />
-        </button>
-      </div>
+
+        {/* Week switcher */}
+        <div className="mt-4 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setWeek(Math.max(1, current - 1))}
+            disabled={current <= 1}
+            className="flex size-9 items-center justify-center rounded-md bg-surface-sunken text-ink ring-1 ring-border-subtle disabled:opacity-40"
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+          <div className="flex items-center gap-2">
+            {data.weeks.map((w) => (
+              <button
+                key={w.id}
+                type="button"
+                onClick={() => setWeek(w.weekNumber)}
+                className={[
+                  'size-2.5 rounded-full transition',
+                  w.weekNumber === current ? 'bg-surface-inverse' : 'bg-surface-sunken ring-1 ring-border-subtle',
+                ].join(' ')}
+                aria-label={`Week ${w.weekNumber}`}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => setWeek(Math.min(data.totalWeeks, current + 1))}
+            disabled={current >= data.totalWeeks}
+            className="flex size-9 items-center justify-center rounded-md bg-surface-sunken text-ink ring-1 ring-border-subtle disabled:opacity-40"
+          >
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
+      </StickyRevealBar>
 
       {/* Week content */}
       <AnimatePresence mode="wait">

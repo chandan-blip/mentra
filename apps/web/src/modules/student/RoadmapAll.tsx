@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '../../components/PageHeader.js';
 import { RoadmapItemCard } from '../../components/roadmap/RoadmapItemCard.js';
 import { RoadmapTabs } from '../../components/roadmap/RoadmapTabs.js';
+import { StickyRevealBar } from '../../components/StickyRevealBar.js';
 import { useRoadmap, useRoadmapItemAction } from '../../lib/roadmap.js';
 
 export function RoadmapAllPage() {
@@ -35,7 +36,9 @@ export function RoadmapAllPage() {
         subtitle={`All ${data.totalWeeks} weeks · ${data.completedItems}/${data.totalItems} items complete`}
       />
 
-      <RoadmapTabs />
+      <StickyRevealBar>
+        <RoadmapTabs />
+      </StickyRevealBar>
 
       <div className="mt-6 space-y-8">
         {data.weeks.map((week, wi) => {

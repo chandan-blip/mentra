@@ -6,6 +6,7 @@ import { Badge, Card } from '@mentra/ui';
 import { PageHeader } from '../../components/PageHeader.js';
 import { RoadmapItemCard } from '../../components/roadmap/RoadmapItemCard.js';
 import { RoadmapTabs } from '../../components/roadmap/RoadmapTabs.js';
+import { StickyRevealBar } from '../../components/StickyRevealBar.js';
 import { useRoadmapHistory, useRoadmapHistoryDetail } from '../../lib/roadmap.js';
 
 const STATUS_LABEL: Record<RoadmapHistoryEntry['status'], string> = {
@@ -29,7 +30,9 @@ export function RoadmapHistoryPage() {
         subtitle="Previous plans, archived when you regenerated."
       />
 
-      <RoadmapTabs />
+      <StickyRevealBar>
+        <RoadmapTabs />
+      </StickyRevealBar>
 
       {isLoading ? (
         <div className="mt-6 text-sm text-ink-muted">Loading…</div>

@@ -1,4 +1,6 @@
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '../../components/PageHeader.js';
 import { MessageSquare, Play, Users, Video } from 'lucide-react';
@@ -43,7 +45,7 @@ export function LiveSessionsPage() {
       initial="hidden"
       animate="visible"
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
-      className="mx-auto w-full max-w-8xl"
+      className="mx-auto w-full max-w-8xl sm:space-y-6"
     >
       <motion.div variants={fadeUp} className="flex items-start justify-between gap-3">
         <PageHeader
@@ -55,22 +57,109 @@ export function LiveSessionsPage() {
 
       <motion.div variants={fadeUp}>
         {loading && sessions.length === 0 ? (
-          <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
+          <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
               <PlaceholderVideoCard key={i} label="Loading…" />
             ))}
           </div>
         ) : sessions.length === 0 ? (
           <EmptyVideoGrid label="No sessions yet" />
         ) : (
-          <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {sessions.map((s) => (
-              <VideoCard key={s.id} session={s} onOpen={() => openSession(s)} />
-            ))}
-          </div>
+          <VirtualCardGrid sessions={sessions} onOpen={openSession} />
         )}
       </motion.div>
     </motion.div>
+  );
+}
+
+// --- Virtualized card grid ---
+
+/** Columns by viewport: 1 (mobile) → 2 (tablet) → 3 (laptop+). */
+function colsForWidth(w: number): number {
+  if (w >= 1024) return 3;
+  if (w >= 640) return 2;
+  return 1;
+}
+
+/** Reactive column count that follows viewport resizes. */
+function useColumns(): number {
+  const [cols, setCols] = useState(() => colsForWidth(typeof window === 'undefined' ? 1024 : window.innerWidth));
+  useEffect(() => {
+    const onResize = () => setCols(colsForWidth(window.innerWidth));
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  return cols;
+}
+
+/**
+ * Windowed card grid: only the rows on screen (+2 overscan) are mounted, so a long feed
+ * stays light and images load as you scroll. Rows are virtualized against the app's main
+ * scroll container (#app-scroll-root); each row holds `cols` cards and is measured live so
+ * variable card heights stay aligned.
+ */
+function VirtualCardGrid({
+  sessions,
+  onOpen,
+}: {
+  sessions: LiveSessionView[];
+  onOpen: (s: LiveSessionView) => void;
+}) {
+  const cols = useColumns();
+  const listRef = useRef<HTMLDivElement>(null);
+  const [scrollMargin, setScrollMargin] = useState(0);
+  const rowCount = Math.ceil(sessions.length / cols);
+
+  const virtualizer = useVirtualizer({
+    count: rowCount,
+    getScrollElement: () => document.getElementById('app-scroll-root'),
+    estimateSize: () => 320,
+    overscan: 2,
+    scrollMargin,
+  });
+
+  // Offset of the grid from the top of the scroll container, so row positions are correct
+  // despite the page header above it. Recomputed when the layout (columns/count) changes.
+  useLayoutEffect(() => {
+    const scrollEl = document.getElementById('app-scroll-root');
+    const listEl = listRef.current;
+    if (scrollEl && listEl) {
+      setScrollMargin(
+        listEl.getBoundingClientRect().top - scrollEl.getBoundingClientRect().top + scrollEl.scrollTop,
+      );
+    }
+  }, [cols, sessions.length]);
+
+  return (
+    <div ref={listRef} style={{ height: virtualizer.getTotalSize(), position: 'relative', width: '100%' }}>
+      {virtualizer.getVirtualItems().map((row) => {
+        const start = row.index * cols;
+        const rowItems = sessions.slice(start, start + cols);
+        return (
+          <div
+            key={row.key}
+            data-index={row.index}
+            ref={virtualizer.measureElement}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              transform: `translateY(${row.start - scrollMargin}px)`,
+            }}
+          >
+            <div
+              className="grid gap-x-4 gap-y-4 pb-4"
+              style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+            >
+              {rowItems.map((s) => (
+                <VideoCard key={s.id} session={s} onOpen={() => onOpen(s)} />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
