@@ -18,13 +18,16 @@ import { ProjectsPage } from './modules/student/Projects.js';
 import { LiveSessionsPage } from './modules/student/LiveSessions.js';
 import { WatchSessionPage } from './modules/student/WatchSession.js';
 import { MentorsPage } from './modules/student/Mentors.js';
+import { MentorDetailPage } from './modules/mentor/MentorDetail.js';
 import { CommunityPage } from './modules/student/Community.js';
 import { StudentsPage } from './modules/student/Students.js';
 import { StudentProfilePage } from './modules/student/StudentProfile.js';
 import { ManifestoPage } from './modules/student/Manifesto.js';
 import { JobsPage } from './modules/student/Jobs.js';
+import { ChatWithMentorPage } from './modules/student/ChatWithMentor.js';
 import { MentorLiveSessionsPage } from './modules/mentor/MentorLiveSessions.js';
 import { ManageVideosPage } from './modules/manager/ManageVideos.js';
+import { ManageAiPromptsPage } from './modules/manager/ManageAiPrompts.js';
 import { PublicWatchPage } from './modules/public/PublicWatch.js';
 import { MentorMentorshipPage } from './modules/mentor/MentorMentorship.js';
 import { HrJobsPage } from './modules/hr/HrJobs.js';
@@ -72,7 +75,9 @@ export function App() {
         <Route path="/live-sessions" element={<LiveSessionsPage />} />
         <Route path="/live-sessions/:id" element={<WatchSessionPage />} />
         <Route path="/jobs" element={<JobsPage />} />
+        <Route path="/chat-with-mentor" element={<ChatWithMentorPage />} />
         <Route path="/mentors" element={<MentorsPage />} />
+        <Route path="/mentors/:id" element={<MentorDetailPage />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/students/:id" element={<StudentProfilePage />} />
@@ -82,6 +87,7 @@ export function App() {
         <Route path="/mentor-live-sessions" element={<MentorLiveSessionsPage />} />
         <Route path="/mentor-mentors" element={<MentorMentorshipPage />} />
         <Route path="/manage-videos" element={<ManageVideosPage />} />
+        <Route path="/manage-ai-prompts" element={<ManageAiPromptsPage />} />
         <Route path="/hr-jobs" element={<HrJobsPage />} />
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/connect-profile" element={<ConnectProfilePage />} />

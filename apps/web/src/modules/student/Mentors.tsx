@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -266,8 +267,15 @@ function FindTab({ onBook, onAsk }: { onBook: (m: MentorView) => void; onAsk: (m
 
 function MentorCard({ match, onBook, onAsk }: { match: MentorMatchView; onBook: (m: MentorView) => void; onAsk: (m: MentorView) => void }) {
   const { mentor } = match;
+  const navigate = useNavigate();
   return (
-    <Card className="flex flex-col gap-3 p-4">
+    <Card
+      onClick={() => navigate(`/mentors/${mentor.userId}`)}
+      role="link"
+      tabIndex={0}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && navigate(`/mentors/${mentor.userId}`)}
+      className="flex cursor-pointer flex-col gap-3 p-4 outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/40"
+    >
       <div className="flex items-start gap-3">
         <span className="grid size-11 shrink-0 place-items-center rounded-full text-sm font-semibold text-white" style={{ background: avatarBg(hueOf(mentor.userId)) }}>
           {mentor.avatarUrl ? <Avatar src={resolveAvatarUrl(mentor.avatarUrl)} name={mentor.name} size="lg" /> : initials(mentor.name)}
@@ -303,14 +311,20 @@ function MentorCard({ match, onBook, onAsk }: { match: MentorMatchView; onBook: 
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => onAsk(mentor)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAsk(mentor);
+            }}
             className="flex h-9 items-center justify-center gap-1.5 rounded-md bg-surface-sunken px-3 text-xs font-semibold text-ink ring-1 ring-border-subtle transition hover:ring-border-strong"
           >
             <MessagesSquare className="size-3.5" /> Ask
           </button>
           <button
             type="button"
-            onClick={() => onBook(mentor)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onBook(mentor);
+            }}
             disabled={mentor.openSlotCount === 0}
             className="flex h-9 items-center justify-center gap-1.5 rounded-md bg-surface-inverse px-3 text-xs font-semibold text-ink-inverse transition hover:bg-ink disabled:opacity-50"
             title={mentor.openSlotCount === 0 ? 'No open slots' : undefined}
@@ -355,6 +369,7 @@ export function SessionCard({
   onBook: (s: OpenSessionView) => void;
   onJoined: (join: BookingJoinResponse, title: string) => void;
 }) {
+  const navigate = useNavigate();
   const book = useBookSlot();
   const joinToken = useBookingJoinToken();
   const [err, setErr] = useState<string | null>(null);
@@ -378,7 +393,13 @@ export function SessionCard({
   }
 
   return (
-    <Card className="flex flex-col gap-3 p-4">
+    <Card
+      onClick={() => navigate(`/mentors/${s.mentorId}`)}
+      role="link"
+      tabIndex={0}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && navigate(`/mentors/${s.mentorId}`)}
+      className="flex cursor-pointer flex-col gap-3 p-4 outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/40"
+    >
       <div className="flex items-start gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-full text-xs font-semibold text-white" style={{ background: avatarBg(hueOf(s.mentorId)) }}>
           {s.mentorAvatarUrl ? <Avatar src={s.mentorAvatarUrl} name={s.mentorName} size="md" /> : initials(s.mentorName)}
@@ -413,7 +434,10 @@ export function SessionCard({
         {isCasual ? (
           <button
             type="button"
-            onClick={join}
+            onClick={(e) => {
+              e.stopPropagation();
+              join();
+            }}
             disabled={full || busy}
             className="flex h-9 items-center justify-center gap-1.5 rounded-md bg-accent-blue px-4 text-xs font-semibold text-white transition hover:brightness-110 disabled:opacity-50"
           >
@@ -422,7 +446,10 @@ export function SessionCard({
         ) : (
           <button
             type="button"
-            onClick={() => onBook(s)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onBook(s);
+            }}
             disabled={full}
             className="flex h-9 items-center justify-center gap-1.5 rounded-md bg-surface-inverse px-4 text-xs font-semibold text-ink-inverse transition hover:bg-ink disabled:opacity-50"
           >

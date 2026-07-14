@@ -4,11 +4,15 @@ import {
   Activity,
   ArrowRight,
   Briefcase,
+  CalendarClock,
   Check,
   Compass,
   Flame,
   FolderGit2,
   GraduationCap,
+  Heart,
+  MessageCircle,
+  Radio,
   Sparkles,
   Target,
   Trophy,
@@ -17,9 +21,10 @@ import {
   Video,
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import type { DashboardRecommendation, PublicProfileCardView, RoadmapView } from '@mentra/shared';
+import type { DashboardRecommendation, LiveSessionView, PublicProfileCardView, RoadmapView } from '@mentra/shared';
 import { Avatar, Badge, Card } from '@mentra/ui';
 import { useAckRecommendation, useDashboardOverview } from '../../lib/dashboard.js';
+import { useEnrollLiveSession, useUpcomingOpen } from '../../lib/live.js';
 import { useRoadmap } from '../../lib/roadmap.js';
 import { useProfile } from '../../lib/profile.js';
 import { useLearningProgress } from '../../lib/learning.js';
@@ -115,6 +120,9 @@ export function StudentDashboard() {
           Here&apos;s how far you&apos;ve come — and where to focus next.
         </p>
       </motion.div>
+
+      {/* Upcoming live sessions — kept at the top; enroll (like + "Enrolled!" comment) inline */}
+      <motion.div variants={fadeUp}><UpcomingSessionsCard /></motion.div>
 
       {/* Progress journey: where you started → where you are now → your goal. */}
       <motion.div variants={fadeUp}>
@@ -470,6 +478,151 @@ function WeeklyProgressCard({ roadmap }: { roadmap: RoadmapView | null | undefin
         </span>
       </div>
     </Card>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Upcoming live sessions                                             */
+/* ------------------------------------------------------------------ */
+
+function formatWhen(iso: string | null): string {
+  if (!iso) return 'Time to be announced';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return 'Time to be announced';
+  return new Intl.DateTimeFormat('en-IN', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(d);
+}
+
+/**
+ * All upcoming mentor sessions with an inline Enroll button — the same action as the
+ * chat's enroll card: enrolling likes the session and posts an "Enrolled!" comment.
+ */
+function UpcomingSessionsCard() {
+  const navigate = useNavigate();
+  const { data, isLoading } = useUpcomingOpen();
+  const enroll = useEnrollLiveSession();
+  const [enrollingId, setEnrollingId] = useState<string | null>(null);
+  const sessions = data ?? [];
+
+  if (isLoading || sessions.length === 0) return null;
+
+  // Enroll, then open the session's watch page.
+  async function onEnroll(id: string) {
+    setEnrollingId(id);
+    try {
+      await enroll.mutateAsync(id);
+      navigate(`/live-sessions/${id}`);
+    } finally {
+      setEnrollingId(null);
+    }
+  }
+
+  return (
+    <Card padding="sm">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="flex items-center gap-2 text-sm font-medium text-ink">
+          <Radio className="size-4" /> Upcoming sessions
+        </h3>
+        <Link
+          to="/live-sessions"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-ink-muted transition hover:text-ink"
+        >
+          View all <ArrowRight className="size-3.5" />
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {sessions.map((s) => (
+          <UpcomingSessionRow
+            key={s.id}
+            session={s}
+            pending={enrollingId === s.id}
+            onEnroll={() => onEnroll(s.id)}
+            onOpen={() => navigate(`/live-sessions/${s.id}`)}
+          />
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function UpcomingSessionRow({
+  session: s,
+  pending,
+  onEnroll,
+  onOpen,
+}: {
+  session: LiveSessionView;
+  pending: boolean;
+  onEnroll: () => void;
+  onOpen: () => void;
+}) {
+  const enrolled = s.likedByViewer;
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onOpen()}
+      className="flex cursor-pointer flex-col gap-3 rounded-lg bg-surface-sunken p-3 ring-1 ring-border-subtle transition hover:ring-border-strong"
+    >
+      <div className="flex items-center gap-2.5">
+        <Avatar src={resolveAvatarUrl(s.mentorAvatarUrl)} name={s.mentorName} size="sm" />
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-xs font-medium text-ink">{s.mentorName}</div>
+          <div className="text-[11px] uppercase tracking-wide text-accent-green">Live session</div>
+        </div>
+      </div>
+
+      <div className="min-w-0">
+        <div className="truncate text-sm font-semibold text-ink">{s.title}</div>
+        <div className="truncate text-xs text-ink-muted">{s.topic}</div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-faint">
+        <span className="inline-flex items-center gap-1">
+          <CalendarClock className="size-3.5" />
+          {formatWhen(s.scheduledFor)}
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <Heart className="size-3.5" />
+          {s.likeCount}
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <MessageCircle className="size-3.5" />
+          {s.chatCount}
+        </span>
+      </div>
+
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          if (enrolled) onOpen();
+          else onEnroll();
+        }}
+        disabled={pending}
+        className={`mt-auto inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-4 text-sm font-semibold transition disabled:opacity-60 ${
+          enrolled
+            ? 'bg-surface text-accent-green ring-1 ring-border-subtle hover:ring-border-strong'
+            : 'bg-accent-blue text-white hover:brightness-110'
+        }`}
+      >
+        {enrolled ? (
+          <>
+            <Check className="size-4" /> Enrolled
+          </>
+        ) : pending ? (
+          'Enrolling…'
+        ) : (
+          'Enroll'
+        )}
+      </button>
+    </div>
   );
 }
 

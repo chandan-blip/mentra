@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { generateJson } from '../../core/ai.js';
+import { getPromptConfig } from '../ai-prompt/ai-prompt.service.js';
+import { PROMPT_KEYS } from '../ai-prompt/ai-prompt.registry.js';
 
 /**
  * Groq-generated cover copy for a live-session thumbnail. We only ask the model for text
@@ -35,18 +37,6 @@ export const thumbnailCopySchema = z.object({
 
 export type ThumbnailCopy = z.infer<typeof thumbnailCopySchema>;
 
-const SYSTEM = [
-  'You are a thumbnail copywriter for an online learning platform.',
-  'Given a live class title, topic, and (optionally) audience chat, produce punchy',
-  'YouTube-style cover copy. Respond with a SINGLE JSON object and NOTHING else.',
-  'Rules:',
-  '- headline: 2 to 5 words, bold and specific, Title Case, NO trailing punctuation.',
-  '- kicker: one short supporting phrase (max ~8 words).',
-  `- accent: EXACTLY one of ${THUMBNAIL_ACCENTS.join(', ')} — pick what fits the mood.`,
-  '- emoji: exactly one emoji that matches the topic.',
-  'Never include hashtags, quotes around the whole value, or markdown.',
-].join('\n');
-
 export type ThumbnailContext = {
   title: string;
   topic: string;
@@ -68,5 +58,7 @@ export async function generateThumbnailCopy(ctx: ThumbnailContext): Promise<Thum
       : 'Audience chat: (none yet)',
   ].join('\n');
 
-  return generateJson({ system: SYSTEM, user, schema: thumbnailCopySchema, temperature: 0.6 });
+  const cfg = await getPromptConfig(PROMPT_KEYS.thumbnailCopy);
+  const system = cfg.system.replaceAll('{ACCENTS}', THUMBNAIL_ACCENTS.join(', '));
+  return generateJson({ system, user, schema: thumbnailCopySchema, temperature: cfg.temperature });
 }

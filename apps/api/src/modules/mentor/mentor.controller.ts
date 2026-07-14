@@ -14,6 +14,7 @@ import {
   cancelBooking,
   cancelSlot,
   getBookingJoinToken,
+  getMentorDetail,
   getMyProfile,
   getThreadMessages,
   joinByCode,
@@ -51,6 +52,10 @@ export async function getMatches(req: Request, res: Response): Promise<void> {
 
 export async function getMentorSlots(req: Request, res: Response): Promise<void> {
   res.json({ data: await listOpenSlots(param(req, 'mentorId')) });
+}
+
+export async function getMentorDetailHandler(req: Request, res: Response): Promise<void> {
+  res.json({ data: await getMentorDetail(param(req, 'mentorId')) });
 }
 
 export async function getSessions(req: Request, res: Response): Promise<void> {

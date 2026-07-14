@@ -2,6 +2,8 @@ import { roadmapTestGenSchema, type RoadmapTestQuestionGen } from '@mentra/share
 import { env } from '../../../env.js';
 import { logger } from '../../../logger.js';
 import { AiError, generateJson } from '../../../core/ai.js';
+import { getPromptConfig } from '../../ai-prompt/ai-prompt.service.js';
+import { PROMPT_KEYS } from '../../ai-prompt/ai-prompt.registry.js';
 
 /**
  * Generate the completion test for a topic. The test MUST cover every subtopic, so
@@ -11,28 +13,6 @@ import { AiError, generateJson } from '../../../core/ai.js';
  */
 
 export type TestSubtopic = { title: string; description: string | null };
-
-const SYSTEM = `You are an assessment designer writing a topic-mastery test for ONE student.
-RULES:
-- Respond with a SINGLE JSON object ONLY. No markdown, no prose, no code fences.
-- The JSON MUST match this exact shape:
-  {
-    "questions": [
-      {
-        "subtopicTitle": string,     // MUST exactly match one of the provided subtopic titles
-        "type": "single_choice" | "multi_choice",
-        "body": string,              // the question text
-        "options": string[],         // 3-5 plausible options
-        "correct": number[],         // 0-based indices of correct option(s); exactly 1 for single_choice, 1+ for multi_choice
-        "explanation": string,       // 1 sentence on why the answer is correct
-        "points": number             // 1-3 by difficulty
-      }
-    ]
-  }
-GUIDELINES:
-- Cover EVERY subtopic listed — produce about {PER} question(s) per subtopic. Do not skip any subtopic.
-- Options must be plausible; never reveal the answer in the question body. Exactly one correct option for single_choice.
-- Vary difficulty. Keep questions concrete and unambiguous. No filler.`;
 
 function buildUserPrompt(topicTitle: string, subtopics: TestSubtopic[]): string {
   const list = subtopics
@@ -68,13 +48,14 @@ export async function generateTestQuestions(input: {
   topicTitle: string;
   subtopics: TestSubtopic[];
 }): Promise<{ model: string; questions: RoadmapTestQuestionGen[] }> {
-  const system = SYSTEM.replaceAll('{PER}', String(env.ROADMAP_TEST_QUESTIONS_PER_SUBTOPIC));
+  const cfg = await getPromptConfig(PROMPT_KEYS.roadmapTopicTest);
+  const system = cfg.system.replaceAll('{PER}', String(env.ROADMAP_TEST_QUESTIONS_PER_SUBTOPIC));
   try {
     const out = await generateJson({
       system,
       user: buildUserPrompt(input.topicTitle, input.subtopics),
       schema: roadmapTestGenSchema,
-      temperature: 0.4,
+      temperature: cfg.temperature,
     });
     const questions = out.questions.slice(0, env.ROADMAP_TEST_MAX_QUESTIONS);
     return { model: env.AI_MODEL, questions };

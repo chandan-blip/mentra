@@ -28,7 +28,7 @@ export function StudentsPage() {
       initial="hidden"
       animate="visible"
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.04 } } }}
-      className="mx-auto w-full max-w-8xl"
+      className="mx-auto w-full sm:space-y-6 max-w-8xl"
     >
       <motion.div variants={fadeUp}>
         <PageHeader

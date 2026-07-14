@@ -7,6 +7,8 @@ import type {
   PublicActivitySummary,
 } from '@mentra/shared';
 import { generateJson } from '../../core/ai.js';
+import { getPromptConfig } from '../ai-prompt/ai-prompt.service.js';
+import { PROMPT_KEYS } from '../ai-prompt/ai-prompt.registry.js';
 import { logger } from '../../logger.js';
 import { getSummary as getRoadmapSummary } from '../roadmap/roadmap.service.js';
 import { getAssignmentStatus } from '../assignment/assignment.service.js';
@@ -281,15 +283,12 @@ export async function getFocus(userId: string): Promise<ActivityFocusView> {
 
   let view: ActivityFocusView;
   try {
+    const cfg = await getPromptConfig(PROMPT_KEYS.activityFocus);
     const ai = await generateJson({
-      system:
-        'You are a career-growth coach inside a learning platform. Given a JSON snapshot of a ' +
-        "student's progress signals, tell them where to focus next. Respond with JSON only, no prose. " +
-        'Be specific, encouraging, and concrete. Each item needs a short title and a one-sentence reason. ' +
-        'Set `target` to the most relevant app area or null. Never invent data not present in the signals.',
+      system: cfg.system,
       user: `Student signals:\n${JSON.stringify(signals, null, 2)}\n\nReturn 2-3 focus items.`,
       schema: focusAiSchema,
-      temperature: 0.5,
+      temperature: cfg.temperature,
     });
     view = {
       headline: ai.headline,

@@ -2,6 +2,8 @@ import { roadmapPlanSchema } from '@mentra/shared';
 import { env } from '../../../env.js';
 import { logger } from '../../../logger.js';
 import { AiError, generateJson } from '../../../core/ai.js';
+import { getPromptConfig } from '../../ai-prompt/ai-prompt.service.js';
+import { PROMPT_KEYS } from '../../ai-prompt/ai-prompt.registry.js';
 import type { RoadmapGenerator } from './generator.interface.js';
 import { defaultGenerator } from './default.generator.js';
 import type { GeneratorAssignment, GeneratorInput, GeneratorSkill, RoadmapPlan } from './types.js';
@@ -11,41 +13,9 @@ import type { GeneratorAssignment, GeneratorInput, GeneratorSkill, RoadmapPlan }
  * assignment into a personalized, week-by-week plan. One AI call per generation;
  * the result is persisted by the service, so we never re-call for the same plan.
  * Falls back to the deterministic generator if the model is unavailable, so a
- * student always ends up with a roadmap.
+ * student always ends up with a roadmap. The system prompt is manager-tunable
+ * (see the ai-prompt module).
  */
-
-const SYSTEM = `You are a senior software-engineering mentor building a personalized study roadmap for ONE student.
-RULES:
-- Respond with a SINGLE JSON object ONLY. No markdown, no prose, no code fences.
-- The JSON MUST match this exact shape:
-  {
-    "totalWeeks": number,                    // matches weeks.length
-    "weeks": [
-      {
-        "weekNumber": number,                // 1-based, sequential
-        "title": string,
-        "theme": string,                     // e.g. "Foundations", "Core skills", "Projects & review"
-        "items": [
-          {
-            "key": string,                   // unique slug across the whole plan, e.g. "w1-arrays"
-            "type": "topic" | "project" | "assessment" | "session" | "reading" | "practice",
-            "title": string,
-            "description": string,
-            "skillIds": string[],            // lowercase skill slugs, e.g. ["dsa","javascript"]
-            "estimatedMin": number,
-            "dependsOn": string[]            // keys of earlier items that must finish first
-          }
-        ]
-      }
-    ],
-    "notes": string                          // 1-2 sentences on how this plan was tailored
-  }
-GUIDELINES:
-- Prioritize the student's WEAKEST skills first; reinforce strengths later.
-- Use the assignment results (which topics they got wrong, their self-reported constraints) to decide focus and pace.
-- Pace items to the student's available study hours. Early weeks = foundations; later weeks add projects; end with a review/assessment.
-- Each week MUST have between {MIN} and {MAX} items. Use {MAXWEEKS} weeks at most.
-- Make titles and descriptions concrete and actionable. No filler.`;
 
 function skillLine(s: GeneratorSkill): string {
   return `- ${s.label} (${s.skillId}): score ${s.score}/100, confidence ${Math.round(s.confidence * 100)}%`;
@@ -86,7 +56,9 @@ function buildUserPrompt(input: GeneratorInput): string {
 export const aiGenerator: RoadmapGenerator = {
   id: 'ai-v1',
   async generate(input: GeneratorInput): Promise<RoadmapPlan> {
-    const system = SYSTEM.replaceAll('{MIN}', String(env.ROADMAP_MIN_ITEMS_PER_WEEK))
+    const cfg = await getPromptConfig(PROMPT_KEYS.roadmapGenerate);
+    const system = cfg.system
+      .replaceAll('{MIN}', String(env.ROADMAP_MIN_ITEMS_PER_WEEK))
       .replaceAll('{MAX}', String(env.ROADMAP_MAX_ITEMS_PER_WEEK))
       .replaceAll('{MAXWEEKS}', String(env.ROADMAP_MAX_WEEKS));
 
@@ -95,7 +67,7 @@ export const aiGenerator: RoadmapGenerator = {
         system,
         user: buildUserPrompt(input),
         schema: roadmapPlanSchema,
-        temperature: 0.4,
+        temperature: cfg.temperature,
       });
       // The model can declare a totalWeeks it doesn't actually write, or exceed the
       // cap. Trust the weeks it produced: renumber 1..N, clamp, and sync totalWeeks.

@@ -6,6 +6,8 @@ import {
 import { env } from '../../env.js';
 import { logger } from '../../logger.js';
 import { AiError, generateJson } from '../../core/ai.js';
+import { getPromptConfig } from '../ai-prompt/ai-prompt.service.js';
+import { PROMPT_KEYS } from '../ai-prompt/ai-prompt.registry.js';
 
 /**
  * Generate the MCQ set for one test in a category's difficulty ladder. One AI call on
@@ -26,26 +28,6 @@ const DIFFICULTY_HINT: Record<LearningDifficulty, string> = {
   intermediate: 'applied understanding, comparisons, and common gotchas',
   advanced: 'deep trade-offs, edge cases, and scenario-based reasoning',
 };
-
-const SYSTEM = `You are an assessment designer writing a multiple-choice test for ONE student.
-RULES:
-- Respond with a SINGLE JSON object ONLY. No markdown, no prose, no code fences.
-- The JSON MUST match this exact shape:
-  {
-    "questions": [
-      {
-        "type": "single_choice" | "multi_choice",
-        "body": string,              // the question text
-        "options": string[],         // 3-5 plausible options
-        "correct": number[],         // 0-based indices; exactly 1 for single_choice, 1+ for multi_choice
-        "explanation": string,       // 1 sentence on why the answer is correct
-        "points": number             // 1-3 by difficulty
-      }
-    ]
-  }
-GUIDELINES:
-- Options must be plausible; never reveal the answer in the question body. Exactly one correct option for single_choice.
-- Keep questions concrete and unambiguous. No filler, no duplicates.`;
 
 function buildUserPrompt(input: TestGenInput): string {
   const tags = input.skillTags.length ? input.skillTags.join(', ') : input.categoryTitle;
@@ -79,11 +61,12 @@ export async function generateTestQuestions(
   input: TestGenInput,
 ): Promise<{ model: string; questions: LearningTestQuestionGen[] }> {
   try {
+    const cfg = await getPromptConfig(PROMPT_KEYS.learningTest);
     const out = await generateJson({
-      system: SYSTEM,
+      system: cfg.system,
       user: buildUserPrompt(input),
       schema: learningTestGenSchema,
-      temperature: 0.4,
+      temperature: cfg.temperature,
     });
     return { model: env.AI_MODEL, questions: out.questions.slice(0, input.count) };
   } catch (err) {

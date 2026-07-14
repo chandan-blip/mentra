@@ -24,6 +24,8 @@ import { marketingRouter, marketingOauthRouter } from './modules/marketing/index
 import { jobsRouter } from './modules/jobs/index.js';
 import { leadsRouter, leadsVapiWebhookRouter } from './modules/leads/index.js';
 import { activityRouter, registerActivityRecorder } from './modules/activity/index.js';
+import { aiPromptRouter } from './modules/ai-prompt/index.js';
+import { careerChatRouter } from './modules/career-chat/index.js';
 
 export function createApp(): Express {
   const app = express();
@@ -86,6 +88,8 @@ export function createApp(): Express {
   app.use('/api/v1/assignment', assignmentRouter);
   app.use('/api/v1/live-session', liveSessionRouter);
   app.use('/api/v1/videos', videoAdminRouter);
+  app.use('/api/v1/ai-prompts', aiPromptRouter);
+  app.use('/api/v1/career-chat', careerChatRouter);
   app.use('/api/v1/mentor', mentorRouter);
   app.use('/api/v1/transaction', transactionRouter);
   app.use('/api/v1/community', communityRouter);

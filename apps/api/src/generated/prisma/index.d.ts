@@ -31608,6 +31608,7 @@ export namespace Prisma {
     recordingUrl: string | null
     thumbnailUrl: string | null
     visible: boolean | null
+    isPublic: boolean | null
     egressId: string | null
     durationSeconds: number | null
     createdAt: Date | null
@@ -31631,6 +31632,7 @@ export namespace Prisma {
     recordingUrl: string | null
     thumbnailUrl: string | null
     visible: boolean | null
+    isPublic: boolean | null
     egressId: string | null
     durationSeconds: number | null
     createdAt: Date | null
@@ -31654,6 +31656,7 @@ export namespace Prisma {
     recordingUrl: number
     thumbnailUrl: number
     visible: number
+    isPublic: number
     egressId: number
     durationSeconds: number
     createdAt: number
@@ -31691,6 +31694,7 @@ export namespace Prisma {
     recordingUrl?: true
     thumbnailUrl?: true
     visible?: true
+    isPublic?: true
     egressId?: true
     durationSeconds?: true
     createdAt?: true
@@ -31714,6 +31718,7 @@ export namespace Prisma {
     recordingUrl?: true
     thumbnailUrl?: true
     visible?: true
+    isPublic?: true
     egressId?: true
     durationSeconds?: true
     createdAt?: true
@@ -31737,6 +31742,7 @@ export namespace Prisma {
     recordingUrl?: true
     thumbnailUrl?: true
     visible?: true
+    isPublic?: true
     egressId?: true
     durationSeconds?: true
     createdAt?: true
@@ -31847,6 +31853,7 @@ export namespace Prisma {
     recordingUrl: string | null
     thumbnailUrl: string | null
     visible: boolean
+    isPublic: boolean
     egressId: string | null
     durationSeconds: number | null
     createdAt: Date
@@ -31889,6 +31896,7 @@ export namespace Prisma {
     recordingUrl?: boolean
     thumbnailUrl?: boolean
     visible?: boolean
+    isPublic?: boolean
     egressId?: boolean
     durationSeconds?: boolean
     createdAt?: boolean
@@ -31913,6 +31921,7 @@ export namespace Prisma {
     recordingUrl?: boolean
     thumbnailUrl?: boolean
     visible?: boolean
+    isPublic?: boolean
     egressId?: boolean
     durationSeconds?: boolean
     createdAt?: boolean
@@ -31940,6 +31949,7 @@ export namespace Prisma {
       recordingUrl: string | null
       thumbnailUrl: string | null
       visible: boolean
+      isPublic: boolean
       egressId: string | null
       durationSeconds: number | null
       createdAt: Date
@@ -32329,6 +32339,7 @@ export namespace Prisma {
     readonly recordingUrl: FieldRef<"LiveSession", 'String'>
     readonly thumbnailUrl: FieldRef<"LiveSession", 'String'>
     readonly visible: FieldRef<"LiveSession", 'Boolean'>
+    readonly isPublic: FieldRef<"LiveSession", 'Boolean'>
     readonly egressId: FieldRef<"LiveSession", 'String'>
     readonly durationSeconds: FieldRef<"LiveSession", 'Int'>
     readonly createdAt: FieldRef<"LiveSession", 'DateTime'>
@@ -44019,6 +44030,7 @@ export namespace Prisma {
     recordingUrl: 'recordingUrl',
     thumbnailUrl: 'thumbnailUrl',
     visible: 'visible',
+    isPublic: 'isPublic',
     egressId: 'egressId',
     durationSeconds: 'durationSeconds',
     createdAt: 'createdAt',
@@ -46674,6 +46686,7 @@ export namespace Prisma {
     recordingUrl?: StringNullableFilter<"LiveSession"> | string | null
     thumbnailUrl?: StringNullableFilter<"LiveSession"> | string | null
     visible?: BoolFilter<"LiveSession"> | boolean
+    isPublic?: BoolFilter<"LiveSession"> | boolean
     egressId?: StringNullableFilter<"LiveSession"> | string | null
     durationSeconds?: IntNullableFilter<"LiveSession"> | number | null
     createdAt?: DateTimeFilter<"LiveSession"> | Date | string
@@ -46697,6 +46710,7 @@ export namespace Prisma {
     recordingUrl?: SortOrderInput | SortOrder
     thumbnailUrl?: SortOrderInput | SortOrder
     visible?: SortOrder
+    isPublic?: SortOrder
     egressId?: SortOrderInput | SortOrder
     durationSeconds?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -46723,6 +46737,7 @@ export namespace Prisma {
     recordingUrl?: StringNullableFilter<"LiveSession"> | string | null
     thumbnailUrl?: StringNullableFilter<"LiveSession"> | string | null
     visible?: BoolFilter<"LiveSession"> | boolean
+    isPublic?: BoolFilter<"LiveSession"> | boolean
     egressId?: StringNullableFilter<"LiveSession"> | string | null
     durationSeconds?: IntNullableFilter<"LiveSession"> | number | null
     createdAt?: DateTimeFilter<"LiveSession"> | Date | string
@@ -46746,6 +46761,7 @@ export namespace Prisma {
     recordingUrl?: SortOrderInput | SortOrder
     thumbnailUrl?: SortOrderInput | SortOrder
     visible?: SortOrder
+    isPublic?: SortOrder
     egressId?: SortOrderInput | SortOrder
     durationSeconds?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -46777,6 +46793,7 @@ export namespace Prisma {
     recordingUrl?: StringNullableWithAggregatesFilter<"LiveSession"> | string | null
     thumbnailUrl?: StringNullableWithAggregatesFilter<"LiveSession"> | string | null
     visible?: BoolWithAggregatesFilter<"LiveSession"> | boolean
+    isPublic?: BoolWithAggregatesFilter<"LiveSession"> | boolean
     egressId?: StringNullableWithAggregatesFilter<"LiveSession"> | string | null
     durationSeconds?: IntNullableWithAggregatesFilter<"LiveSession"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"LiveSession"> | Date | string
@@ -50265,6 +50282,7 @@ export namespace Prisma {
     recordingUrl?: string | null
     thumbnailUrl?: string | null
     visible?: boolean
+    isPublic?: boolean
     egressId?: string | null
     durationSeconds?: number | null
     createdAt?: Date | string
@@ -50288,6 +50306,7 @@ export namespace Prisma {
     recordingUrl?: string | null
     thumbnailUrl?: string | null
     visible?: boolean
+    isPublic?: boolean
     egressId?: string | null
     durationSeconds?: number | null
     createdAt?: Date | string
@@ -50311,6 +50330,7 @@ export namespace Prisma {
     recordingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     visible?: BoolFieldUpdateOperationsInput | boolean
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     egressId?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50334,6 +50354,7 @@ export namespace Prisma {
     recordingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     visible?: BoolFieldUpdateOperationsInput | boolean
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     egressId?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50357,6 +50378,7 @@ export namespace Prisma {
     recordingUrl?: string | null
     thumbnailUrl?: string | null
     visible?: boolean
+    isPublic?: boolean
     egressId?: string | null
     durationSeconds?: number | null
     createdAt?: Date | string
@@ -50380,6 +50402,7 @@ export namespace Prisma {
     recordingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     visible?: BoolFieldUpdateOperationsInput | boolean
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     egressId?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50403,6 +50426,7 @@ export namespace Prisma {
     recordingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     visible?: BoolFieldUpdateOperationsInput | boolean
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
     egressId?: NullableStringFieldUpdateOperationsInput | string | null
     durationSeconds?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53539,6 +53563,7 @@ export namespace Prisma {
     recordingUrl?: SortOrder
     thumbnailUrl?: SortOrder
     visible?: SortOrder
+    isPublic?: SortOrder
     egressId?: SortOrder
     durationSeconds?: SortOrder
     createdAt?: SortOrder
@@ -53568,6 +53593,7 @@ export namespace Prisma {
     recordingUrl?: SortOrder
     thumbnailUrl?: SortOrder
     visible?: SortOrder
+    isPublic?: SortOrder
     egressId?: SortOrder
     durationSeconds?: SortOrder
     createdAt?: SortOrder
@@ -53591,6 +53617,7 @@ export namespace Prisma {
     recordingUrl?: SortOrder
     thumbnailUrl?: SortOrder
     visible?: SortOrder
+    isPublic?: SortOrder
     egressId?: SortOrder
     durationSeconds?: SortOrder
     createdAt?: SortOrder

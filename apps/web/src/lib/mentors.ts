@@ -5,6 +5,7 @@ import type {
   CreateBookingInput,
   CreateSlotInput,
   MentorBookingView,
+  MentorDetailView,
   MentorMatchView,
   MentorMessageView,
   MentorThreadView,
@@ -51,6 +52,15 @@ export function useMentors() {
   return useQuery({
     queryKey: ['mentor', 'directory'],
     queryFn: () => apiFetch<MentorView[]>(`${base}/mentors`),
+  });
+}
+
+/** One mentor's profile + aggregate impact stats — for the mentor details page. */
+export function useMentorDetail(mentorId: string | undefined) {
+  return useQuery({
+    queryKey: ['mentor', 'detail', mentorId],
+    queryFn: () => apiFetch<MentorDetailView>(`${base}/mentors/${mentorId}`),
+    enabled: !!mentorId,
   });
 }
 

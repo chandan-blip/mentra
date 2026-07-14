@@ -2,6 +2,8 @@ import { roadmapSubtopicsGenSchema, type RoadmapSubtopicGenItem } from '@mentra/
 import { env } from '../../../env.js';
 import { logger } from '../../../logger.js';
 import { AiError, generateJson } from '../../../core/ai.js';
+import { getPromptConfig } from '../../ai-prompt/ai-prompt.service.js';
+import { PROMPT_KEYS } from '../../ai-prompt/ai-prompt.registry.js';
 
 /**
  * Break a single roadmap topic into the COMPLETE set of subtopics a student must
@@ -16,24 +18,6 @@ export type SubtopicContext = {
   description: string | null;
   skillIds: string[];
 };
-
-const SYSTEM = `You are a senior software-engineering mentor breaking ONE study topic into its complete set of subtopics.
-RULES:
-- Respond with a SINGLE JSON object ONLY. No markdown, no prose, no code fences.
-- The JSON MUST match this exact shape:
-  {
-    "subtopics": [
-      {
-        "title": string,            // short, specific subtopic name
-        "description": string,      // 1-2 sentences on exactly what to learn and why it matters
-        "estimatedMin": number      // realistic minutes to learn this subtopic
-      }
-    ]
-  }
-GUIDELINES:
-- Be EXHAUSTIVE for this topic: include every subtopic a student needs so they never have to wonder what else to study. Order them from foundational to advanced.
-- Produce between {MIN} and {MAX} subtopics. Merge trivia; split anything that is really two ideas.
-- Keep titles concrete and descriptions actionable. No filler, no duplicates.`;
 
 function buildUserPrompt(topic: SubtopicContext): string {
   const blocks = [
@@ -58,7 +42,8 @@ export async function generateSubtopics(topic: SubtopicContext): Promise<{
   model: string;
   subtopics: RoadmapSubtopicGenItem[];
 }> {
-  const system = SYSTEM.replaceAll('{MIN}', String(env.ROADMAP_SUBTOPICS_MIN)).replaceAll(
+  const cfg = await getPromptConfig(PROMPT_KEYS.roadmapSubtopics);
+  const system = cfg.system.replaceAll('{MIN}', String(env.ROADMAP_SUBTOPICS_MIN)).replaceAll(
     '{MAX}',
     String(env.ROADMAP_SUBTOPICS_MAX),
   );
@@ -67,7 +52,7 @@ export async function generateSubtopics(topic: SubtopicContext): Promise<{
       system,
       user: buildUserPrompt(topic),
       schema: roadmapSubtopicsGenSchema,
-      temperature: 0.3,
+      temperature: cfg.temperature,
     });
     const subtopics = out.subtopics.slice(0, env.ROADMAP_SUBTOPICS_MAX);
     return { model: env.AI_MODEL, subtopics };

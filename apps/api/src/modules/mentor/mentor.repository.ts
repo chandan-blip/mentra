@@ -564,6 +564,96 @@ export async function latestMessagePreviews(threadIds: string[]): Promise<Map<st
   return new Map(rows.map((r) => [r.threadId, r.body]));
 }
 
+// --- Mentor impact stats (details page) ---
+
+/** Booking counts by lifecycle for one mentor, in a single pass. */
+export async function countBookingStats(
+  mentorId: string,
+): Promise<{ total: number; completed: number; confirmed: number; cancelled: number }> {
+  const [rows] = await db.execute<
+    ({ total: number; completed: number; confirmed: number; cancelled: number } & RowDataPacket)[]
+  >(
+    'SELECT COUNT(*) AS total, ' +
+      "SUM(`status` = 'completed') AS completed, " +
+      "SUM(`status` = 'confirmed') AS confirmed, " +
+      "SUM(`status` IN ('cancelled', 'rejected')) AS cancelled " +
+      'FROM `MentorBooking` WHERE `mentorId` = :mentorId',
+    { mentorId },
+  );
+  const r = rows[0];
+  return {
+    total: Number(r?.total ?? 0),
+    completed: Number(r?.completed ?? 0),
+    confirmed: Number(r?.confirmed ?? 0),
+    cancelled: Number(r?.cancelled ?? 0),
+  };
+}
+
+/** Distinct students who ever booked a session OR opened a doubt thread with the mentor. */
+export async function countDistinctStudents(mentorId: string): Promise<number> {
+  const [rows] = await db.execute<({ n: number } & RowDataPacket)[]>(
+    'SELECT COUNT(*) AS n FROM (' +
+      'SELECT `studentId` FROM `MentorBooking` WHERE `mentorId` = :mentorId ' +
+      'UNION SELECT `studentId` FROM `MentorThread` WHERE `mentorId` = :mentorId' +
+      ') t',
+    { mentorId },
+  );
+  return Number(rows[0]?.n ?? 0);
+}
+
+/** Number of async doubt threads addressed to this mentor. */
+export async function countThreads(mentorId: string): Promise<number> {
+  const [rows] = await db.execute<({ n: number } & RowDataPacket)[]>(
+    'SELECT COUNT(*) AS n FROM `MentorThread` WHERE `mentorId` = :mentorId',
+    { mentorId },
+  );
+  return Number(rows[0]?.n ?? 0);
+}
+
+/** Doubt messages students have sent this mentor (excludes the mentor's own replies). */
+export async function countStudentDoubtMessages(mentorId: string): Promise<number> {
+  const [rows] = await db.execute<({ n: number } & RowDataPacket)[]>(
+    'SELECT COUNT(*) AS n FROM `MentorMessage` m ' +
+      'JOIN `MentorThread` t ON t.`id` = m.`threadId` ' +
+      'WHERE t.`mentorId` = :mentorId AND m.`authorUserId` <> :mentorId',
+    { mentorId },
+  );
+  return Number(rows[0]?.n ?? 0);
+}
+
+/** Average rating, count, and the per-star distribution (index 0 = ★1 … 4 = ★5). */
+export async function ratingStats(
+  mentorId: string,
+): Promise<{ avg: number | null; count: number; distribution: [number, number, number, number, number] }> {
+  const [rows] = await db.execute<({ score: number; n: number } & RowDataPacket)[]>(
+    'SELECT `feedbackScore` AS score, COUNT(*) AS n FROM `MentorBooking` ' +
+      'WHERE `mentorId` = :mentorId AND `feedbackScore` IS NOT NULL GROUP BY `feedbackScore`',
+    { mentorId },
+  );
+  const distribution: [number, number, number, number, number] = [0, 0, 0, 0, 0];
+  let weighted = 0;
+  let count = 0;
+  for (const row of rows) {
+    const score = Number(row.score);
+    const n = Number(row.n);
+    if (score >= 1 && score <= 5) {
+      distribution[score - 1] = n;
+      weighted += score * n;
+      count += n;
+    }
+  }
+  return { avg: count > 0 ? weighted / count : null, count, distribution };
+}
+
+/** Live broadcast sessions this mentor has run to completion. */
+export async function countLiveSessions(mentorId: string): Promise<number> {
+  const [rows] = await db.execute<({ n: number } & RowDataPacket)[]>(
+    "SELECT COUNT(*) AS n FROM `LiveSession` WHERE `mentorId` = :mentorId AND `status` = 'ended'",
+    { mentorId },
+  );
+  return Number(rows[0]?.n ?? 0);
+}
+
 // --- AI match cache ---
 
 export async function findMatchCache(

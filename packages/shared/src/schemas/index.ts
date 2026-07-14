@@ -13,3 +13,5 @@ export * from './notification.js';
 export * from './marketing.js';
 export * from './jobs.js';
 export * from './leads.js';
+export * from './ai-prompt.js';
+export * from './career-chat.js';

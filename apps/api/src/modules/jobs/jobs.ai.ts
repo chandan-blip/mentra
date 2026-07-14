@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { JobEmploymentTypeSchema, JobExperienceSchema, JobLocationTypeSchema } from '@mentra/shared';
 import { generateJson } from '../../core/ai.js';
+import { getPromptConfig } from '../ai-prompt/ai-prompt.service.js';
+import { PROMPT_KEYS } from '../ai-prompt/ai-prompt.registry.js';
 
 /**
  * AI job ingest. Given a profile (or an HR-chosen role/skill set) the model
@@ -32,16 +34,6 @@ export type AiJob = z.infer<typeof aiJobSchema>;
 
 const aiBatchSchema = z.object({ jobs: z.array(aiJobSchema).max(20) });
 
-const SYSTEM = `You are a job-market research assistant for a career-development platform.
-Using your knowledge of the current technology hiring market, produce realistic, specific job openings a candidate could plausibly find and apply to today.
-
-Rules:
-- Return ONLY a JSON object of the form: { "jobs": [ { ...job... } ] }.
-- Each job MUST have: title, company, location, locationType (onsite|remote|hybrid), employmentType (full-time|part-time|internship|contract), experienceLevel (entry|mid|senior), description (2-4 sentences), skills (array of concrete tech skills), targetRole, salary (a realistic range or null), applyUrl (a real company careers URL or null).
-- Use real, well-known employers or realistic named companies. Do NOT invent fake apply links — use the company's known careers domain, or null.
-- Tailor each role's seniority and required skills to the candidate profile.
-- No duplicate (title, company) pairs.`;
-
 export async function generateJobs(input: {
   count: number;
   role?: string;
@@ -61,11 +53,12 @@ export async function generateJobs(input: {
     .filter(Boolean)
     .join('\n');
 
+  const cfg = await getPromptConfig(PROMPT_KEYS.jobsGenerate);
   const { jobs } = await generateJson({
-    system: SYSTEM,
+    system: cfg.system,
     user,
     schema: aiBatchSchema,
-    temperature: 0.6,
+    temperature: cfg.temperature,
   });
   return jobs;
 }

@@ -18,6 +18,7 @@ import {
   patchSchedule,
   postCreate,
   postEnd,
+  postEnroll,
   postFinalizeUpload,
   postJoinToken,
   postLike,
@@ -67,6 +68,11 @@ liveSessionRouter.post('/sessions/:id/join-token', asyncHandler(postJoinToken));
 // Like / unlike a session — auth only (any user who can open the watch page).
 liveSessionRouter.post('/sessions/:id/like', asyncHandler(postLike));
 liveSessionRouter.delete('/sessions/:id/like', asyncHandler(deleteLike));
+// Enroll — same as the chat's Enroll button: a like + a one-time "Enrolled!" comment.
+liveSessionRouter.post('/sessions/:id/enroll', asyncHandler(postEnroll));
+// Upcoming sessions for the dashboard block — auth only (no plan gate) so the block
+// shows for every signed-in student whenever any upcoming session is available.
+liveSessionRouter.get('/upcoming', asyncHandler(getUpcoming));
 // Single-session detail for the watch page. Registered AFTER the specific /sessions/<word>
 // GETs (live/upcoming/past/mine) so those win; this matches any remaining id.
 liveSessionRouter.get('/sessions/:id', asyncHandler(getById));

@@ -6,6 +6,7 @@ import {
   createSession,
   createUpload,
   endSession,
+  enrollSession,
   finalizeUpload,
   getJoinToken,
   getMessages,
@@ -107,6 +108,10 @@ export async function postLike(req: Request, res: Response): Promise<void> {
 
 export async function deleteLike(req: Request, res: Response): Promise<void> {
   res.json({ data: await unlikeSession(uid(req), id(req)) });
+}
+
+export async function postEnroll(req: Request, res: Response): Promise<void> {
+  res.json({ data: await enrollSession(uid(req), id(req)) });
 }
 
 const progressSchema = z.object({ positionSeconds: z.number().int().min(0).max(60 * 60 * 24) });

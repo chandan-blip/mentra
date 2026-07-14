@@ -5,6 +5,8 @@ import {
 import { env } from '../../env.js';
 import { logger } from '../../logger.js';
 import { AiError, generateJson } from '../../core/ai.js';
+import { getPromptConfig } from '../ai-prompt/ai-prompt.service.js';
+import { PROMPT_KEYS } from '../ai-prompt/ai-prompt.registry.js';
 
 /**
  * Generate a student's test-series categories from their roadmap topics + profile.
@@ -19,26 +21,6 @@ export type CategoryGenInput = {
   techStack: string[];
   topicTitles: string[];
 };
-
-const SYSTEM = `You are a curriculum designer building a "test series" catalogue for ONE student.
-RULES:
-- Respond with a SINGLE JSON object ONLY. No markdown, no prose, no code fences.
-- The JSON MUST match this exact shape:
-  {
-    "categories": [
-      {
-        "slug": string,          // stable kebab-case id, e.g. "interview-prep"
-        "title": string,         // 1-4 words, e.g. "Interview Prep", "OOP Concepts", "CI/CD"
-        "description": string,   // one sentence on what this series covers
-        "skillTags": string[]    // 2-5 short skill/topic tags
-      }
-    ]
-  }
-GUIDELINES:
-- Produce 6-9 categories tailored to the student's goal, target roles, tech stack, and roadmap topics.
-- Cover a spread: fundamentals (e.g. OOP, DSA), the student's stack, ops (DevOps, CI/CD), system design, and interview prep.
-- Categories are self-contained test series — they do NOT depend on roadmap completion.
-- Slugs must be unique, lowercase, hyphenated. Keep titles short and human.`;
 
 function buildUserPrompt(input: CategoryGenInput): string {
   const roles = input.targetRoles.length ? input.targetRoles.join(', ') : 'software engineering';
@@ -81,11 +63,12 @@ export async function generateCategories(
   input: CategoryGenInput,
 ): Promise<{ model: string; categories: LearningCategoryGenItem[] }> {
   try {
+    const cfg = await getPromptConfig(PROMPT_KEYS.learningCategories);
     const out = await generateJson({
-      system: SYSTEM,
+      system: cfg.system,
       user: buildUserPrompt(input),
       schema: learningCategoriesGenSchema,
-      temperature: 0.5,
+      temperature: cfg.temperature,
     });
     return { model: env.AI_MODEL, categories: out.categories };
   } catch (err) {

@@ -8,6 +8,7 @@ import {
   getAvailability,
   getMatches,
   getMentorBookings,
+  getMentorDetailHandler,
   getMentorProfile,
   getMentorSlots,
   getMentorThreads,
@@ -54,6 +55,7 @@ mentorRouter.get('/mentors', student, asyncHandler(getMentors));
 mentorRouter.get('/mentors/matches', student, asyncHandler(getMatches));
 mentorRouter.get('/sessions', student, asyncHandler(getSessions));
 mentorRouter.get('/mentors/:mentorId/slots', student, asyncHandler(getMentorSlots));
+mentorRouter.get('/mentors/:mentorId', student, asyncHandler(getMentorDetailHandler));
 mentorRouter.post('/bookings', student, asyncHandler(postBooking));
 mentorRouter.get('/bookings', student, asyncHandler(getMyBookings));
 mentorRouter.post('/bookings/:id/feedback', student, asyncHandler(postFeedback));

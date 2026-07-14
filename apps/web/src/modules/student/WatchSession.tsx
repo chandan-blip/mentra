@@ -11,6 +11,7 @@ import {
   saveWatchProgress,
   stageBg,
   useCreateSessionComment,
+  useEnrollLiveSession,
   useElapsed,
   useJoinToken,
   useLiveSessions,
@@ -168,6 +169,7 @@ function WatchScaffold({
         {/* Action bar: like + comment (+ any state-specific action) */}
         <div className="mt-3 flex items-center gap-2 border-b border-border-subtle py-2">
           <LikeButton session={s} />
+          {s.status === 'scheduled' && !s.isOwner ? <EnrollButton session={s} /> : null}
           {s.isPublic ? <ShareButton session={s} /> : null}
           <button
             type="button"
@@ -219,6 +221,28 @@ function LikeButton({ session: s }: { session: LiveSessionView }) {
       }`}
     >
       <Heart className={`size-4 ${liked ? 'fill-current' : ''}`} /> {compact(s.likeCount)}
+    </button>
+  );
+}
+
+/** Enroll on an upcoming session (like + "Enrolled!" comment). Flips to "Enrolled" in place. */
+function EnrollButton({ session: s }: { session: LiveSessionView }) {
+  const enroll = useEnrollLiveSession();
+  const enrolled = s.likedByViewer;
+  return (
+    <button
+      type="button"
+      onClick={() => !enrolled && enroll.mutate(s.id)}
+      disabled={enroll.isPending || enrolled}
+      aria-label={enrolled ? 'Enrolled' : 'Enroll'}
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold ring-1 transition disabled:opacity-100 ${
+        enrolled
+          ? 'cursor-default bg-surface-sunken text-accent-green ring-border-subtle'
+          : 'bg-accent-blue text-white ring-transparent hover:brightness-110 disabled:opacity-60'
+      }`}
+    >
+      {enrolled ? <Check className="size-4" /> : null}
+      {enrolled ? 'Enrolled' : enroll.isPending ? 'Enrolling…' : 'Enroll'}
     </button>
   );
 }

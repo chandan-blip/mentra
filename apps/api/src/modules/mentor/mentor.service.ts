@@ -5,6 +5,7 @@ import type {
   CreateBookingInput,
   CreateSlotInput,
   MentorBookingView,
+  MentorDetailView,
   MentorMatchView,
   MentorMessageView,
   MentorThreadView,
@@ -21,6 +22,8 @@ import type {
   SlotStatus,
 } from '@mentra/shared';
 import { generateJson, AiError } from '../../core/ai.js';
+import { getPromptConfig } from '../ai-prompt/ai-prompt.service.js';
+import { PROMPT_KEYS } from '../ai-prompt/ai-prompt.registry.js';
 import { logger } from '../../logger.js';
 import { env } from '../../env.js';
 import { ensureRoom, mintToken } from '../../core/livekit.js';
@@ -153,6 +156,55 @@ export async function listMentors(): Promise<MentorView[]> {
   );
 }
 
+/**
+ * One mentor's public profile plus aggregate impact stats (sessions run, students
+ * helped, doubts fielded, ratings, breadth of knowledge) — powers the details page.
+ */
+export async function getMentorDetail(mentorId: string): Promise<MentorDetailView> {
+  const user = await repo.findUserById(mentorId);
+  if (!user || user.role !== 'mentor') throw new MentorError('MENTOR_NOT_FOUND', 'Mentor not found', 404);
+
+  const [profile, avatars, slotCounts, bookingStats, studentsHelped, doubtThreads, doubtsAsked, rating, liveSessions] =
+    await Promise.all([
+      repo.findProfile(mentorId),
+      repo.findAvatars([mentorId]),
+      repo.countOpenFutureSlots([mentorId]),
+      repo.countBookingStats(mentorId),
+      repo.countDistinctStudents(mentorId),
+      repo.countThreads(mentorId),
+      repo.countStudentDoubtMessages(mentorId),
+      repo.ratingStats(mentorId),
+      repo.countLiveSessions(mentorId),
+    ]);
+
+  const view = toMentorView(
+    mentorId,
+    user.name,
+    profile ?? undefined,
+    avatars.get(mentorId),
+    slotCounts.get(mentorId) ?? 0,
+  );
+
+  return {
+    ...view,
+    stats: {
+      sessionsConducted: bookingStats.completed,
+      upcomingSessions: bookingStats.confirmed,
+      liveSessions,
+      totalBookings: bookingStats.total,
+      studentsHelped,
+      doubtThreads,
+      doubtsAsked,
+      avgRating: rating.avg,
+      ratingCount: rating.count,
+      ratingDistribution: rating.distribution,
+      expertiseCount: view.expertise.length,
+      techStackCount: view.techStack.length,
+      yearsExperience: view.yearsExperience,
+    },
+  };
+}
+
 // --- AI matching (students) ---
 
 const aiMatchSchema = z.object({
@@ -187,15 +239,12 @@ export async function matchMentors(studentId: string): Promise<MentorMatchView[]
 
   // 2. Generate via the model, validated + cached. Fall back on any AI failure.
   const signals = await repo.findStudentSignals(studentId);
+  const cfg = await getPromptConfig(PROMPT_KEYS.mentorMatch);
   try {
     const result = await generateJson({
       schema: aiMatchSchema,
-      temperature: 0.3,
-      system:
-        'You are a mentor-matching engine for a career-prep platform. Given a student profile and a ' +
-        'list of candidate mentors, rank the mentors by how well they fit the student. Respond with ' +
-        'JSON only: {"matches":[{"mentorId","score","reason"}]}. score is 0-100. reason is one short ' +
-        'sentence addressed to the student. Only use mentorId values from the candidates. Rank ALL candidates.',
+      temperature: cfg.temperature,
+      system: cfg.system,
       user: JSON.stringify({
         student: {
           targetRoles: signals?.targetRoles ?? [],

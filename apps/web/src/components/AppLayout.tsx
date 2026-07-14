@@ -38,6 +38,7 @@ const APP_MODULE_ROUTES: { prefix: string; key: string }[] = [
   { prefix: '/projects', key: 'projects' },
   { prefix: '/live-sessions', key: 'live-sessions' },
   { prefix: '/jobs', key: 'jobs' },
+  { prefix: '/chat-with-mentor', key: 'career-chat' },
   { prefix: '/mentor-live-sessions', key: 'mentor-live-sessions' },
   { prefix: '/mentor-mentors', key: 'mentor-mentors' },
   { prefix: '/manage-videos', key: 'manage-videos' },

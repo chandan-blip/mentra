@@ -67,6 +67,18 @@ export function useUpcoming() {
   });
 }
 
+/**
+ * Upcoming sessions for the dashboard block — hits the auth-only endpoint (no plan gate)
+ * so the block appears for any signed-in student whenever sessions exist. Shares the
+ * ['live','upcoming'] cache key so the enroll mutation's optimistic patch still applies.
+ */
+export function useUpcomingOpen() {
+  return useQuery({
+    queryKey: ['live', 'upcoming'],
+    queryFn: () => apiFetch<LiveSessionView[]>(`${base}/upcoming`),
+  });
+}
+
 export function usePastSessions() {
   return useQuery({
     queryKey: ['live', 'past'],
@@ -186,6 +198,28 @@ export function useToggleLike(sessionId: string) {
         method: next ? 'POST' : 'DELETE',
       }),
     onSuccess: (res) => {
+      qc.setQueryData<LiveSessionView>(['live', 'session', sessionId], (prev) =>
+        prev ? { ...prev, likedByViewer: res.liked, likeCount: res.likes } : prev,
+      );
+    },
+  });
+}
+
+/**
+ * Enroll on an upcoming session (same action as the chat's Enroll button): likes it and
+ * posts an "Enrolled!" comment server-side. On success, flips the session to enrolled
+ * (liked) in the upcoming-list cache so the button updates in place.
+ */
+export function useEnrollLiveSession() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (sessionId: string) =>
+      apiFetch<LikeResultView>(`${base}/sessions/${sessionId}/enroll`, { method: 'POST' }),
+    onSuccess: (res, sessionId) => {
+      qc.setQueryData<LiveSessionView[]>(['live', 'upcoming'], (prev) =>
+        prev?.map((s) => (s.id === sessionId ? { ...s, likedByViewer: res.liked, likeCount: res.likes } : s)),
+      );
+      // Also patch the single-session view so the watch page's Enroll flips in place.
       qc.setQueryData<LiveSessionView>(['live', 'session', sessionId], (prev) =>
         prev ? { ...prev, likedByViewer: res.liked, likeCount: res.likes } : prev,
       );

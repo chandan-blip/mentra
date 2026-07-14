@@ -28,7 +28,8 @@ export const SEED_FEATURE_MODULES: FeatureModule[] = [
   { key: 'mentors', label: 'Find a Mentor', icon: 'UserRound', route: '/mentors', sortOrder: 14 },
   { key: 'live-sessions', label: 'Live Sessions', icon: 'Radio', route: '/live-sessions', sortOrder: 15 },
   { key: 'jobs', label: 'Jobs', icon: 'Briefcase', route: '/jobs', sortOrder: 16 },
-  { key: 'support', label: 'Support', icon: 'Headphones', route: '/support', sortOrder: 17 },
+  { key: 'career-chat', label: 'Chat with Mentor', icon: 'MessagesSquare', route: '/chat-with-mentor', sortOrder: 17 },
+  { key: 'support', label: 'Support', icon: 'Headphones', route: '/support', sortOrder: 18 },
 
   // Mentor
   { key: 'mentor-live-sessions', label: 'My Live Sessions', icon: 'Video', route: '/mentor-live-sessions', sortOrder: 20 },
@@ -36,6 +37,9 @@ export const SEED_FEATURE_MODULES: FeatureModule[] = [
 
   // Content management — role-gated video library (edit/delete/visibility/thumbnail).
   { key: 'manage-videos', label: 'Manage Videos', icon: 'Clapperboard', route: '/manage-videos', sortOrder: 22 },
+
+  // AI operations — role-gated tuning of every feature's AI system prompt + temperature.
+  { key: 'manage-ai-prompts', label: 'AI Prompts', icon: 'Wand2', route: '/manage-ai-prompts', sortOrder: 23 },
 
   // HR
   { key: 'hr-jobs', label: 'Job Postings', icon: 'Building2', route: '/hr-jobs', sortOrder: 25 },
@@ -70,6 +74,8 @@ export const SEED_FEATURE_PERMISSIONS: Perm[] = [
   ['student', 'live-sessions', true, true],
   // Students browse the board (read) and can trigger AI discovery for themselves (write).
   ['student', 'jobs', true, true],
+  // Chat with Mentor: read to load the thread, write to send messages & enroll.
+  ['student', 'career-chat', true, true],
   ['student', 'support', true, true],
   ['student', 'analytics', true, false],
   ['student', 'community', true, true],

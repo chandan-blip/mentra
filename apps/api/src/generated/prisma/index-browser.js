@@ -492,6 +492,7 @@ exports.Prisma.LiveSessionScalarFieldEnum = {
   recordingUrl: 'recordingUrl',
   thumbnailUrl: 'thumbnailUrl',
   visible: 'visible',
+  isPublic: 'isPublic',
   egressId: 'egressId',
   durationSeconds: 'durationSeconds',
   createdAt: 'createdAt',

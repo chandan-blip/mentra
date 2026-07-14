@@ -4,9 +4,10 @@ import { logger } from '../logger.js';
 
 /**
  * Thin client over Groq's OpenAI-compatible Chat Completions API. Mentra uses the
- * LLM only for structured generation (assignments, roadmaps), never chat — so this
- * client forces JSON output and validates it against a caller-supplied Zod schema.
- * Callers cache the result in the DB; we never call the model speculatively.
+ * LLM for structured generation (assignments, roadmaps) via `generateJson`, and for
+ * the mentor-chat coach via `generateChatJson` — both force JSON output and validate
+ * it against a caller-supplied Zod schema. Callers persist the result in the DB; we
+ * never call the model speculatively.
  */
 export class AiError extends Error {
   constructor(
@@ -17,6 +18,9 @@ export class AiError extends Error {
     this.name = 'AiError';
   }
 }
+
+/** One turn in a chat request (system sets the contract; user/assistant are the history). */
+export type AiChatMessage = { role: 'system' | 'user' | 'assistant'; content: string };
 
 type GenerateJsonInput<S extends ZodTypeAny> = {
   /** System prompt — sets the role and the strict "JSON only" contract. */
@@ -29,20 +33,24 @@ type GenerateJsonInput<S extends ZodTypeAny> = {
   temperature?: number;
 };
 
+type GenerateChatJsonInput<S extends ZodTypeAny> = {
+  /** Full message array (system first, then the alternating user/assistant history). */
+  messages: AiChatMessage[];
+  /** Validates (and types) the model's JSON reply. */
+  schema: S;
+  /** Sampling temperature — a touch higher for a natural, human conversation. */
+  temperature?: number;
+};
+
 type ChatCompletion = {
   choices?: { message?: { content?: string | null } }[];
 };
 
 /**
- * Ask the model for a JSON object and return it validated as `T`. Throws `AiError`
- * on transport, parse, or schema-validation failure — callers decide how to surface it.
+ * POST a chat-completion request forcing a JSON object, and return the parsed (but not
+ * yet schema-validated) content. Throws `AiError` on transport / parse failure.
  */
-export async function generateJson<S extends ZodTypeAny>({
-  system,
-  user,
-  schema,
-  temperature = 0.4,
-}: GenerateJsonInput<S>): Promise<z.infer<S>> {
+async function requestJson(messages: AiChatMessage[], temperature: number): Promise<unknown> {
   const url = `${env.AI_BASE_URL.replace(/\/$/, '')}/chat/completions`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), env.AI_TIMEOUT_MS);
@@ -63,10 +71,7 @@ export async function generateJson<S extends ZodTypeAny>({
         temperature,
         max_tokens: env.AI_MAX_TOKENS,
         response_format: { type: 'json_object' },
-        messages: [
-          { role: 'system', content: system },
-          { role: 'user', content: user },
-        ],
+        messages,
       }),
       signal: controller.signal,
     });
@@ -98,15 +103,50 @@ export async function generateJson<S extends ZodTypeAny>({
     throw new AiError('AI_PARSE', 'AI response was not valid JSON');
   }
 
+  logger.info({ model: env.AI_MODEL, durationMs: Date.now() - startedAt }, 'ai.response');
+  return json;
+}
+
+/** Validate parsed JSON against the schema, throwing a typed `AiError` on mismatch. */
+function validate<S extends ZodTypeAny>(json: unknown, schema: S): z.infer<S> {
   const parsed = schema.safeParse(json);
   if (!parsed.success) {
-    logger.error(
-      { issues: parsed.error.flatten() },
-      'ai.invalid_shape',
-    );
+    logger.error({ issues: parsed.error.flatten() }, 'ai.invalid_shape');
     throw new AiError('AI_INVALID', 'AI response did not match the expected schema');
   }
-
-  logger.info({ model: env.AI_MODEL, durationMs: Date.now() - startedAt }, 'ai.response');
   return parsed.data;
+}
+
+/**
+ * Ask the model for a JSON object and return it validated as `T`. Throws `AiError`
+ * on transport, parse, or schema-validation failure — callers decide how to surface it.
+ */
+export async function generateJson<S extends ZodTypeAny>({
+  system,
+  user,
+  schema,
+  temperature = 0.4,
+}: GenerateJsonInput<S>): Promise<z.infer<S>> {
+  const json = await requestJson(
+    [
+      { role: 'system', content: system },
+      { role: 'user', content: user },
+    ],
+    temperature,
+  );
+  return validate(json, schema);
+}
+
+/**
+ * Multi-turn variant: pass the whole conversation (system + prior turns) and get a
+ * validated JSON reply. Powers the mentor-chat coach, where continuity across turns
+ * makes the exchange feel human. Same failure modes as `generateJson`.
+ */
+export async function generateChatJson<S extends ZodTypeAny>({
+  messages,
+  schema,
+  temperature = 0.6,
+}: GenerateChatJsonInput<S>): Promise<z.infer<S>> {
+  const json = await requestJson(messages, temperature);
+  return validate(json, schema);
 }

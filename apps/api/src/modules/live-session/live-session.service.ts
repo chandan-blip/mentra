@@ -328,6 +328,21 @@ export async function unlikeSession(userId: string, id: string): Promise<LikeRes
   return { liked: false, likes: await repo.countLikes(id) };
 }
 
+/**
+ * Enroll on a session — the same action as the chat's Enroll button: a like plus a
+ * one-time "Enrolled!" comment. Idempotent (re-enrolling won't re-post the comment).
+ * Returns the liked state + total so the UI can flip to "Enrolled".
+ */
+export async function enrollSession(userId: string, id: string): Promise<LikeResultView> {
+  const session = await repo.findById(id);
+  if (!session) throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
+  if (!(await repo.hasLiked(userId, id))) {
+    await repo.insertLike(id, userId);
+    await persistChatMessage({ sessionId: id, userId, body: 'Enrolled! 🎉 Looking forward to it.' });
+  }
+  return { liked: true, likes: await repo.countLikes(id) };
+}
+
 export async function getMessages(userId: string, id: string): Promise<ChatMessageView[]> {
   const session = await repo.findById(id);
   if (!session) throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);

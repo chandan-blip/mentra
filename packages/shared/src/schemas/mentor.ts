@@ -124,6 +124,44 @@ export type MentorMatchView = {
   reason: string;
 };
 
+/**
+ * Aggregate impact stats for one mentor — powers the graphical mentor-details page.
+ * All counts are derived from real bookings / doubt threads / feedback (no estimates).
+ */
+export type MentorStats = {
+  /** Completed 1:1 or group mentorship sessions. */
+  sessionsConducted: number;
+  /** Confirmed sessions still upcoming (paid + subscriber). */
+  upcomingSessions: number;
+  /** Live broadcast sessions this mentor has run to completion. */
+  liveSessions: number;
+  /** Every booking ever made against this mentor, any status. */
+  totalBookings: number;
+  /** Distinct students who booked a session or opened a doubt thread. */
+  studentsHelped: number;
+  /** Number of async doubt threads opened with this mentor. */
+  doubtThreads: number;
+  /** Individual doubt messages students have sent this mentor. */
+  doubtsAsked: number;
+  /** Average post-session rating (1–5), or null if never rated. */
+  avgRating: number | null;
+  /** How many ratings the average is based on. */
+  ratingCount: number;
+  /** Count of ratings per star, index 0 = ★1 … index 4 = ★5. */
+  ratingDistribution: [number, number, number, number, number];
+  /** Distinct areas of expertise the mentor lists (a proxy for breadth of knowledge). */
+  expertiseCount: number;
+  /** Distinct technologies the mentor lists. */
+  techStackCount: number;
+  /** Years of professional experience, if stated. */
+  yearsExperience: number | null;
+};
+
+/** A single mentor's public profile plus their aggregate impact stats. */
+export type MentorDetailView = MentorView & {
+  stats: MentorStats;
+};
+
 export type AvailabilitySlotView = {
   id: string;
   mentorId: string;
