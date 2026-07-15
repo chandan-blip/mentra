@@ -86,15 +86,28 @@ export async function findEnquiryOwnerId(): Promise<string | null> {
   return rows[0]?.id ?? null;
 }
 
-export async function findLead(ownerId: string, id: string): Promise<LeadRow | null> {
+/**
+ * Look up a lead. Pass `ownerId: null` (admin/operator view) to fetch it regardless of
+ * owner; a string scopes it to that owner so marketing users only reach their own leads.
+ */
+export async function findLead(ownerId: string | null, id: string): Promise<LeadRow | null> {
+  const scoped = ownerId !== null;
   const [rows] = await db.execute<(LeadRow & RowDataPacket)[]>(
-    `SELECT ${LEAD_COLS} FROM \`Lead\` WHERE \`id\` = :id AND \`ownerId\` = :ownerId LIMIT 1`,
-    { id, ownerId },
+    `SELECT ${LEAD_COLS} FROM \`Lead\` WHERE \`id\` = :id${scoped ? ' AND `ownerId` = :ownerId' : ''} LIMIT 1`,
+    scoped ? { id, ownerId } : { id },
   );
   return rows[0] ?? null;
 }
 
-export async function listLeads(ownerId: string, limit = 500): Promise<LeadRow[]> {
+/** List leads for one owner, or ALL leads when `ownerId` is null (admin/operator view). */
+export async function listLeads(ownerId: string | null, limit = 500): Promise<LeadRow[]> {
+  if (ownerId === null) {
+    const [rows] = await db.query<(LeadRow & RowDataPacket)[]>(
+      `SELECT ${LEAD_COLS} FROM \`Lead\` ORDER BY \`createdAt\` DESC LIMIT ?`,
+      [limit],
+    );
+    return rows;
+  }
   const [rows] = await db.query<(LeadRow & RowDataPacket)[]>(
     `SELECT ${LEAD_COLS} FROM \`Lead\` WHERE \`ownerId\` = ? ORDER BY \`createdAt\` DESC LIMIT ?`,
     [ownerId, limit],
@@ -102,16 +115,17 @@ export async function listLeads(ownerId: string, limit = 500): Promise<LeadRow[]
   return rows;
 }
 
-export async function updateLead(ownerId: string, id: string, input: UpdateLeadInput): Promise<void> {
+export async function updateLead(ownerId: string | null, id: string, input: UpdateLeadInput): Promise<void> {
   const entries = Object.entries(input).filter(([col]) => (LEAD_WRITABLE as readonly string[]).includes(col));
   if (entries.length === 0) return;
-  const params: SqlParams = { id, ownerId };
+  const scoped = ownerId !== null;
+  const params: SqlParams = scoped ? { id, ownerId } : { id };
   const sets = entries.map(([col, value]) => {
     params[col] = leadParam(col, value);
     return `\`${col}\` = :${col}`;
   });
   await db.execute<ResultSetHeader>(
-    `UPDATE \`Lead\` SET ${sets.join(', ')} WHERE \`id\` = :id AND \`ownerId\` = :ownerId`,
+    `UPDATE \`Lead\` SET ${sets.join(', ')} WHERE \`id\` = :id${scoped ? ' AND `ownerId` = :ownerId' : ''}`,
     params,
   );
 }
@@ -124,10 +138,11 @@ export async function markContacted(ownerId: string, leadIds: string[]): Promise
   );
 }
 
-export async function deleteLead(ownerId: string, id: string): Promise<number> {
+export async function deleteLead(ownerId: string | null, id: string): Promise<number> {
+  const scoped = ownerId !== null;
   const [res] = await db.execute<ResultSetHeader>(
-    'DELETE FROM `Lead` WHERE `id` = :id AND `ownerId` = :ownerId',
-    { id, ownerId },
+    `DELETE FROM \`Lead\` WHERE \`id\` = :id${scoped ? ' AND `ownerId` = :ownerId' : ''}`,
+    scoped ? { id, ownerId } : { id },
   );
   // Clean up its list memberships.
   await db.execute<ResultSetHeader>('DELETE FROM `LeadListMember` WHERE `leadId` = :id', { id });

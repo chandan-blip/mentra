@@ -8,9 +8,12 @@ import {
   updateLeadListSchema,
   updateLeadSchema,
 } from '@mentra/shared';
+import { isUserAdmin } from '../access/access.service.js';
 import * as svc from './leads.service.js';
 
 const uid = (req: Request): string => req.auth!.sub;
+/** Admins (platform operators) see & manage every lead, incl. landing enquiries owned elsewhere. */
+const admin = (req: Request): Promise<boolean> => isUserAdmin(uid(req));
 const param = (req: Request, key: string): string => {
   const v = req.params[key];
   return Array.isArray(v) ? (v[0] ?? '') : (v ?? '');
@@ -19,15 +22,17 @@ const param = (req: Request, key: string): string => {
 // --- Leads ---
 
 export async function getLeads(req: Request, res: Response): Promise<void> {
-  res.json({ data: await svc.listLeads(uid(req)) });
+  res.json({ data: await svc.listLeads(uid(req), await admin(req)) });
 }
 
 export async function getLead(req: Request, res: Response): Promise<void> {
-  res.json({ data: await svc.getLead(uid(req), param(req, 'id')) });
+  res.json({ data: await svc.getLead(uid(req), param(req, 'id'), await admin(req)) });
 }
 
 export async function postLeadCall(req: Request, res: Response): Promise<void> {
-  res.json({ data: await svc.callLead(uid(req), param(req, 'id'), startCallRunSchema.parse(req.body ?? {})) });
+  res.json({
+    data: await svc.callLead(uid(req), param(req, 'id'), startCallRunSchema.parse(req.body ?? {}), await admin(req)),
+  });
 }
 
 export async function postLead(req: Request, res: Response): Promise<void> {
@@ -35,11 +40,13 @@ export async function postLead(req: Request, res: Response): Promise<void> {
 }
 
 export async function patchLead(req: Request, res: Response): Promise<void> {
-  res.json({ data: await svc.updateLead(uid(req), param(req, 'id'), updateLeadSchema.parse(req.body ?? {})) });
+  res.json({
+    data: await svc.updateLead(uid(req), param(req, 'id'), updateLeadSchema.parse(req.body ?? {}), await admin(req)),
+  });
 }
 
 export async function deleteLeadHandler(req: Request, res: Response): Promise<void> {
-  await svc.deleteLead(uid(req), param(req, 'id'));
+  await svc.deleteLead(uid(req), param(req, 'id'), await admin(req));
   res.json({ data: { ok: true } });
 }
 

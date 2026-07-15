@@ -124,12 +124,19 @@ function toCallView(row: repo.LeadCallRow & { leadName: string }): LeadCallView 
 
 // --- Leads CRUD ---
 
-export async function listLeads(ownerId: string): Promise<LeadView[]> {
-  return (await repo.listLeads(ownerId)).map(toLeadView);
+/**
+ * Owner scope for a lead read/mutate. Admins (the platform operators) see and manage
+ * EVERY lead — including inbound landing enquiries, which may be owned by a different
+ * marketing account — so `null` means "any owner". A marketing user stays scoped to self.
+ */
+const scopeOf = (viewerId: string, isAdmin: boolean): string | null => (isAdmin ? null : viewerId);
+
+export async function listLeads(viewerId: string, isAdmin = false): Promise<LeadView[]> {
+  return (await repo.listLeads(scopeOf(viewerId, isAdmin))).map(toLeadView);
 }
 
-export async function getLead(ownerId: string, id: string): Promise<LeadView> {
-  const lead = await repo.findLead(ownerId, id);
+export async function getLead(viewerId: string, id: string, isAdmin = false): Promise<LeadView> {
+  const lead = await repo.findLead(scopeOf(viewerId, isAdmin), id);
   if (!lead) throw new LeadError('LEAD_NOT_FOUND', 'Lead not found', 404);
   return toLeadView(lead);
 }
@@ -138,16 +145,22 @@ export async function createLead(ownerId: string, input: CreateLeadInput): Promi
   return toLeadView(await repo.insertLead(ownerId, input));
 }
 
-export async function updateLead(ownerId: string, id: string, input: UpdateLeadInput): Promise<LeadView> {
-  const existing = await repo.findLead(ownerId, id);
+export async function updateLead(
+  viewerId: string,
+  id: string,
+  input: UpdateLeadInput,
+  isAdmin = false,
+): Promise<LeadView> {
+  const scope = scopeOf(viewerId, isAdmin);
+  const existing = await repo.findLead(scope, id);
   if (!existing) throw new LeadError('LEAD_NOT_FOUND', 'Lead not found', 404);
-  await repo.updateLead(ownerId, id, input);
-  const updated = await repo.findLead(ownerId, id);
+  await repo.updateLead(scope, id, input);
+  const updated = await repo.findLead(scope, id);
   return toLeadView(updated!);
 }
 
-export async function deleteLead(ownerId: string, id: string): Promise<void> {
-  const deleted = await repo.deleteLead(ownerId, id);
+export async function deleteLead(viewerId: string, id: string, isAdmin = false): Promise<void> {
+  const deleted = await repo.deleteLead(scopeOf(viewerId, isAdmin), id);
   if (deleted === 0) throw new LeadError('LEAD_NOT_FOUND', 'Lead not found', 404);
 }
 
@@ -255,13 +268,20 @@ export async function listCalls(
 }
 
 /** Place a single AI call to one lead (not tied to a list). */
-export async function callLead(ownerId: string, leadId: string, input: StartCallRunInput): Promise<LeadCallView> {
+export async function callLead(
+  viewerId: string,
+  leadId: string,
+  input: StartCallRunInput,
+  isAdmin = false,
+): Promise<LeadCallView> {
   const missing = missingVapiVars();
   if (missing.length) {
     throw new LeadError('VAPI_NOT_CONFIGURED', `AI calling is not configured — missing env: ${missing.join(', ')}.`, 503);
   }
-  const lead = await repo.findLead(ownerId, leadId);
+  const lead = await repo.findLead(scopeOf(viewerId, isAdmin), leadId);
   if (!lead) throw new LeadError('LEAD_NOT_FOUND', 'Lead not found', 404);
+  // The call/contacted rows belong to the lead's actual owner (may differ from an admin viewer).
+  const ownerId = lead.ownerId;
   if (!lead.phone || !lead.phone.trim()) {
     throw new LeadError('LEAD_NO_PHONE', 'This lead has no phone number to call.', 400);
   }
