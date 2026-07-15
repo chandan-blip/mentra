@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Check, Hand, Heart, MessageSquare, Send, Share2, UserPlus, Users, Video } from 'lucide-react';
+import { ArrowLeft, CalendarClock, Check, Hand, Heart, MessageSquare, Send, Share2, UserPlus, Users, Video } from 'lucide-react';
 import { Avatar } from '@mentra/ui';
 import type { ChatMessageView, JoinTokenResponse, LiveSessionView } from '@mentra/shared';
 import { VideoPlayer } from '../../components/VideoPlayer.js';
@@ -115,6 +115,7 @@ function WatchScaffold({
   comments,
   commentsCount,
   extraActions,
+  belowMedia,
 }: {
   session: LiveSessionView;
   onBack: () => void;
@@ -126,6 +127,8 @@ function WatchScaffold({
   comments: ReactNode;
   commentsCount: number;
   extraActions?: ReactNode;
+  /** Optional block rendered directly under the player (e.g. an upcoming session's details). */
+  belowMedia?: ReactNode;
 }) {
   // Live sessions surface the chat immediately; recordings keep comments collapsed.
   const [openComments, setOpenComments] = useState(live);
@@ -151,6 +154,8 @@ function WatchScaffold({
 
       {/* Video — edge-to-edge on mobile, rounded card on larger screens */}
       <div className="-mx-3 overflow-hidden bg-black sm:mx-0 sm:rounded-lg">{media}</div>
+
+      {belowMedia}
 
       <div className="mt-3">
         <h1 className="text-base font-semibold leading-snug text-ink sm:text-lg">{s.title}</h1>
@@ -450,24 +455,54 @@ function RecordingWatch({ session, onBack }: { session: LiveSessionView; onBack:
 
 function PendingWatch({ session: s, onBack }: { session: LiveSessionView; onBack: () => void }) {
   const processing = s.recordingStatus === 'recording' || s.recordingStatus === 'processing';
+
+  // Show the session's AI cover as the poster; fall back to the tinted placeholder only
+  // when there's no thumbnail yet. Badges name the state and the scheduled time.
   const media = (
-    <div
-      className="grid aspect-video w-full place-items-center overflow-hidden text-white/80"
-      style={{ background: stageBg(hueOf(s.id)) }}
-    >
-      <div className="flex flex-col items-center gap-2 px-6 text-center">
-        <Video className="size-9" />
-        <div className="text-sm font-medium">
-          {processing
-            ? 'This recording is still processing — check back shortly.'
-            : s.scheduledFor
-              ? `Starts ${formatWhen(s.scheduledFor)}`
-              : 'This session hasn’t started yet.'}
-        </div>
-        {s.status === 'scheduled' ? (
-          <div className="text-xs text-white/60">You’ll be able to watch here once it goes live.</div>
-        ) : null}
+    <div className="relative aspect-video w-full overflow-hidden" style={{ background: stageBg(hueOf(s.id)) }}>
+      {s.thumbnailUrl ? (
+        <img src={s.thumbnailUrl} alt="" decoding="async" className="h-full w-full object-cover" />
+      ) : (
+        <span className="grid h-full w-full place-items-center text-white/70">
+          <Video className="size-9" />
+        </span>
+      )}
+      <span className="absolute left-3 top-3 rounded-md bg-black/65 px-2 py-1 text-xs font-semibold text-white backdrop-blur">
+        {processing ? 'Processing…' : 'Upcoming'}
+      </span>
+      {!processing && s.scheduledFor ? (
+        <span className="absolute bottom-3 left-3 rounded-md bg-black/65 px-2 py-1 text-xs font-medium text-white backdrop-blur">
+          {formatWhen(s.scheduledFor)}
+        </span>
+      ) : null}
+    </div>
+  );
+
+  // Details block under the player: what this is, when it starts, and the topic.
+  const details = (
+    <div className="mt-3 rounded-lg bg-surface-sunken p-4 ring-1 ring-border-subtle">
+      <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+        <CalendarClock className="size-4 text-accent-blue" />
+        {processing ? 'Recording is processing' : 'Upcoming session'}
       </div>
+      <p className="mt-1.5 text-sm text-ink-muted">
+        {processing
+          ? 'This recording is still processing — check back shortly.'
+          : s.scheduledFor
+            ? `Starts ${formatWhen(s.scheduledFor)}`
+            : 'This session hasn’t started yet.'}
+      </p>
+      {s.status === 'scheduled' ? (
+        <p className="mt-1 text-xs text-ink-faint">You’ll be able to watch here once it goes live.</p>
+      ) : null}
+      {s.topic ? (
+        <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border-subtle pt-3 text-xs text-ink-faint">
+          <span className="rounded-full bg-surface px-2.5 py-1 font-medium text-ink-muted ring-1 ring-border-subtle">
+            {s.topic}
+          </span>
+          <span>with {s.mentorName}</span>
+        </div>
+      ) : null}
     </div>
   );
 
@@ -476,6 +511,7 @@ function PendingWatch({ session: s, onBack }: { session: LiveSessionView; onBack
       session={s}
       onBack={onBack}
       media={media}
+      belowMedia={details}
       commentsCount={s.chatCount}
       comments={<CommentsList session={s} />}
     />

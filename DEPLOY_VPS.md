@@ -5,7 +5,7 @@ Mentra is added **alongside** them as its own subdomain — it must NOT take the
 nginx `default_server`. Stack is native (no Docker): MySQL + Redis + Node API
 (systemd) + LiveKit + nginx, built into `/srv/mentra`.
 
-Assumed subdomain: **mentra.lootmarket.store** (change everywhere if different).
+Assumed subdomain: **app.mentradev.sbs** (change everywhere if different).
 
 ---
 
@@ -31,7 +31,7 @@ can touch prod secrets.
 # from your laptop:
 VPS_HOST=youruser@89.117.58.200 bash sync-to-vps.sh
 # then on the VPS (see "Future redeploys" below):
-cd /opt/mentra && sudo MENTRA_PUBLIC_URL=https://mentra.lootmarket.store bash deploy.sh
+cd /opt/mentra && sudo MENTRA_PUBLIC_URL=https://app.mentradev.sbs bash deploy.sh
 ```
 
 If you rsync by hand instead of the helper, **always** pass `--exclude '.env*'`.
@@ -55,8 +55,13 @@ systemctl is-active mysql redis-server
 
 ## 1. DNS
 
-Add an **A record**: `mentra.lootmarket.store → 89.117.58.200`. Wait for it to resolve
-(`dig +short mentra.lootmarket.store`).
+Two hostnames — the **app** lives on `app.*`, the **landing page** on the root domain.
+Add **A records** (both → the VPS):
+- `app.mentradev.sbs → 89.117.58.200`  (the React app + API)
+- `mentradev.sbs → 89.117.58.200`      (the marketing landing page)
+- `www.mentradev.sbs → 89.117.58.200`  (optional; landing cert covers it)
+
+Wait for them to resolve (`dig +short app.mentradev.sbs`, `dig +short mentradev.sbs`).
 
 ## 2. Get the code onto the VPS
 
@@ -78,7 +83,7 @@ Fill every `<PLACEHOLDER>`:
 - `AI_API_KEY` — copy your Groq key from the old `.env`.
 - `LIVEKIT_API_KEY` (any string) + `LIVEKIT_API_SECRET` (`openssl rand -base64 32`) —
   must match `livekit.yaml` in step 5.
-- Confirm `mentra.lootmarket.store` is your real subdomain throughout.
+- Confirm `app.mentradev.sbs` is your real subdomain throughout.
 
 ## 4. Provision everything EXCEPT nginx (safe on a shared host)
 
@@ -87,7 +92,7 @@ The MySQL step is additive (`CREATE … IF NOT EXISTS mentra`) — it won't touc
 
 ```bash
 cd /opt/mentra
-sudo MENTRA_PUBLIC_URL=https://mentra.lootmarket.store \
+sudo MENTRA_PUBLIC_URL=https://app.mentradev.sbs \
      MYSQL_PASSWORD='<same strong password as in .env>' \
      SKIP_NGINX=1 \
      bash provision.sh
@@ -125,14 +130,33 @@ sudo ufw allow 7882/udp     # LiveKit RTC/UDP (media)
 
 ```bash
 cd /opt/mentra
-sed 's/MENTRA_DOMAIN/mentra.lootmarket.store/' nginx/mentra.vps.conf \
+sed 's/MENTRA_DOMAIN/app.mentradev.sbs/' nginx/mentra.vps.conf \
   | sudo tee /etc/nginx/sites-available/mentra.conf >/dev/null
 sudo ln -s /etc/nginx/sites-available/mentra.conf /etc/nginx/sites-enabled/mentra.conf
 sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d mentra.lootmarket.store   # issues cert, adds 80→443 redirect
+sudo certbot --nginx -d app.mentradev.sbs   # issues cert, adds 80→443 redirect
 ```
 (If `certbot certificates` already showed a `*.lootmarket.store` wildcard, you can instead
 add the `listen 443 ssl` + existing cert paths to the vhost by hand and skip certbot.)
+
+## 7b. Landing page vhost (root domain)
+
+The landing page is a static file (`landing/index.html`) rsynced to `/srv/mentra/landing`
+by provision/deploy. Its vhost serves that page and proxies `/api/` to the API so the
+onboarding enquiry form posts same-origin. The "Get started" buttons link to
+`https://app.mentradev.sbs`.
+
+```bash
+cd /opt/mentra
+sed 's/LANDING_DOMAIN/mentradev.sbs/' nginx/landing.vps.conf \
+  | sudo tee /etc/nginx/sites-available/mentra-landing.conf >/dev/null
+sudo ln -s /etc/nginx/sites-available/mentra-landing.conf /etc/nginx/sites-enabled/mentra-landing.conf
+sudo nginx -t && sudo systemctl reload nginx
+sudo certbot --nginx -d mentradev.sbs -d www.mentradev.sbs   # cert + 80→443 redirect
+```
+
+Enquiries submitted here appear in the **Leads** admin UI (`source: landing`), owned by a
+marketing/admin user. Verify: `curl -i -X POST https://mentradev.sbs/api/v1/enquiries -H 'content-type: application/json' -d '{"name":"Test","email":"t@e.com"}'` → `201`.
 
 ## 8. Seed baseline data (fresh DB)
 
@@ -148,9 +172,9 @@ pnpm --filter @mentra/api db:seed
 
 ```bash
 systemctl status mentra-api livekit --no-pager
-curl -i https://mentra.lootmarket.store/api/v1/health   # adjust to a real health route
+curl -i https://app.mentradev.sbs/api/v1/health   # adjust to a real health route
 ```
-Open `https://mentra.lootmarket.store` in a browser; check login, then a live session
+Open `https://app.mentradev.sbs` in a browser; check login, then a live session
 (LiveKit media needs UDP 7882 reachable).
 
 ---
@@ -161,7 +185,7 @@ Open `https://mentra.lootmarket.store` in a browser; check login, then a live se
 nginx or `livekit.yaml`, so it's safe on the shared host:
 ```bash
 cd /opt/mentra && git pull
-sudo MENTRA_PUBLIC_URL=https://mentra.lootmarket.store bash deploy.sh
+sudo MENTRA_PUBLIC_URL=https://app.mentradev.sbs bash deploy.sh
 ```
 
 

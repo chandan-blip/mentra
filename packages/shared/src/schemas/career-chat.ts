@@ -12,7 +12,10 @@ import { z } from 'zod';
  */
 
 export type CareerChatRole = 'student' | 'mentor';
-export type CareerChatKind = 'text' | 'session-invite';
+// `nudge` is a proactive idle follow-up from the coach. It renders exactly like `text`
+// (only `session-invite` renders specially); the distinct kind just lets both ends count
+// how many nudges a conversation has had, to cap them.
+export type CareerChatKind = 'text' | 'session-invite' | 'nudge';
 
 /** The upcoming live session attached to a `session-invite` message. */
 export type CareerChatSessionCard = {

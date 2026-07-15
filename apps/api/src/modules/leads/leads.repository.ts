@@ -73,6 +73,19 @@ export async function insertLead(ownerId: string, input: CreateLeadInput): Promi
   return created;
 }
 
+/**
+ * Pick the user who should own inbound landing-page enquiries so they surface in a real
+ * marketing inbox: a `marketing`-role user first, else a legacy admin, else the earliest
+ * account. Returns null only if there are no users at all.
+ */
+export async function findEnquiryOwnerId(): Promise<string | null> {
+  const [rows] = await db.query<({ id: string } & RowDataPacket)[]>(
+    'SELECT `id` FROM `User` ' +
+      "ORDER BY (`roleId` = 'marketing') DESC, (`role` = 'admin') DESC, `createdAt` ASC LIMIT 1",
+  );
+  return rows[0]?.id ?? null;
+}
+
 export async function findLead(ownerId: string, id: string): Promise<LeadRow | null> {
   const [rows] = await db.execute<(LeadRow & RowDataPacket)[]>(
     `SELECT ${LEAD_COLS} FROM \`Lead\` WHERE \`id\` = :id AND \`ownerId\` = :ownerId LIMIT 1`,

@@ -1,10 +1,11 @@
 import { Router, type Request, type Response } from 'express';
+import { rateLimit } from 'express-rate-limit';
 import { z } from 'zod';
 import { env } from '../../env.js';
 import { requireAuth } from '../auth/auth.middleware.js';
 import { requireRole } from '../access/access.middleware.js';
 import { LeadError } from './leads.errors.js';
-import { MARKETING_ROLE, handleVapiWebhook } from './leads.service.js';
+import { MARKETING_ROLE, createEnquiry, handleVapiWebhook } from './leads.service.js';
 import {
   deleteLeadHandler,
   deleteListHandler,
@@ -40,6 +41,49 @@ leadsVapiWebhookRouter.post('/vapi/webhook', (req: Request, res: Response) => {
       req.log.error({ err }, 'vapi webhook failed');
       // Ack anyway so Vapi doesn't hammer retries on a transient store error.
       res.json({ ok: false });
+    });
+});
+
+/**
+ * Public onboarding-enquiry endpoint for the marketing landing page (no auth — it's a
+ * public form). Rate-limited hard by IP since it's internet-facing, and empty optional
+ * fields are coerced to null. Each submission becomes a Lead in the marketing inbox.
+ */
+export const leadsEnquiryRouter: Router = Router();
+
+const enquiryLimiter = rateLimit({
+  windowMs: 60 * 60_000,
+  limit: 10,
+  keyGenerator: (req: Request) => req.ip ?? 'anon',
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: { code: 'RATE_LIMITED', message: 'Too many enquiries — please try again later.' } },
+});
+
+const enquirySchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  email: z.string().trim().email().max(255),
+  phone: z.string().trim().max(40).optional().default(''),
+  interest: z.string().trim().max(120).optional().default(''),
+  message: z.string().trim().max(2000).optional().default(''),
+});
+
+leadsEnquiryRouter.post('/', enquiryLimiter, (req: Request, res: Response) => {
+  const parsed = enquirySchema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Please check the form and try again.' } });
+    return;
+  }
+  const { name, email, phone, interest, message } = parsed.data;
+  createEnquiry({ name, email, phone, interest, message })
+    .then(() => res.status(201).json({ data: { ok: true } }))
+    .catch((err: unknown) => {
+      if (err instanceof LeadError) {
+        res.status(err.status).json({ error: { code: err.code, message: err.message } });
+        return;
+      }
+      req.log.error({ err }, 'enquiry submit failed');
+      res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' } });
     });
 });
 

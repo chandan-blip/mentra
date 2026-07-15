@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mentra — Your AI-guided Career OS</title>
+    <meta
+      name="description"
+      content="Mentra turns your goals into a personalised roadmap — AI mentor chat, live sessions, and hands-on projects. Tell us where you want to go and get started."
+    />
+    <!-- App lives on the app subdomain; the landing (this page) is the root domain. -->
+    <style>
+      :root {
+        --canvas: #0a0a0a;
+        --surface: #141414;
+        --surface-sunken: #101010;
+        --ink: #f5f5f4;
+        --ink-muted: #a3a3a3;
+        --ink-faint: #737373;
+        --border: #262626;
+        --border-strong: #3a3a3a;
+        --accent: #4ade80;
+        --accent-blue: #60a5fa;
+        --radius: 16px;
+        --radius-lg: 22px;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--canvas);
+        color: var(--ink);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: inherit; text-decoration: none; }
+      .wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+      /* Header */
+      header {
+        position: sticky; top: 0; z-index: 20;
+        background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+      .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+      .brand .mark {
+        display: grid; place-items: center; width: 32px; height: 32px; border-radius: 999px;
+        background: var(--ink); color: var(--canvas); font-weight: 800; font-size: 15px;
+      }
+      .nav-actions { display: flex; align-items: center; gap: 12px; }
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 20px;
+        border-radius: 999px; font-weight: 600; font-size: 15px; cursor: pointer; border: none;
+        transition: transform 0.12s ease, background 0.2s ease, box-shadow 0.2s ease;
+      }
+      .btn-primary { background: var(--ink); color: var(--canvas); }
+      .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(255,255,255,0.12); }
+      .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--border-strong); }
+      .btn-ghost:hover { border-color: var(--ink-muted); }
+      .btn-lg { height: 52px; padding: 0 28px; font-size: 16px; }
+
+      /* Hero */
+      .hero { padding: 88px 0 64px; text-align: center; position: relative; overflow: hidden; }
+      .hero::before {
+        content: ""; position: absolute; inset: -40% 0 auto 0; height: 520px; z-index: -1;
+        background: radial-gradient(60% 60% at 50% 0%, rgba(74,222,128,0.10), transparent 70%);
+      }
+      .pill {
+        display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; margin-bottom: 22px;
+        border-radius: 999px; border: 1px solid var(--border-strong); font-size: 13px; color: var(--ink-muted);
+      }
+      .pill .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--accent); }
+      h1 {
+        font-size: clamp(34px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.02em; font-weight: 800;
+        max-width: 14ch; margin: 0 auto;
+      }
+      h1 .grad { background: linear-gradient(90deg, #fff, #9ca3af); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .sub { margin: 22px auto 0; max-width: 60ch; font-size: clamp(16px, 2.5vw, 19px); color: var(--ink-muted); }
+      .cta-row { margin-top: 34px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+      /* Features */
+      section { padding: 56px 0; }
+      .eyebrow { text-align: center; color: var(--accent); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+      .h2 { text-align: center; font-size: clamp(26px, 4vw, 36px); font-weight: 800; letter-spacing: -0.02em; margin-top: 10px; }
+      .grid { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .card {
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+        padding: 24px; transition: border-color 0.2s ease, transform 0.2s ease;
+      }
+      .card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+      .card .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-sunken); border: 1px solid var(--border); font-size: 22px; margin-bottom: 16px; }
+      .card h3 { font-size: 17px; font-weight: 700; }
+      .card p { margin-top: 8px; color: var(--ink-muted); font-size: 15px; }
+
+      /* Enquiry */
+      .enquiry { background: var(--surface-sunken); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+      .enquiry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+      .enquiry-copy h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 800; letter-spacing: -0.02em; }
+      .enquiry-copy p { margin-top: 16px; color: var(--ink-muted); font-size: 16px; max-width: 44ch; }
+      .enquiry-copy ul { margin-top: 22px; list-style: none; display: grid; gap: 12px; }
+      .enquiry-copy li { display: flex; gap: 10px; align-items: flex-start; color: var(--ink); font-size: 15px; }
+      .enquiry-copy li .tick { color: var(--accent); font-weight: 800; }
+
+      form.card { padding: 28px; }
+      .field { margin-bottom: 16px; }
+      label { display: block; font-size: 13px; color: var(--ink-muted); margin-bottom: 7px; font-weight: 500; }
+      input, select, textarea {
+        width: 100%; background: var(--canvas); color: var(--ink); border: 1px solid var(--border-strong);
+        border-radius: 12px; padding: 12px 14px; font-size: 15px; font-family: inherit; outline: none;
+        transition: border-color 0.15s ease;
+      }
+      input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+      textarea { resize: vertical; min-height: 96px; }
+      form .btn-primary { width: 100%; justify-content: center; height: 50px; font-size: 16px; }
+      .form-note { margin-top: 12px; font-size: 13px; text-align: center; min-height: 20px; }
+      .form-note.ok { color: var(--accent); }
+      .form-note.err { color: #f87171; }
+      .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+      footer { padding: 40px 0; border-top: 1px solid var(--border); color: var(--ink-faint); font-size: 14px; }
+      .foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+      @media (max-width: 860px) {
+        .grid { grid-template-columns: 1fr; }
+        .enquiry-grid { grid-template-columns: 1fr; gap: 32px; }
+        .nav .btn-ghost { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap nav">
+        <div class="brand"><span class="mark">M</span> Mentra</div>
+        <div class="nav-actions">
+          <a class="btn btn-ghost" href="https://app.mentradev.sbs">Sign in</a>
+          <a class="btn btn-primary" href="https://app.mentradev.sbs">Get started</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <div class="hero">
+        <div class="wrap">
+          <span class="pill"><span class="dot"></span> Your AI-guided Career OS</span>
+          <h1>Turn your goal into a <span class="grad">personalised roadmap</span></h1>
+          <p class="sub">
+            Mentra maps where you are to where you want to be — an AI mentor that knows your journey,
+            live sessions with real mentors, and hands-on projects that actually move the needle.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary btn-lg" href="https://app.mentradev.sbs">Get started — it's free</a>
+            <a class="btn btn-ghost btn-lg" href="#enquiry">Talk to us</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <section>
+        <div class="wrap">
+          <div class="eyebrow">Why Mentra</div>
+          <div class="h2">Everything you need to level up, in one place</div>
+          <div class="grid">
+            <div class="card">
+              <div class="ico">🧭</div>
+              <h3>AI-built roadmap</h3>
+              <p>Answer a few questions and get a week-by-week plan tailored to your target role and skills.</p>
+            </div>
+            <div class="card">
+              <div class="ico">💬</div>
+              <h3>Mentor chat, anytime</h3>
+              <p>A career coach that remembers your context and nudges you forward — like a real 1:1.</p>
+            </div>
+            <div class="card">
+              <div class="ico">🎥</div>
+              <h3>Live sessions</h3>
+              <p>Join live sessions with mentors, ask questions, and rewatch the recordings on demand.</p>
+            </div>
+            <div class="card">
+              <div class="ico">🛠️</div>
+              <h3>Hands-on projects</h3>
+              <p>Practical, graded projects that build a portfolio, not just a checklist of tutorials.</p>
+            </div>
+            <div class="card">
+              <div class="ico">📈</div>
+              <h3>Track your progress</h3>
+              <p>Streaks, skill growth, and a clear picture of how far you've come from day one.</p>
+            </div>
+            <div class="card">
+              <div class="ico">💼</div>
+              <h3>Job matches</h3>
+              <p>Fresh openings matched to your profile, so the roadmap always points somewhere real.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Enquiry -->
+      <section class="enquiry" id="enquiry">
+        <div class="wrap enquiry-grid">
+          <div class="enquiry-copy">
+            <h2>Tell us where you want to go</h2>
+            <p>
+              Share a little about yourself and what you're aiming for. We'll help you onboard and
+              point you to the right starting line.
+            </p>
+            <ul>
+              <li><span class="tick">✓</span> A tailored onboarding, based on your goal</li>
+              <li><span class="tick">✓</span> Guidance from mentors in your field</li>
+              <li><span class="tick">✓</span> No spam — just a genuine next step</li>
+            </ul>
+          </div>
+
+          <form class="card" id="enquiry-form" novalidate>
+            <div class="field">
+              <label for="name">Your name</label>
+              <input id="name" name="name" type="text" maxlength="120" autocomplete="name" required placeholder="Jane Doe" />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" maxlength="255" autocomplete="email" required placeholder="jane@example.com" />
+            </div>
+            <div class="field">
+              <label for="phone">Phone <span style="color:var(--ink-faint)">(optional)</span></label>
+              <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="tel" placeholder="+91 98765 43210" />
+            </div>
+            <div class="field">
+              <label for="interest">What are you looking for?</label>
+              <select id="interest" name="interest">
+                <option value="">Choose one…</option>
+                <option>Land my first job</option>
+                <option>Switch careers</option>
+                <option>Level up my current role</option>
+                <option>Prepare for interviews</option>
+                <option>Just exploring</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="message">Anything else? <span style="color:var(--ink-faint)">(optional)</span></label>
+              <textarea id="message" name="message" maxlength="2000" placeholder="A line about your goal…"></textarea>
+            </div>
+            <!-- Honeypot: bots fill this; humans never see it. Submissions with it set are dropped. -->
+            <div class="hp" aria-hidden="true"><label>Do not fill<input name="company_website" tabindex="-1" autocomplete="off" /></label></div>
+
+            <button class="btn btn-primary" type="submit" id="submit-btn">Send enquiry</button>
+            <div class="form-note" id="form-note" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap foot">
+        <div class="brand"><span class="mark">M</span> Mentra</div>
+        <div>© <span id="year"></span> Mentra · <a href="https://app.mentradev.sbs" style="color:var(--ink-muted)">Open the app →</a></div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      const form = document.getElementById('enquiry-form');
+      const note = document.getElementById('form-note');
+      const btn = document.getElementById('submit-btn');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        note.className = 'form-note';
+        note.textContent = '';
+
+        // Honeypot — silently succeed for bots without hitting the API.
+        if (form.company_website.value) {
+          note.className = 'form-note ok';
+          note.textContent = "Thanks! We'll be in touch soon.";
+          form.reset();
+          return;
+        }
+
+        const payload = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          phone: form.phone.value.trim(),
+          interest: form.interest.value,
+          message: form.message.value.trim(),
+        };
+        if (!payload.name || !payload.email) {
+          note.className = 'form-note err';
+          note.textContent = 'Please add your name and email.';
+          return;
+        }
+
+        btn.disabled = true;
+        const original = btn.textContent;
+        btn.textContent = 'Sending…';
+        try {
+          // Same-origin: the landing vhost proxies /api/ to the API service.
+          const res = await fetch('/api/v1/enquiries', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (res.ok) {
+            note.className = 'form-note ok';
+            note.textContent = "Thanks! We've got your enquiry — we'll reach out soon.";
+            form.reset();
+          } else {
+            const body = await res.json().catch(() => ({}));
+            note.className = 'form-note err';
+            note.textContent = body?.error?.message || 'Something went wrong. Please try again.';
+          }
+        } catch {
+          note.className = 'form-note err';
+          note.textContent = 'Network error — please try again.';
+        } finally {
+          btn.disabled = false;
+          btn.textContent = original;
+        }
+      });
+    </script>
+  </body>
+</html>

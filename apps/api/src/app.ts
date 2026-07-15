@@ -22,7 +22,7 @@ import { communityRouter } from './modules/community/index.js';
 import { notificationRouter } from './modules/notification/index.js';
 import { marketingRouter, marketingOauthRouter } from './modules/marketing/index.js';
 import { jobsRouter } from './modules/jobs/index.js';
-import { leadsRouter, leadsVapiWebhookRouter } from './modules/leads/index.js';
+import { leadsRouter, leadsVapiWebhookRouter, leadsEnquiryRouter } from './modules/leads/index.js';
 import { activityRouter, registerActivityRecorder } from './modules/activity/index.js';
 import { aiPromptRouter } from './modules/ai-prompt/index.js';
 import { careerChatRouter } from './modules/career-chat/index.js';
@@ -98,6 +98,8 @@ export function createApp(): Express {
   app.use('/api/v1/marketing', marketingOauthRouter);
   app.use('/api/v1/marketing', marketingRouter);
   app.use('/api/v1/jobs', jobsRouter);
+  // Public onboarding enquiries from the marketing landing page (no auth) → creates Leads.
+  app.use('/api/v1/enquiries', leadsEnquiryRouter);
   // Public Vapi webhook (no auth) must precede the role-gated leads router.
   app.use('/api/v1/leads', leadsVapiWebhookRouter);
   app.use('/api/v1/leads', leadsRouter);

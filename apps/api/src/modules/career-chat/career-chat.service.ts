@@ -34,9 +34,9 @@ const ENROLL_COMMENT = 'Enrolled! 🎉 Looking forward to it.';
 const INVITE_LINE = "One more thing — there's a live session coming up that fits this really well. Want to join?";
 
 /**
- * Sent when the AI is unavailable. The coach acts like a busy human mentor: instead of
- * replying to every message, it stays quiet and drops one of these "I'll get back to you"
- * notes only once every few student messages (see `maybeBusyReply`).
+ * Sent when the AI reply fails (after retries). Rather than leave the student staring at
+ * silence, the coach drops one of these human-sounding "I'll get back to you" notes so
+ * every message gets an acknowledgement (see `busyReply`).
  */
 const BUSY_REPLIES = [
   "Hey, I'm tied up with another mentee right now — I'll get back to you on this properly in a bit, promise 🙏",
@@ -44,9 +44,6 @@ const BUSY_REPLIES = [
   "Caught up with a few things right now — I haven't forgotten you, I'll come back to this soon.",
   'Bear with me, a bit swamped just now. I’ll pick this up with you shortly.',
 ];
-
-/** After how many stacked, un-answered student messages the busy coach drops a note. */
-const BUSY_REPLY_EVERY = 3;
 
 const iso = (d: Date | null): string | null => (d ? new Date(d).toISOString() : null);
 const firstName = (name: string | null): string => (name ? (name.trim().split(/\s+/)[0] ?? '') : '');
@@ -70,6 +67,9 @@ export async function sendMessage(
 ): Promise<CareerChatMessageView[]> {
   await ensureSeeded(userId);
   const studentRow = await repo.insertMessage({ userId, role: 'student', kind: 'text', body: input.body });
+  // Only the rows created by THIS turn — the client appends these to its cache rather
+  // than reloading the whole thread on every message.
+  const created: repo.CareerChatRow[] = [studentRow];
 
   // History (oldest-first, capped) after the student's new turn is stored. This is the
   // full persistent thread, so the coach picks up context from earlier sessions too.
@@ -82,47 +82,48 @@ export async function sendMessage(
       profileContext: await buildProfileContext(userId),
       history,
     });
-    await repo.insertMessage({ userId, role: 'mentor', kind: 'text', body: reply.reply });
+    created.push(await repo.insertMessage({ userId, role: 'mentor', kind: 'text', body: reply.reply }));
     if (reply.suggestSession) {
-      await maybeInvite(userId, reply.sessionQuery);
+      const invite = await maybeInvite(userId, reply.sessionQuery);
+      if (invite) created.push(invite);
     }
   } catch (err) {
     if (!(err instanceof AiError)) throw err;
-    // The AI is down. Flag this student turn (issue = 1) and act like a busy human
-    // mentor: don't reply back-to-back — only drop a realistic "I'll get back to you"
-    // note once every few flagged messages (see maybeBusyReply).
+    // The AI is down (even after retries). Flag this student turn (issue = 1) and reply
+    // with a human-sounding "I'll get back to you" note so the student always gets an
+    // acknowledgement instead of silence.
     logger.error({ err }, 'career-chat coach reply failed');
     await repo.markIssue(studentRow.id);
-    await maybeBusyReply(userId);
+    created.push(await busyReply(userId));
   }
 
-  return getConversation(userId);
+  return buildViews(userId, created);
 }
 
 /**
- * The busy-mentor cadence. When the AI is down, each failed student turn is flagged
- * (issue = 1). We count the trailing run of flagged, unanswered student messages and
- * post a short "I'll get back to you" note only on every Nth one — so the mentor stays
- * quiet in between instead of replying back-to-back.
+ * Post a "busy mentor" fallback for a failed turn, so the student always gets a reply
+ * instead of silence. Avoids repeating the exact line the coach used last time, so two
+ * back-to-back failures don't echo the identical note. Returns the row it posted.
  */
-async function maybeBusyReply(userId: string): Promise<void> {
+async function busyReply(userId: string): Promise<repo.CareerChatRow> {
   const rows = await repo.listByUser(userId);
-  let run = 0;
-  for (let i = rows.length - 1; i >= 0 && rows[i]!.role === 'student' && rows[i]!.issue === 1; i -= 1) run += 1;
-  if (run === 0 || run % BUSY_REPLY_EVERY !== 0) return;
-  const body = BUSY_REPLIES[Math.floor(Math.random() * BUSY_REPLIES.length)]!;
-  await repo.insertMessage({ userId, role: 'mentor', kind: 'text', body });
+  const lastBody = rows[rows.length - 1]?.body ?? '';
+  const fresh = BUSY_REPLIES.filter((b) => b !== lastBody);
+  const pool = fresh.length ? fresh : BUSY_REPLIES;
+  const body = pool[Math.floor(Math.random() * pool.length)]!;
+  return repo.insertMessage({ userId, role: 'mentor', kind: 'text', body });
 }
 
 /**
  * Proactive idle nudge: when the student has read the coach's reply but gone quiet, the
  * coach sends ONE short follow-up question — like a real mentor prodding gently. Fires at
  * most once per idle gap (guarded by `isNudgeEligible`) and is best-effort: an AI hiccup
- * just leaves the thread as-is. Returns the (possibly unchanged) conversation.
+ * just leaves the thread as-is. Returns only the new nudge message (the client appends
+ * it), or an empty array when nothing was posted.
  */
 export async function nudge(userId: string): Promise<CareerChatMessageView[]> {
   const rows = await repo.listByUser(userId);
-  if (!isNudgeEligible(rows)) return buildViews(userId, rows);
+  if (!isNudgeEligible(rows)) return [];
 
   const history = await buildHistory(userId, rows.slice(-HISTORY_WINDOW));
   const lastCoach = rows[rows.length - 1]!.body;
@@ -135,25 +136,29 @@ export async function nudge(userId: string): Promise<CareerChatMessageView[]> {
     });
     // Belt-and-braces: if the model still echoed its last line, drop the nudge rather
     // than post a duplicate. A missed nudge is better than a repeat.
-    if (norm(reply.reply) === norm(lastCoach)) return buildViews(userId, rows);
-    await repo.insertMessage({ userId, role: 'mentor', kind: 'text', body: reply.reply });
+    if (norm(reply.reply) === norm(lastCoach)) return [];
+    const coachRow = await repo.insertMessage({ userId, role: 'mentor', kind: 'nudge', body: reply.reply });
+    return buildViews(userId, [coachRow]);
   } catch (err) {
     if (err instanceof AiError) {
       logger.error({ err }, 'career-chat nudge failed');
-      return buildViews(userId, rows);
+      return [];
     }
     throw err;
   }
-
-  return getConversation(userId);
 }
 
+/** A conversation gets at most this many proactive idle nudges over its whole lifetime. */
+const MAX_NUDGES = 3;
+
 /**
- * Nudge only when: the student has engaged at least once, the coach spoke last (a text
- * message, not a session card), and we haven't already nudged this gap — i.e. fewer than
- * two trailing coach messages since the student's last turn.
+ * Nudge only when: the student has engaged at least once, the coach's last message was a
+ * real reply (`text`, not a nudge/card), we haven't already nudged this gap (fewer than
+ * two trailing coach messages), AND the conversation hasn't used up its nudge budget —
+ * so a student who keeps going quiet gets a couple of gentle prods, not an endless stream.
  */
 function isNudgeEligible(rows: repo.CareerChatRow[]): boolean {
+  if (rows.filter((r) => r.kind === 'nudge').length >= MAX_NUDGES) return false;
   const last = rows[rows.length - 1];
   if (!last || last.role !== 'mentor' || last.kind !== 'text') return false;
   if (!rows.some((r) => r.role === 'student')) return false;
@@ -184,14 +189,18 @@ export async function enroll(
   });
 
   await repo.markEnrolled(invite.id);
-  await repo.insertMessage({
+  const confirmation = await repo.insertMessage({
     userId,
     role: 'mentor',
     kind: 'text',
     body: "Awesome — you're in! 🎉 I saved your spot and left a note for the host. See you there.",
   });
 
-  return getConversation(userId);
+  // Delta = the (now-enrolled) invite card + the confirmation. The client merges by id,
+  // so the existing card flips to "enrolled" in place and the confirmation appends.
+  const updatedInvite = await repo.findById(invite.id);
+  const delta = updatedInvite ? [updatedInvite, confirmation] : [confirmation];
+  return buildViews(userId, delta);
 }
 
 // --- Internals ---
@@ -227,12 +236,13 @@ async function buildProfileContext(userId: string): Promise<string> {
  * Attach a live-session invite when the coach asked for one. Picks the upcoming session
  * that best matches the coach's topic hint (else the soonest), and skips it if the
  * student already has a pending invite or has already enrolled — so we never stack cards.
+ * Returns the invite row it posted (for the turn's delta), or null when it skips.
  */
-async function maybeInvite(userId: string, query: string | null): Promise<void> {
-  if ((await repo.pendingInviteCount(userId)) > 0) return;
+async function maybeInvite(userId: string, query: string | null): Promise<repo.CareerChatRow | null> {
+  if ((await repo.pendingInviteCount(userId)) > 0) return null;
 
   const upcoming = await liveRepo.listUpcoming();
-  if (upcoming.length === 0) return;
+  if (upcoming.length === 0) return null;
 
   const q = (query ?? '').trim().toLowerCase();
   const match = q
@@ -240,9 +250,9 @@ async function maybeInvite(userId: string, query: string | null): Promise<void> 
     : null;
   const chosen = match ?? upcoming[0]!;
 
-  if (await liveRepo.hasLiked(userId, chosen.id)) return; // already enrolled
+  if (await liveRepo.hasLiked(userId, chosen.id)) return null; // already enrolled
 
-  await repo.insertMessage({
+  return repo.insertMessage({
     userId,
     role: 'mentor',
     kind: 'session-invite',

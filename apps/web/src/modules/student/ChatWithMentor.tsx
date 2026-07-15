@@ -18,6 +18,9 @@ const STARTERS = [
 
 /** How long the student can stay quiet after a coach reply before the coach nudges them. */
 const IDLE_NUDGE_MS = 20000;
+/** Cap on proactive idle nudges per conversation (matches the API's MAX_NUDGES). Once hit,
+ *  we stop arming the timer so we don't keep pinging /nudge for a no-op. */
+const MAX_IDLE_NUDGES = 3;
 
 /**
  * Chat with your Mentor — a human-feeling career coach. It reads like a real 1:1 chat
@@ -54,6 +57,8 @@ export function ChatWithMentorPage() {
   useEffect(() => {
     if (chat.isLoading || send.isPending || nudge.isPending || pendingText) return;
     if (input.trim()) return;
+    // Stop once the conversation has used up its nudge budget (backend enforces this too).
+    if (messages.filter((m) => m.kind === 'nudge').length >= MAX_IDLE_NUDGES) return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== 'mentor' || last.kind !== 'text') return;
     if (!messages.some((m) => m.role === 'student')) return;

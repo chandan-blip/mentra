@@ -24,6 +24,41 @@ export const MARKETING_ROLE = 'marketing';
 const iso = (d: Date): string => new Date(d).toISOString();
 const isoN = (d: Date | null): string | null => (d ? new Date(d).toISOString() : null);
 
+/** Fields the public landing-page enquiry form submits (unauthenticated). */
+export type EnquiryInput = {
+  name: string;
+  email: string;
+  phone?: string | null;
+  interest?: string | null;
+  message?: string | null;
+};
+
+/**
+ * Record a public onboarding enquiry from the marketing landing page as a Lead
+ * (`source: 'landing'`, `status: 'new'`) owned by the marketing inbox, so it shows up in
+ * the existing Leads UI with no new table. Owner is resolved to a marketing/admin user.
+ */
+export async function createEnquiry(input: EnquiryInput): Promise<void> {
+  const ownerId = await repo.findEnquiryOwnerId();
+  if (!ownerId) throw new LeadError('NO_ENQUIRY_OWNER', 'No account is available to receive enquiries', 503);
+
+  const noteParts: string[] = [];
+  if (input.interest) noteParts.push(`Interest: ${input.interest}`);
+  if (input.message) noteParts.push(input.message);
+
+  const lead: CreateLeadInput = {
+    firstName: input.name,
+    email: input.email,
+    phone: input.phone || null,
+    status: 'new',
+    source: 'landing',
+    notes: noteParts.join('\n\n') || null,
+    tags: ['onboarding'],
+  };
+  await repo.insertLead(ownerId, lead);
+  logger.info({ email: input.email, source: 'landing' }, 'enquiry.created');
+}
+
 function normalizeTags(value: string[] | string | null): string[] {
   if (Array.isArray(value)) return value;
   if (typeof value === 'string') {

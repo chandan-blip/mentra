@@ -21,12 +21,39 @@ const EnvSchema = z.object({
 
   PROFILE_DEFAULT_TIMEZONE: z.string().min(1).default('Asia/Kolkata'),
 
-  // AI (Groq, OpenAI-compatible). Powers personalized assignments + roadmaps.
+  // AI (Groq, OpenAI-compatible). Powers structured generation: assignments + roadmaps.
   AI_API_KEY: z.string().min(1),
   AI_BASE_URL: z.string().url().default('https://api.groq.com/openai/v1'),
   AI_MODEL: z.string().min(1).default('llama-3.3-70b-versatile'),
   AI_TIMEOUT_MS: z.coerce.number().int().positive().default(30_000),
   AI_MAX_TOKENS: z.coerce.number().int().positive().default(4_096),
+
+  // Mentor-chat coach — a FAILOVER CHAIN of free, OpenAI-compatible providers. Set a key
+  // for each provider you want in the chain; they're tried in the order below and the
+  // first success wins, so one provider being down just shifts to the next. Base URL and
+  // model have sensible defaults per provider — only the *_API_KEY is required to enable
+  // one. If NONE are set, chat falls back to the Groq (AI_*) creds above.
+  //
+  // 1) Groq — fastest; llama-3.3-70b
+  AI_CHAT_GROQ_API_KEY: z.string().min(1).optional(),
+  AI_CHAT_GROQ_BASE_URL: z.string().url().default('https://api.groq.com/openai/v1'),
+  AI_CHAT_GROQ_MODEL: z.string().min(1).default('llama-3.3-70b-versatile'),
+  // 2) Google Gemini — biggest free quota (1,500 req/day)
+  AI_CHAT_GEMINI_API_KEY: z.string().min(1).optional(),
+  AI_CHAT_GEMINI_BASE_URL: z.string().url().default('https://generativelanguage.googleapis.com/v1beta/openai'),
+  AI_CHAT_GEMINI_MODEL: z.string().min(1).default('gemini-flash-latest'),
+  // 3) OpenRouter — many free models behind one key (ids rotate; adjust if 404)
+  AI_CHAT_OPENROUTER_API_KEY: z.string().min(1).optional(),
+  AI_CHAT_OPENROUTER_BASE_URL: z.string().url().default('https://openrouter.ai/api/v1'),
+  AI_CHAT_OPENROUTER_MODEL: z.string().min(1).default('meta-llama/llama-3.3-70b-instruct:free'),
+  // 4) Cerebras — very high throughput
+  AI_CHAT_CEREBRAS_API_KEY: z.string().min(1).optional(),
+  AI_CHAT_CEREBRAS_BASE_URL: z.string().url().default('https://api.cerebras.ai/v1'),
+  AI_CHAT_CEREBRAS_MODEL: z.string().min(1).default('llama-3.3-70b'),
+  // 5) Mistral (La Plateforme) — free tier
+  AI_CHAT_MISTRAL_API_KEY: z.string().min(1).optional(),
+  AI_CHAT_MISTRAL_BASE_URL: z.string().url().default('https://api.mistral.ai/v1'),
+  AI_CHAT_MISTRAL_MODEL: z.string().min(1).default('mistral-small-latest'),
 
   // Dashboard (module 04)
   DASHBOARD_RECOMMENDER_STRATEGY: z.enum(['default']).default('default'),

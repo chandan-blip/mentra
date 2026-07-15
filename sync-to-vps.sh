@@ -4,7 +4,7 @@
 # Safe by design: env files, build output, node_modules and local state are
 # EXCLUDED, so this can never overwrite the production secrets that live only at
 # /srv/mentra/.env on the server. After syncing, redeploy on the VPS with:
-#   cd /opt/mentra && sudo MENTRA_PUBLIC_URL=https://mentra.lootmarket.store bash deploy.sh
+#   cd /opt/mentra && sudo MENTRA_PUBLIC_URL=https://app.mentradev.sbs bash deploy.sh
 #
 # Usage:
 #   bash sync-to-vps.sh
@@ -25,4 +25,4 @@ rsync -az --delete \
 echo "✅ Synced to $VPS_HOST:$VPS_PATH"
 echo "   (excluded: .env*, node_modules, dist, var, .git — prod secrets untouched)"
 echo "   Next, on the VPS:"
-echo "     cd $VPS_PATH && sudo MENTRA_PUBLIC_URL=https://mentra.lootmarket.store bash deploy.sh"
+echo "     cd $VPS_PATH && sudo MENTRA_PUBLIC_URL=https://app.mentradev.sbs bash deploy.sh"

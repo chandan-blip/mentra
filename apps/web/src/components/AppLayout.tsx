@@ -5,6 +5,7 @@ import { AppShell, Avatar, Sidebar, TopBar } from '@mentra/ui';
 import type { ModuleEntitlement } from '@mentra/shared';
 import { AppSidebar, FOOTER_MODULE_KEYS, isRouteActive, SidebarLink, SidebarModuleButton } from './AppSidebar.js';
 import { MobileBottomNav } from './MobileBottomNav.js';
+import { CareerChatFab } from './CareerChatFab.js';
 import { NotificationBell } from './NotificationBell.js';
 import { LogoutConfirmModal } from './LogoutConfirmModal.js';
 import { useMyAccess } from '../lib/access.js';
@@ -344,6 +345,7 @@ export function AppLayout() {
         <Outlet context={{ user, loadingUser } satisfies AppOutletContext} />
       )}
       <LogoutConfirmModal open={logoutOpen} onCancel={() => setLogoutOpen(false)} onConfirm={handleLogout} />
+      <CareerChatFab />
     </AppShell>
     </ChromeContext.Provider>
   );
