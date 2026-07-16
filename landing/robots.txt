@@ -1,0 +1,16 @@
+# Mentra — marketing landing page (https://mentradev.sbs)
+# The login-gated app is a separate host (app.mentradev.sbs) and serves its own
+# robots.txt from apps/web/public/ — rules here do NOT apply to it.
+
+User-agent: *
+Allow: /
+
+# POST-only enquiry endpoint. Nothing to index, and crawlers that probe it only
+# add noise to the Leads admin.
+Disallow: /api/
+
+# AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, …) are allowed
+# by the wildcard above — this is a marketing page, so being quotable by
+# assistants is the point. See /llms.txt for a condensed summary of the product.
+
+Sitemap: https://mentradev.sbs/sitemap.xml

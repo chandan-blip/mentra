@@ -24,4 +24,4 @@ Disallow: /leads
 Disallow: /transactions
 Disallow: /onboarding
 
-Sitemap: https://mentra.app/sitemap.xml
+Sitemap: https://app.mentradev.sbs/sitemap.xml

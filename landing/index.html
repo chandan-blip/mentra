@@ -43,19 +43,40 @@
     <meta property="og:image" content="https://mentradev.sbs/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Mentra — your AI-powered Career OS: a personalized roadmap from where you are to job-ready." />
 
     <!-- ===== Twitter / X ===== -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Mentra — Your AI-powered Career OS" />
     <meta name="twitter:description" content="Turn your goal into a roadmap. AI mentor, live sessions, projects, and job matches — in one place." />
     <meta name="twitter:image" content="https://mentradev.sbs/og-image.png" />
+    <meta name="twitter:image:alt" content="Mentra — your AI-powered Career OS: a personalized roadmap from where you are to job-ready." />
 
     <!-- ===== Structured data ===== -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@graph": [
-          { "@type": "Organization", "@id": "https://mentradev.sbs/#org", "name": "Mentra", "url": "https://mentradev.sbs/", "logo": "https://mentradev.sbs/brand/mentra-icon-white.png", "description": "Your AI-powered Career OS — turn a goal into a roadmap, with an AI mentor, live sessions, projects, and job matches." },
+          {
+            "@type": "Organization",
+            "@id": "https://mentradev.sbs/#org",
+            "name": "Mentra",
+            "url": "https://mentradev.sbs/",
+            "logo": "https://mentradev.sbs/brand/mentra-icon-white.png",
+            "description": "Your AI-powered Career OS — turn a goal into a roadmap, with an AI mentor, live sessions, projects, and job matches.",
+            "sameAs": [
+              "https://www.instagram.com/mentra.software",
+              "https://www.facebook.com/share/1BVXCGGVoq/",
+              "https://t.me/mentralive"
+            ],
+            "contactPoint": [{
+              "@type": "ContactPoint",
+              "contactType": "customer support",
+              "telephone": "+918777596614",
+              "url": "https://mentradev.sbs/#enquiry",
+              "availableLanguage": ["English"]
+            }]
+          },
           { "@type": "WebSite", "@id": "https://mentradev.sbs/#website", "url": "https://mentradev.sbs/", "name": "Mentra", "publisher": { "@id": "https://mentradev.sbs/#org" } },
           { "@type": "SoftwareApplication", "name": "Mentra", "applicationCategory": "EducationalApplication", "operatingSystem": "Web, iOS, Android", "url": "https://app.mentradev.sbs/", "description": "An AI-guided Career OS with a personalized roadmap, AI mentor chat, live sessions, projects, and job matching.", "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" } },
           { "@type": "FAQPage", "mainEntity": [
@@ -411,8 +432,110 @@
       .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
       @media (max-width: 860px) { .enq-grid { grid-template-columns: 1fr; gap: 36px; } }
 
+      /* ---------- Social dock (fixed, bottom) ---------- */
+      .dock {
+        position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+        transform: translateX(-50%); z-index: 60;
+        display: flex; align-items: center; gap: 6px; padding: 7px;
+        border-radius: 999px; border: 1px solid var(--b);
+        background: rgba(20, 20, 20, 0.72);
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+        box-shadow: 0 14px 38px -12px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+      .dock a, .dock .dock-btn {
+        position: relative; width: 40px; height: 40px; border-radius: 999px;
+        display: grid; place-items: center; color: var(--ink-muted);
+        border: 0; background: transparent; font-family: inherit; cursor: pointer;
+        transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+      }
+      .dock a svg, .dock .dock-btn svg { width: 18px; height: 18px; }
+      .dock a:hover, .dock .dock-btn:hover { background: var(--raised); transform: translateY(-2px); }
+      .dock [data-net="instagram"]:hover { color: #e1306c; }
+      .dock [data-net="facebook"]:hover { color: #1877f2; }
+      .dock [data-net="whatsapp"]:hover { color: #25d366; }
+      .dock [data-net="telegram"]:hover, .dock [data-net="telegram"][aria-expanded="true"] { color: #29a9eb; }
+      .dock [data-net="telegram"][aria-expanded="true"] { background: var(--raised); }
+
+      /* Telegram menu — channel vs. direct message */
+      .tg-wrap { position: relative; display: flex; }
+      .tg-menu {
+        position: absolute; bottom: calc(100% + 14px); left: 50%;
+        transform: translateX(-50%) translateY(6px) scale(0.98);
+        width: 246px; padding: 6px; z-index: 1;
+        border: 1px solid var(--b); border-radius: var(--r-md);
+        background: rgba(18, 18, 18, 0.95);
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+        box-shadow: 0 20px 46px -14px rgba(0, 0, 0, 0.92);
+        opacity: 0; visibility: hidden;
+        transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+      }
+      .tg-menu.open { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0) scale(1); }
+      .tg-menu::after {
+        content: ""; position: absolute; top: calc(100% - 6px); left: 50%;
+        width: 10px; height: 10px; transform: translateX(-50%) rotate(45deg);
+        background: rgba(18, 18, 18, 0.95);
+        border-right: 1px solid var(--b); border-bottom: 1px solid var(--b);
+      }
+      .dock .tg-menu a {
+        display: flex; align-items: center; gap: 11px;
+        width: 100%; height: auto; padding: 9px 10px; border-radius: 10px; color: var(--ink);
+      }
+      .dock .tg-menu a:hover { background: var(--raised); transform: none; color: var(--ink); }
+      .dock .tg-menu a::after { content: none; }
+      .tg-menu .ic {
+        flex: 0 0 auto; width: 32px; height: 32px; border-radius: 9px;
+        display: grid; place-items: center; color: #29a9eb;
+        background: var(--sunken); border: 1px solid var(--b-subtle);
+      }
+      .dock .tg-menu .ic svg { width: 15px; height: 15px; }
+      .tg-menu b { display: block; font-size: 13.5px; font-weight: 600; line-height: 1.35; }
+      .tg-menu small { display: block; font-size: 11.5px; color: var(--ink-muted); }
+      .dock [data-net="telegram"][aria-expanded="true"]::after { content: none; }
+
+      .dock .sep { flex: 0 0 auto; width: 1px; height: 22px; background: var(--b-strong); margin-inline: 3px; }
+
+      .dock .dock-query {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: auto; height: 40px; padding: 0 16px; gap: 8px;
+        background: var(--inverse); color: var(--ink-inverse);
+        font-weight: 600; font-size: 14px; letter-spacing: -0.01em;
+      }
+      .dock .dock-query:hover {
+        background: var(--inverse); color: var(--ink-inverse);
+        box-shadow: 0 12px 26px -12px rgba(255, 255, 255, 0.45);
+      }
+      .dock .dock-query svg { width: 16px; height: 16px; }
+
+      /* label bubble on hover — the query pill already has a visible label */
+      .dock a::after {
+        content: attr(data-tip);
+        position: absolute; bottom: calc(100% + 10px); left: 50%;
+        transform: translateX(-50%) translateY(4px);
+        padding: 5px 9px; border-radius: 7px; white-space: nowrap;
+        background: var(--raised); border: 1px solid var(--b); color: var(--ink);
+        font-size: 11px; font-weight: 500; letter-spacing: 0;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.18s ease, transform 0.18s ease;
+      }
+      .dock a:hover::after, .dock a:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+      .dock .dock-query::after { content: none; }
+
+      @media (max-width: 400px) {
+        .dock { gap: 2px; padding: 6px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+        .dock a { width: 36px; height: 36px; }
+        .dock .dock-query { height: 36px; padding: 0 13px; font-size: 13.5px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .dock a:hover { transform: none; }
+      }
+
+      /* the sticky header would otherwise cover the form heading on jump */
+      #enquiry { scroll-margin-top: 80px; }
+
       /* ---------- Footer ---------- */
-      footer { border-top: 1px solid var(--b-subtle); padding: 46px 0 40px; }
+      footer { border-top: 1px solid var(--b-subtle); padding: 46px 0 116px; }
       .foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
       .foot .lead { max-width: 32ch; }
       .foot .lead p { margin-top: 12px; font-size: 14px; }
@@ -854,6 +977,40 @@
       </div>
     </footer>
 
+    <!-- ===== Social dock ===== -->
+    <div class="dock" role="complementary" aria-label="Social links and enquiry">
+      <a data-net="instagram" data-tip="Instagram" href="https://www.instagram.com/mentra.software" target="_blank" rel="noopener noreferrer" aria-label="Mentra on Instagram">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.209 0-4-1.79-4-4 0-2.209 1.79-4 4-4 2.209 0 4 1.79 4 4 0 2.209-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.439.645 1.439 1.439z"/></svg>
+      </a>
+      <a data-net="facebook" data-tip="Facebook" href="https://www.facebook.com/share/1BVXCGGVoq/" target="_blank" rel="noopener noreferrer" aria-label="Mentra on Facebook">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>
+      </a>
+      <a data-net="whatsapp" data-tip="WhatsApp" href="https://wa.me/918777596614?text=Hi%20Mentra%2C%20I%27d%20like%20to%20know%20more." target="_blank" rel="noopener noreferrer" aria-label="Message Mentra on WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884a9.82 9.82 0 016.988 2.898 9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      </a>
+      <span class="tg-wrap">
+        <button type="button" class="dock-btn" data-net="telegram" data-tip="Telegram" id="tg-toggle"
+                aria-haspopup="true" aria-expanded="false" aria-controls="tg-menu" aria-label="Mentra on Telegram — channel or direct message">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </button>
+        <div class="tg-menu" id="tg-menu" role="menu" aria-labelledby="tg-toggle">
+          <a role="menuitem" href="https://t.me/+jh-9J7aDORE4ZmE9" target="_blank" rel="noopener noreferrer">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-5-6 15-3.5-6.5L3 11z"/><path d="M11.5 14.5L21 6"/></svg></span>
+            <span><b>Join our channel</b><small>Updates &amp; announcements</small></span>
+          </a>
+          <a role="menuitem" href="https://t.me/mentralive" target="_blank" rel="noopener noreferrer">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <span><b>Message us</b><small>@mentralive</small></span>
+          </a>
+        </div>
+      </span>
+      <span class="sep" aria-hidden="true"></span>
+      <a class="dock-query" id="dock-query" href="#enquiry">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M9.6 9a2.5 2.5 0 0 1 4.86.83c0 1.67-2.5 2.5-2.5 2.5"/><path d="M12 15.5h.01"/></svg>
+        Query
+      </a>
+    </div>
+
     <script>
       document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -878,6 +1035,29 @@
       const form = document.getElementById("enquiry-form");
       const note = document.getElementById("form-note");
       const btn = document.getElementById("submit-btn");
+
+      // preventScroll so focusing doesn't fight the in-flight smooth scroll
+      document.getElementById("dock-query").addEventListener("click", () => {
+        setTimeout(() => document.getElementById("name").focus({ preventScroll: true }), 700);
+      });
+
+      const tgToggle = document.getElementById("tg-toggle");
+      const tgMenu = document.getElementById("tg-menu");
+      const setTg = (open) => {
+        tgMenu.classList.toggle("open", open);
+        tgToggle.setAttribute("aria-expanded", String(open));
+      };
+      tgToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setTg(!tgMenu.classList.contains("open"));
+      });
+      tgMenu.addEventListener("click", () => setTg(false));
+      document.addEventListener("click", (e) => {
+        if (!tgMenu.contains(e.target)) setTg(false);
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && tgMenu.classList.contains("open")) { setTg(false); tgToggle.focus(); }
+      });
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         note.className = "form-note";

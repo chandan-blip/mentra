@@ -12,6 +12,7 @@ import {
   getMine,
   getPast,
   getPublicById,
+  getPublicOg,
   getSessionSummary,
   getUpcoming,
   getWatchProgress,
@@ -36,6 +37,10 @@ export const liveSessionRouter: Router = Router();
  */
 export const liveSessionPublicRouter: Router = Router();
 liveSessionPublicRouter.get('/videos/:id', asyncHandler(getPublicById));
+// Server-rendered OG tags for the same video. nginx points social crawlers at this so a
+// shared /watch/<id> link unfurls with the session's real title, topic, and thumbnail
+// instead of the SPA shell's generic card. Humans never hit it.
+liveSessionPublicRouter.get('/videos/:id/og', asyncHandler(getPublicOg));
 
 liveSessionRouter.use(requireAuth);
 

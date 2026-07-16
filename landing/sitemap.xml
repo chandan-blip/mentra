@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  One entry by design: the landing page is a single document and its nav targets
+  (#how, #features, #plans, #faq) are fragments of it, not separate URLs — listing
+  them here would be treated as duplicates. The app on app.mentradev.sbs is a
+  different host and needs its own sitemap (apps/web/public/sitemap.xml).
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://mentradev.sbs/</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

@@ -1,6 +1,9 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { createLiveSessionSchema, createUploadSchema, updateLiveSessionSchema } from '@mentra/shared';
+import { env } from '../../env.js';
+import { LiveSessionError } from './live-session.errors.js';
+import { renderWatchOg, renderWatchUnavailable } from './og.js';
 import {
   addMessage,
   createSession,
@@ -43,6 +46,28 @@ export async function getMine(req: Request, res: Response): Promise<void> {
 /** Public (no-auth) single video for the shareable /watch/:id page. */
 export async function getPublicById(req: Request, res: Response): Promise<void> {
   res.json({ data: await getPublicVideo(id(req)) });
+}
+
+/**
+ * Public (no-auth) Open Graph shell for /watch/:id — the only HTML the API serves.
+ * nginx routes ONLY social crawlers here; they never run the SPA's JS, so without this
+ * every shared session unfurls with the generic tags from apps/web/index.html. Humans
+ * always fall through to the SPA. See og.ts and nginx/mentra.vps.conf.
+ */
+export async function getPublicOg(req: Request, res: Response): Promise<void> {
+  let html: string;
+  let status = 200;
+  try {
+    html = renderWatchOg(await getPublicVideo(id(req)), env.WEB_APP_ORIGIN);
+  } catch (err) {
+    // Private / hidden / still-transcoding → no preview, same gate as the page. Any
+    // other failure is a real fault: let asyncHandler log and 500 it rather than
+    // reporting a missing video.
+    if (!(err instanceof LiveSessionError) || err.status !== 404) throw err;
+    html = renderWatchUnavailable(env.WEB_APP_ORIGIN);
+    status = 404;
+  }
+  res.status(status).type('html').set('Cache-Control', 'public, max-age=300').send(html);
 }
 
 export async function postUpload(req: Request, res: Response): Promise<void> {

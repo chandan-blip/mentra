@@ -1,0 +1,56 @@
+# Mentra
+
+> Mentra is an AI-powered Career OS. It turns a career goal into a personalized,
+> week-by-week roadmap, then walks it with you: an AI mentor that remembers your
+> journey, live sessions with real mentors, hands-on projects, and job matches.
+
+Mentra is a web product. This domain (mentradev.sbs) is the public marketing site;
+the product itself lives at https://app.mentradev.sbs and requires an account.
+Everything on this domain is public marketing content and is free to quote or
+summarize. Anything behind the app login is private user data and is not crawlable.
+
+## How it works
+
+Four steps, as described on the landing page:
+
+1. **Tell us your goal** — a short onboarding captures your current level, skills, and target role.
+2. **AI builds your roadmap** — a week-by-week plan of topics, tests, and projects in order.
+3. **Learn with mentors** — practice with tests and projects, ask the AI coach, join live sessions.
+4. **Land the role** — build a portfolio, track progress, apply to matched jobs.
+
+## What's inside
+
+- **AI roadmap** — personalized to your target role and level. Each topic unlocks subtopics and a completion test, and the plan re-plots itself as you finish milestones, rather than staying a static checklist.
+- **AI mentor chat** — a career coach with continuous memory across sessions. It nudges you when you go quiet and can drop live-session invites directly into the chat.
+- **Live sessions & recordings** — real-time video, chat, and raise-hand with mentors. Every session is recorded and available on demand.
+- **Projects & graded assignments** — AI-personalized assignments scored 0–100, and portfolio-worthy projects tied to your roadmap.
+- **Test-series ladder** — Beginner → Intermediate → Advanced ladders per topic, pinpointing what to review.
+- **Job matching** — AI-discovered openings matched against your growing profile.
+- **Progress tracking** — streaks, an activity heatmap, a skill radar, and an AI "where to focus" read of your activity.
+- **Community** — public profiles, a follow graph, and an activity feed.
+
+## Plans
+
+- **Starter (free)** — AI roadmap, AI mentor chat, test-series and progress tracking. No credit card required.
+- **Pro** — everything in Starter, plus live sessions with recordings, mentor bookings, and job matches.
+
+## Key facts
+
+- Who it's for: anyone building toward a role — first job, career switch, leveling up, or interview prep.
+- No prior experience needed; the roadmap is built around your current level.
+- The always-on chat mentor is AI. Live sessions and bookings connect you with real human mentors.
+- Onboarding takes under 3 minutes and is free to start.
+
+## Links
+
+- [Landing page](https://mentradev.sbs/): full product overview, plans, and FAQ.
+- [Open the app](https://app.mentradev.sbs/): sign in or create an account.
+- [Enquiry form](https://mentradev.sbs/#enquiry): ask a question or get help onboarding.
+
+## Contact
+
+- [Instagram](https://www.instagram.com/mentra.software)
+- [Facebook](https://www.facebook.com/share/1BVXCGGVoq/)
+- [Telegram channel](https://t.me/+jh-9J7aDORE4ZmE9): updates and announcements.
+- [Telegram](https://t.me/mentralive): direct message.
+- WhatsApp: +91 87775 96614
