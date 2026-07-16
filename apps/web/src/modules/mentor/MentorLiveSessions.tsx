@@ -375,6 +375,12 @@ function Row({ session, children }: { session: LiveSessionView; children: ReactN
         <div className="truncate text-sm font-medium text-ink">{session.title}</div>
         <div className="text-xs text-ink-faint">{session.topic} · {labelFor(session)}</div>
       </div>
+      <span
+        className="flex shrink-0 items-center gap-1 text-xs tabular-nums text-ink-faint"
+        title={`${session.likeCount} ${session.likeCount === 1 ? 'student has' : 'students have'} enrolled`}
+      >
+        <Users className="size-3.5" /> {session.likeCount}
+      </span>
       {children}
     </div>
   );
@@ -505,7 +511,8 @@ function Report({ session, onBack }: { session: LiveSessionView; onBack: () => v
         <Card className="mt-5 text-sm text-ink-muted">Loading report…</Card>
       ) : summary.data ? (
         <>
-          <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <Stat label="Enrolled" value={String(session.likeCount)} />
             <Stat label="Peak viewers" value={String(summary.data.session.peakViewers)} />
             <Stat label="Chat messages" value={String(summary.data.chatCount)} />
             <Stat label="Attendees" value={String(summary.data.attendees.length)} />

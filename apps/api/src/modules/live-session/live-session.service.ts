@@ -164,15 +164,13 @@ export async function updateSchedule(
       input.scheduledFor === undefined ? undefined : input.scheduledFor ? new Date(input.scheduledFor) : null,
   });
   const updated = await repo.findById(id);
-  const me = await repo.findUserById(userId);
-  return toView(updated!, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
+  return (await toViews([updated!], userId))[0]!;
 }
 
 export async function startSession(userId: string, id: string): Promise<LiveSessionView> {
   const session = await loadOwned(userId, id);
   if (session.status === 'live') {
-    const me = await repo.findUserById(userId);
-    return toView(session, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
+    return (await toViews([session], userId))[0]!;
   }
   if (session.status !== 'scheduled') {
     throw new LiveSessionError('SESSION_CLOSED', 'This session has already ended', 409);
@@ -181,8 +179,7 @@ export async function startSession(userId: string, id: string): Promise<LiveSess
   await repo.markLive(id);
   emit('live-session.started', { sessionId: id, mentorId: userId });
   const updated = await repo.findById(id);
-  const me = await repo.findUserById(userId);
-  return toView(updated!, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
+  return (await toViews([updated!], userId))[0]!;
 }
 
 export async function endSession(userId: string, id: string): Promise<LiveSessionView> {
@@ -194,8 +191,7 @@ export async function endSession(userId: string, id: string): Promise<LiveSessio
   // Refresh the cover now that chat comments exist (best-effort).
   requestThumbnail(id, 'end');
   const updated = await repo.findById(id);
-  const me = await repo.findUserById(userId);
-  return toView(updated!, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
+  return (await toViews([updated!], userId))[0]!;
 }
 
 // --- Mentor upload (video → same HLS pipeline) ---
