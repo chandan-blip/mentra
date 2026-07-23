@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CalendarClock, Check, Heart, MessageCircle, MessagesSquare, Send, Sparkles } from 'lucide-react';
+import { CalendarClock, Check, Heart, MessageCircle, Send, Sparkles } from 'lucide-react';
 import { Avatar } from '@mentra/ui';
 import type { CareerChatSessionCard } from '@mentra/shared';
-import { PageHeader } from '../../components/PageHeader.js';
 import { resolveAvatarUrl } from '../../lib/auth.js';
 import { useProfile } from '../../lib/profile.js';
 import { useCareerChat, useEnrollSession, useNudge, useSendCareerMessage } from '../../lib/careerChat.js';
@@ -104,14 +103,6 @@ export function ChatWithMentorPage() {
       animate={{ opacity: 1, y: 0 }}
       className="mx-auto flex h-[calc(100%+1.75rem)] w-full max-w-2xl flex-col -mb-7 md:mb-0 md:h-full"
     >
-      <div className="hidden shrink-0 sm:block">
-        <PageHeader
-          icon={<MessagesSquare />}
-          title="Chat with your Mentor"
-          subtitle="Ask anything about jobs, interviews, and what to learn — your mentor is here to help."
-        />
-      </div>
-
       {/* Coach header — makes it read as a real person, not a bot */}
       <div className="flex shrink-0 items-center gap-3 border-b border-border-subtle pb-3 pt-3 sm:mt-5 sm:pt-0">
         <Avatar size="md" name={coachName} online />

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 /**
  * Circular progress (donut) with a centered label slot. Single-hue by design — this is a
  * magnitude mark (0–100), not a categorical one — so it takes one `color` and a faint track.
- * Matches the inline-SVG convention used by SkillRadar/ActivityHeatmap (no chart lib in the app).
+ * Matches the inline-SVG convention used by ActivityHeatmap (no chart lib in the app).
  */
 export function ProgressRing({
   value,

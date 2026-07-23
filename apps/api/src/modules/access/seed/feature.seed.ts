@@ -21,15 +21,14 @@ type FeatureModule = { key: string; label: string; icon: string; route: string; 
 
 export const SEED_FEATURE_MODULES: FeatureModule[] = [
   // Student
-  { key: 'assignment', label: 'Assignment', icon: 'ClipboardCheck', route: '/assignment', sortOrder: 10 },
-  { key: 'roadmap', label: 'Roadmap', icon: 'Target', route: '/roadmap', sortOrder: 11 },
   { key: 'learning', label: 'Learning', icon: 'BookOpen', route: '/learning', sortOrder: 12 },
   { key: 'projects', label: 'Projects', icon: 'Code2', route: '/projects', sortOrder: 13 },
   { key: 'mentors', label: 'Find a Mentor', icon: 'UserRound', route: '/mentors', sortOrder: 14 },
   { key: 'live-sessions', label: 'Live Sessions', icon: 'Radio', route: '/live-sessions', sortOrder: 15 },
   { key: 'jobs', label: 'Jobs', icon: 'Briefcase', route: '/jobs', sortOrder: 16 },
   { key: 'career-chat', label: 'Chat with Mentor', icon: 'MessagesSquare', route: '/chat-with-mentor', sortOrder: 17 },
-  { key: 'support', label: 'Support', icon: 'Headphones', route: '/support', sortOrder: 18 },
+  { key: 'coding', label: 'Coding', icon: 'Code2', route: '/coding', sortOrder: 18 },
+  { key: 'support', label: 'Support', icon: 'Headphones', route: '/support', sortOrder: 19 },
 
   // Mentor
   { key: 'mentor-live-sessions', label: 'My Live Sessions', icon: 'Video', route: '/mentor-live-sessions', sortOrder: 20 },
@@ -40,6 +39,9 @@ export const SEED_FEATURE_MODULES: FeatureModule[] = [
 
   // AI operations — role-gated tuning of every feature's AI system prompt + temperature.
   { key: 'manage-ai-prompts', label: 'AI Prompts', icon: 'Wand2', route: '/manage-ai-prompts', sortOrder: 23 },
+
+  // Content management — role-gated coding-task authoring + submission review.
+  { key: 'coding-tasks', label: 'Coding Tasks', icon: 'SquareCode', route: '/manage-coding-tasks', sortOrder: 24 },
 
   // HR
   { key: 'hr-jobs', label: 'Job Postings', icon: 'Building2', route: '/hr-jobs', sortOrder: 25 },
@@ -65,9 +67,7 @@ export const SEED_FEATURE_MODULES: FeatureModule[] = [
 type Perm = [string, string, boolean, boolean];
 
 export const SEED_FEATURE_PERMISSIONS: Perm[] = [
-  // Student — takes the assignment, drives the roadmap, joins sessions & community.
-  ['student', 'assignment', true, true],
-  ['student', 'roadmap', true, true],
+  // Student — learns, joins sessions & community.
   ['student', 'learning', true, false],
   ['student', 'projects', true, true],
   ['student', 'mentors', true, true],
@@ -76,6 +76,8 @@ export const SEED_FEATURE_PERMISSIONS: Perm[] = [
   ['student', 'jobs', true, true],
   // Chat with Mentor: read to load the thread, write to send messages & enroll.
   ['student', 'career-chat', true, true],
+  // Coding: read the task list & solve; write to submit solutions.
+  ['student', 'coding', true, true],
   ['student', 'support', true, true],
   ['student', 'analytics', true, false],
   ['student', 'community', true, true],
@@ -84,6 +86,8 @@ export const SEED_FEATURE_PERMISSIONS: Perm[] = [
   ['mentor', 'mentor-live-sessions', true, true],
   ['mentor', 'mentor-mentors', true, true],
   ['mentor', 'live-sessions', true, true],
+  // Coding task authoring + submission review (the manager surface).
+  ['mentor', 'coding-tasks', true, true],
   ['mentor', 'analytics', true, false],
   ['mentor', 'community', true, true],
 

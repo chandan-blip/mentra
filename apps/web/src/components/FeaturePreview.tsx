@@ -66,12 +66,12 @@ export function FeaturePreview({
       <motion.div variants={fadeUp} className="mt-7 flex flex-wrap items-center gap-3">
         <button
           type="button"
-          onClick={() => navigate('/roadmap')}
+          onClick={() => navigate('/dashboard')}
           className="h-10 rounded-md bg-surface-inverse px-5 text-sm font-semibold text-ink-inverse transition hover:bg-ink"
         >
-          Continue your roadmap
+          Back to dashboard
         </button>
-        <span className="text-xs text-ink-faint">This module is coming soon — your roadmap keeps you moving in the meantime.</span>
+        <span className="text-xs text-ink-faint">This module is coming soon — more is on the way.</span>
       </motion.div>
     </motion.div>
   );

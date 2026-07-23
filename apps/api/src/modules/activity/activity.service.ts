@@ -10,8 +10,6 @@ import { generateJson } from '../../core/ai.js';
 import { getPromptConfig } from '../ai-prompt/ai-prompt.service.js';
 import { PROMPT_KEYS } from '../ai-prompt/ai-prompt.registry.js';
 import { logger } from '../../logger.js';
-import { getSummary as getRoadmapSummary } from '../roadmap/roadmap.service.js';
-import { getAssignmentStatus } from '../assignment/assignment.service.js';
 import {
   type ActivityRow,
   countSince,
@@ -28,9 +26,6 @@ const FOCUS_TTL_MS = 6 * 60 * 60_000; // regenerate AI focus at most every 6h
 /** Event types that count as public-safe learning milestones. */
 const MILESTONE_TYPES = [
   'onboarding.completed',
-  'roadmap.generated',
-  'roadmap.item.completed',
-  'assignment.completed',
   'live-session.ended',
   'learning.series.completed',
 ];
@@ -45,14 +40,6 @@ function titleFor(type: string, meta: Record<string, unknown> | null): string {
   switch (type) {
     case 'onboarding.completed':
       return 'Completed onboarding';
-    case 'roadmap.generated':
-      return 'Generated a new roadmap';
-    case 'roadmap.item.completed':
-      return 'Completed a roadmap item';
-    case 'assignment.generated':
-      return 'Started a personalized assignment';
-    case 'assignment.completed':
-      return typeof meta?.score === 'number' ? `Completed the assignment (${meta.score}%)` : 'Completed the assignment';
     case 'learning.test.completed':
       return meta?.passed
         ? `Passed a test${typeof meta?.percent === 'number' ? ` (${meta.percent}%)` : ''}`
@@ -194,23 +181,14 @@ type Signals = {
   currentStreak: number;
   daysSinceActive: number | null;
   weekCount: number;
-  roadmap: {
-    hasRoadmap: boolean;
-    percentComplete: number;
-    currentWeek: number;
-    completedItems: number;
-    totalItems: number;
-  };
-  assignment: { status: string; score: number | null };
 };
 
 const TARGET_HREF: Record<string, string> = {
-  roadmap: '/roadmap',
-  assignment: '/assignment',
   community: '/community',
   students: '/students',
   mentors: '/mentors',
   analytics: '/analytics',
+  learning: '/learning',
 };
 
 const focusAiSchema = z.object({
@@ -222,7 +200,7 @@ const focusAiSchema = z.object({
         reason: z.string().min(1).max(300),
         action: z.string().max(80).nullable().optional(),
         target: z
-          .enum(['roadmap', 'assignment', 'community', 'students', 'mentors', 'analytics'])
+          .enum(['community', 'students', 'mentors', 'analytics', 'learning'])
           .nullable()
           .optional(),
       }),
@@ -232,11 +210,7 @@ const focusAiSchema = z.object({
 });
 
 async function gatherSignals(userId: string): Promise<Signals> {
-  const [summary, roadmap, assignment] = await Promise.all([
-    getSummary(userId),
-    getRoadmapSummary(userId).catch(() => null),
-    getAssignmentStatus(userId).catch(() => null),
-  ]);
+  const summary = await getSummary(userId);
 
   const lastActive = summary.activeDays.filter((d) => d.count > 0).map((d) => d.day).sort().pop() ?? null;
   const daysSinceActive =
@@ -248,14 +222,6 @@ async function gatherSignals(userId: string): Promise<Signals> {
     currentStreak: summary.currentStreak,
     daysSinceActive,
     weekCount: summary.weekCount,
-    roadmap: {
-      hasRoadmap: Boolean(roadmap?.hasRoadmap),
-      percentComplete: roadmap?.percentComplete ?? 0,
-      currentWeek: roadmap?.currentWeek ?? 1,
-      completedItems: roadmap?.completedItems ?? 0,
-      totalItems: roadmap?.totalItems ?? 0,
-    },
-    assignment: { status: assignment?.status ?? 'unknown', score: assignment?.score ?? null },
   };
 }
 
@@ -313,22 +279,6 @@ export async function getFocus(userId: string): Promise<ActivityFocusView> {
 /** Deterministic focus when the model is unavailable — never leaves the user empty. */
 function ruleBasedFocus(s: Signals): ActivityFocusView {
   const items: ActivityFocusView['items'] = [];
-
-  if (s.assignment.status !== 'completed') {
-    items.push({
-      title: 'Take your assignment',
-      reason: 'Your personalized roadmap is built from it — this unlocks everything else.',
-      action: 'Start assignment',
-      href: '/assignment',
-    });
-  } else if (s.roadmap.hasRoadmap && s.roadmap.percentComplete < 100) {
-    items.push({
-      title: `Continue week ${s.roadmap.currentWeek} of your roadmap`,
-      reason: `You're ${s.roadmap.percentComplete}% through (${s.roadmap.completedItems}/${s.roadmap.totalItems} items).`,
-      action: 'Open roadmap',
-      href: '/roadmap',
-    });
-  }
 
   if (s.daysSinceActive != null && s.daysSinceActive >= 3) {
     items.push({

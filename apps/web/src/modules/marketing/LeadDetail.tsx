@@ -1,9 +1,8 @@
 import { useState, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, Phone, PhoneCall } from 'lucide-react';
+import { ArrowLeft, ExternalLink, PhoneCall } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
-import type { LeadCallStatus, LeadStatus, LeadView } from '@mentra/shared';
-import { PageHeader } from '../../components/PageHeader.js';
+import type { LeadCallStatus, LeadStatus } from '@mentra/shared';
 import { ApiError } from '../../lib/api.js';
 import { useCallLead, useLead, useLeadCallHistory } from '../../lib/leads.js';
 
@@ -23,8 +22,6 @@ const CALL_TONE: Record<LeadCallStatus, 'default' | 'info' | 'warning' | 'succes
   ended: 'success',
   failed: 'danger',
 };
-
-const fullName = (l: LeadView) => [l.firstName, l.lastName].filter(Boolean).join(' ') || l.email || l.phone || 'Unnamed lead';
 
 export function LeadDetailPage() {
   const { id = '' } = useParams();
@@ -69,23 +66,16 @@ export function LeadDetailPage() {
         <ArrowLeft className="size-4" /> Leads
       </button>
 
-      <PageHeader
-        icon={<Phone />}
-        title={fullName(l)}
-        subtitle={[l.jobTitle, l.company].filter(Boolean).join(' · ') || undefined}
-        actions={
-          <button
-            type="button"
-            onClick={handleCall}
-            disabled={!hasPhone || call.isPending}
-            title={hasPhone ? 'Place an AI call to this lead' : 'Add a phone number first'}
-            className="inline-flex h-10 items-center gap-2 rounded-md bg-surface-inverse px-4 text-sm font-semibold text-ink-inverse transition hover:bg-ink disabled:opacity-50"
-          >
-            <PhoneCall className="size-4" />
-            {call.isPending ? 'Calling…' : 'Call with AI'}
-          </button>
-        }
-      />
+      <button
+        type="button"
+        onClick={handleCall}
+        disabled={!hasPhone || call.isPending}
+        title={hasPhone ? 'Place an AI call to this lead' : 'Add a phone number first'}
+        className="inline-flex h-10 items-center gap-2 rounded-md bg-surface-inverse px-4 text-sm font-semibold text-ink-inverse transition hover:bg-ink disabled:opacity-50"
+      >
+        <PhoneCall className="size-4" />
+        {call.isPending ? 'Calling…' : 'Call with AI'}
+      </button>
 
       {!hasPhone ? (
         <div className="rounded-md bg-accent-amber/10 px-4 py-3 text-sm text-accent-amber ring-1 ring-accent-amber/30">

@@ -19,46 +19,46 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Canvas
+        // Canvas — white page
         canvas: {
-          DEFAULT: '#0a0a0a', // page background
-          deep: '#050505', // deepest layer behind everything
+          DEFAULT: '#ffffff', // page background
+          deep: '#f6f8fb', // deepest layer behind everything
         },
         // Surface = elevated cards / panels
         surface: {
-          DEFAULT: '#141414', // primary card
-          raised: '#1a1a1a', // hover / second-tier card
-          sunken: '#0f0f0f', // input fields, inset areas
-          inverse: '#ffffff', // white-filled emphasis cards
+          DEFAULT: '#ffffff', // primary card
+          raised: '#f8fafc', // hover / second-tier card / chips
+          sunken: '#f1f5f9', // input fields, inset areas
+          inverse: '#0f172a', // dark-filled emphasis (primary buttons)
         },
         // Borders / dividers
         border: {
-          subtle: '#1f1f1f',
-          DEFAULT: '#262626',
-          strong: '#333333',
+          subtle: '#eef1f5',
+          DEFAULT: '#e2e8f0',
+          strong: '#cbd5e1',
         },
         // Text
         ink: {
-          DEFAULT: '#f5f5f5', // primary on dark
-          muted: '#a3a3a3', // secondary on dark
-          faint: '#6b6b6b', // tertiary / labels
-          inverse: '#0a0a0a', // primary on white cards
-          'inverse-muted': '#525252',
+          DEFAULT: '#0f172a', // primary on light
+          muted: '#475569', // secondary on light
+          faint: '#94a3b8', // tertiary / labels
+          inverse: '#ffffff', // primary on dark emphasis surfaces
+          'inverse-muted': '#cbd5e1',
         },
         // Accents (used very sparingly)
         accent: {
-          green: '#22c55e', // online / success
-          amber: '#f59e0b', // warning
-          red: '#ef4444', // error
-          blue: '#3b82f6', // info / link (used minimally)
+          green: '#16a34a', // online / success
+          amber: '#d97706', // warning
+          red: '#dc2626', // error
+          blue: '#2563eb', // info / link (used minimally)
         },
         // Chart palette
         chart: {
-          1: '#ffffff',
-          2: '#a3a3a3',
-          3: '#525252',
-          4: '#22c55e',
-          5: '#3b82f6',
+          1: '#0f172a',
+          2: '#475569',
+          3: '#94a3b8',
+          4: '#16a34a',
+          5: '#2563eb',
         },
       },
       maxWidth: {
@@ -100,11 +100,11 @@ export default {
         tighter2: '-0.025em',
       },
       boxShadow: {
-        // Subtle inner glow on raised cards
-        card: '0 0 0 1px rgba(255,255,255,0.04), 0 1px 2px rgba(0,0,0,0.6)',
+        // Soft, low-contrast shadows tuned for a light canvas
+        card: '0 0 0 1px rgba(15,23,42,0.04), 0 1px 2px rgba(15,23,42,0.06)',
         'card-hover':
-          '0 0 0 1px rgba(255,255,255,0.08), 0 8px 24px -8px rgba(0,0,0,0.8)',
-        'inset-subtle': 'inset 0 1px 0 rgba(255,255,255,0.04)',
+          '0 0 0 1px rgba(15,23,42,0.06), 0 8px 24px -8px rgba(15,23,42,0.18)',
+        'inset-subtle': 'inset 0 1px 0 rgba(255,255,255,0.7)',
       },
       spacing: {
         // Card paddings mirror the theme's generous breathing room
@@ -114,7 +114,7 @@ export default {
       backgroundImage: {
         // Subtle dotted texture used in theme (chart background)
         'dot-grid':
-          'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)',
+          'radial-gradient(circle, rgba(15,23,42,0.06) 1px, transparent 1px)',
       },
       backgroundSize: {
         'dot-grid': '16px 16px',

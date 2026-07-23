@@ -110,11 +110,13 @@ export function AuthPage() {
   }
 
   return (
-    <main className="min-h-full bg-canvas text-ink">
-      <div className="grid min-h-screen lg:grid-cols-[minmax(420px,0.78fr)_1.22fr]">
-        <section className="flex min-h-screen items-center px-5 py-8 sm:px-8 lg:px-12">
-          <div className="mx-auto w-full max-w-[440px]">
-            <div className="mb-10 flex items-center gap-3">
+    <main className="relative min-h-dvh bg-canvas text-ink">
+      {/* Full-screen animated routes; the form floats on top as a frosted card. */}
+      <AuthMotionBackdrop />
+      <div className="absolute inset-0 bg-white/20" />
+      <div className="relative mx-auto flex min-h-dvh max-w-[560px] items-center px-4 py-6">
+        <div className="w-full rounded-2xl bg-surface/95 p-6 shadow-card-hover ring-1 ring-border-subtle backdrop-blur-md sm:p-7">
+            <div className="mb-6 flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-md bg-surface-inverse text-ink-inverse">
                 <GraduationCap className="size-5" />
               </div>
@@ -124,8 +126,8 @@ export function AuthPage() {
               </div>
             </div>
 
-            <div className="mb-8">
-              <div className="mb-4 grid w-full grid-cols-2 rounded-md bg-surface-sunken p-1 ring-1 ring-border-subtle sm:inline-grid sm:w-auto">
+            <div className="mb-5">
+              <div className="mb-3 grid w-full grid-cols-2 rounded-md bg-surface-sunken p-1 ring-1 ring-border-subtle sm:inline-grid sm:w-auto">
                 {(['signin', 'signup'] as const).map((tab) => {
                   const active = mode === tab;
                   return (
@@ -160,29 +162,48 @@ export function AuthPage() {
                 })}
               </div>
               <h1 className="text-display-md tracking-normal text-ink">{title}</h1>
-              <p className="mt-3 max-w-sm text-sm leading-6 text-ink-muted">
+              <p className="mt-2 max-w-sm text-sm leading-6 text-ink-muted">
                 {getSubtitle(mode)}
               </p>
             </div>
 
             {!isForgot && !isReset ? (
               <>
-                <div className="mb-5 grid grid-cols-3 gap-3">
-                  <button type="button" className="auth-social-button">
+                {/* Social sign-in isn't wired up yet — disabled + dimmed until implemented. */}
+                <div className="mb-4 grid grid-cols-3 gap-3">
+                  <button
+                    type="button"
+                    disabled
+                    title="Coming soon"
+                    aria-label="Continue with GitHub (coming soon)"
+                    className="auth-social-button cursor-not-allowed opacity-40"
+                  >
                     <Github className="size-4" />
                     GitHub
                   </button>
-                  <button type="button" className="auth-social-button">
+                  <button
+                    type="button"
+                    disabled
+                    title="Coming soon"
+                    aria-label="Continue with Google (coming soon)"
+                    className="auth-social-button cursor-not-allowed opacity-40"
+                  >
                     <GoogleMark />
                     Google
                   </button>
-                  <button type="button" className="auth-social-button">
+                  <button
+                    type="button"
+                    disabled
+                    title="Coming soon"
+                    aria-label="Continue with LinkedIn (coming soon)"
+                    className="auth-social-button cursor-not-allowed opacity-40"
+                  >
                     <Linkedin className="size-4 text-[#0A66C2]" />
                     LinkedIn
                   </button>
                 </div>
 
-                <div className="mb-5 flex items-center gap-3 text-xs text-ink-faint">
+                <div className="mb-4 flex items-center gap-3 text-xs text-ink-faint">
                   <span className="h-px flex-1 bg-border-subtle" />
                   <span>Email</span>
                   <span className="h-px flex-1 bg-border-subtle" />
@@ -190,7 +211,7 @@ export function AuthPage() {
               </>
             ) : null}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3">
               {isSignup ? (
                 <label className="block">
                   <span className="mb-2 block text-sm text-ink-muted">Full name</span>
@@ -355,42 +376,62 @@ export function AuthPage() {
               </button>
             </form>
           </div>
-        </section>
-
-        <section className="hidden min-h-screen border-l border-border-subtle bg-surface-sunken p-2 lg:block">
-          <div className="relative h-full overflow-hidden rounded-lg bg-canvas-deep">
-            <AuthMotionBackdrop />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,5,5,0.68),rgba(5,5,5,0.18)),linear-gradient(0deg,rgba(5,5,5,0.78),rgba(5,5,5,0.08)_45%)]" />
-            <div className="absolute bottom-0 left-0 right-0 p-10">
-              <div className="mb-5 flex w-fit items-center gap-2 rounded-md bg-surface/80 px-3 py-2 text-xs text-ink-muted ring-1 ring-border backdrop-blur">
-                <span className="h-2 w-2 rounded-full bg-accent-green" />
-                Phase 1: profile, assessment, dashboard
-              </div>
-              <div className="max-w-xl text-display-lg tracking-normal">
-                Measure your skills. Build the next week from evidence.
-              </div>
-              <div className="mt-6 grid max-w-2xl grid-cols-3 gap-3">
-                <Metric value="30" label="MCQ baseline" />
-                <Metric value="8" label="core skills" />
-                <Metric value="1" label="personal roadmap" />
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+        </div>
+      </main>
   );
 }
 
-const NEON_ROUTES = [
-  { d: 'M120 240 H360 V360 H520 V200 H760 V440 H880', color: '#22d3ee', dur: '9s', pulse: '90 1500' },
-  { d: 'M120 520 H280 V680 H520 V520 H680 V760 H880', color: '#a855f7', dur: '11s', pulse: '90 1500' },
-  { d: 'M200 880 V640 H440 V480 H600 V320 H840 V120', color: '#34d399', dur: '13s', pulse: '90 1500' },
+/** Flowing "data routes" — a faint base line + a bright travelling segment along it. */
+const FLOW_LINES = [
+  { d: 'M-40 220 H340 V360 H520 V210 H820 V440 H1040', color: '#2563eb', dur: '7s' },
+  { d: 'M-40 520 H260 V680 H520 V520 H700 V760 H1040', color: '#7c3aed', dur: '9s' },
+  { d: 'M220 1040 V640 H440 V470 H640 V320 H860 V-40', color: '#16a34a', dur: '11s' },
+  { d: 'M-40 820 H160 V900 H470 V820 H1040', color: '#0891b2', dur: '8.5s' },
 ];
+
+/** Pulsing junction nodes on the network. */
+const FLOW_NODES = [
+  { cx: 340, cy: 360, color: '#2563eb', dur: '3s' },
+  { cx: 520, cy: 520, color: '#7c3aed', dur: '3.6s' },
+  { cx: 640, cy: 320, color: '#16a34a', dur: '3.2s' },
+  { cx: 820, cy: 440, color: '#0891b2', dur: '4s' },
+  { cx: 470, cy: 820, color: '#2563eb', dur: '3.4s' },
+  { cx: 700, cy: 760, color: '#7c3aed', dur: '4.2s' },
+];
+
+/** A large, slowly drifting blurred colour blob — the "aurora" that makes the page breathe. */
+function AuroraBlob({
+  className,
+  color,
+  x,
+  y,
+  duration,
+}: {
+  className: string;
+  color: string;
+  x: number[];
+  y: number[];
+  duration: number;
+}) {
+  return (
+    <motion.div
+      aria-hidden
+      className={`pointer-events-none absolute rounded-full blur-3xl ${className}`}
+      style={{ background: `radial-gradient(circle, ${color}, transparent 62%)` }}
+      animate={{ x, y, scale: [1, 1.12, 0.95, 1] }}
+      transition={{ duration, repeat: Infinity, ease: 'easeInOut' }}
+    />
+  );
+}
 
 function AuthMotionBackdrop() {
   return (
-    <div className="absolute inset-0 overflow-hidden bg-[radial-gradient(circle_at_15%_15%,rgba(34,211,238,0.14),transparent_40%),radial-gradient(circle_at_85%_85%,rgba(168,85,247,0.14),transparent_40%),linear-gradient(140deg,#04060a_0%,#070b14_55%,#04060a_100%)]">
+    <div className="absolute inset-0 overflow-hidden bg-gradient-to-b from-white to-[#f2f6fc]">
+      {/* Drifting aurora */}
+      <AuroraBlob className="-left-40 -top-40 h-[46rem] w-[46rem]" color="rgba(37,99,235,0.18)" x={[0, 70, -30, 0]} y={[0, 50, 90, 0]} duration={26} />
+      <AuroraBlob className="-right-40 top-1/4 h-[42rem] w-[42rem]" color="rgba(22,163,74,0.16)" x={[0, -60, 20, 0]} y={[0, 40, -30, 0]} duration={30} />
+      <AuroraBlob className="bottom-[-14rem] left-1/4 h-[40rem] w-[40rem]" color="rgba(124,58,237,0.16)" x={[0, 45, -45, 0]} y={[0, -30, 25, 0]} duration={34} />
+
       <svg
         viewBox="0 0 1000 1000"
         className="absolute inset-0 h-full w-full"
@@ -398,51 +439,47 @@ function AuthMotionBackdrop() {
         preserveAspectRatio="xMidYMid slice"
       >
         <defs>
-          <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2.4" result="blur" />
+          <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2.6" result="b" />
             <feMerge>
-              <feMergeNode in="blur" />
+              <feMergeNode in="b" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
-          <pattern id="microGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M40 0 H0 V40" fill="none" stroke="#13202f" strokeWidth="0.5" />
+          <pattern id="microGrid" width="44" height="44" patternUnits="userSpaceOnUse">
+            <path d="M44 0 H0 V44" fill="none" stroke="#e6eaf0" strokeWidth="0.6" />
           </pattern>
         </defs>
 
-        <rect x="0" y="0" width="1000" height="1000" fill="url(#microGrid)" opacity="0.5" />
+        <rect x="0" y="0" width="1000" height="1000" fill="url(#microGrid)" opacity="0.6" />
 
-        {NEON_ROUTES.map((route) => (
-          <g key={route.color} filter="url(#neonGlow)">
+        {FLOW_LINES.map((r) => (
+          <g key={r.d} filter="url(#softGlow)">
+            <path d={r.d} stroke={r.color} strokeWidth="1" fill="none" opacity="0.18" />
             <path
-              d={route.d}
-              stroke={route.color}
-              strokeWidth="1"
-              strokeLinecap="square"
-              strokeLinejoin="miter"
+              d={r.d}
+              stroke={r.color}
+              strokeWidth="2"
+              strokeLinecap="round"
               fill="none"
-              opacity="0.28"
-            />
-            <path
-              d={route.d}
-              stroke={route.color}
-              strokeWidth="1.6"
-              strokeLinecap="square"
-              strokeLinejoin="miter"
-              fill="none"
-              strokeDasharray={route.pulse}
+              opacity="0.7"
+              strokeDasharray="70 1400"
             >
-              <animate
-                attributeName="stroke-dashoffset"
-                from="0"
-                to="-1590"
-                dur={route.dur}
-                repeatCount="indefinite"
-              />
+              <animate attributeName="stroke-dashoffset" from="0" to="-1470" dur={r.dur} repeatCount="indefinite" />
             </path>
           </g>
         ))}
+
+        {FLOW_NODES.map((n) => (
+          <circle key={`${n.cx}-${n.cy}`} cx={n.cx} cy={n.cy} r="3" fill={n.color} filter="url(#softGlow)">
+            <animate attributeName="r" values="2.5;5.5;2.5" dur={n.dur} repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.35;1;0.35" dur={n.dur} repeatCount="indefinite" />
+          </circle>
+        ))}
       </svg>
+
+      {/* Gentle vignette so the network fades toward the edges and stays clean behind the card. */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_50%,rgba(255,255,255,0.55))]" />
     </div>
   );
 }
@@ -501,7 +538,7 @@ function getActionLabel(mode: AuthPanel) {
 
 function getSubtitle(mode: AuthPanel) {
   if (mode === 'signup') {
-    return 'Start with a profile, then take the initial assessment to build your skill matrix.';
+    return 'Create your account, then set up your profile to personalize your learning.';
   }
   if (mode === 'forgot') {
     return 'Enter your account email. In local dev, Mentra returns a reset token directly.';
@@ -509,18 +546,9 @@ function getSubtitle(mode: AuthPanel) {
   if (mode === 'reset') {
     return 'Use the reset token and choose a new password for your account.';
   }
-  return 'Continue to your assessment, roadmap, and progress dashboard.';
+  return 'Continue to your learning, live sessions, and progress dashboard.';
 }
 
-
-function Metric({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="rounded-md bg-surface/80 p-4 ring-1 ring-border backdrop-blur">
-      <div className="text-display-sm tracking-normal">{value}</div>
-      <div className="mt-1 text-xs text-ink-muted">{label}</div>
-    </div>
-  );
-}
 
 function GoogleMark() {
   return (

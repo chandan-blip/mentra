@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { Check, Crown, LifeBuoy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Card } from '@mentra/ui';
-import { PageHeader } from '../../components/PageHeader.js';
 import { useMyAccess, useStudentPlans } from '../../lib/access.js';
 
 const fadeUp = {
@@ -23,12 +22,6 @@ export function SubscriptionsPage() {
 
   return (
     <div className="mx-auto w-full max-w-8xl space-y-6">
-      <PageHeader
-        icon={<Crown />}
-        title="Subscriptions"
-        subtitle="Your plan and what each tier unlocks."
-      />
-
       {isLoading ? (
         <div className="text-sm text-ink-muted">Loading plans…</div>
       ) : (

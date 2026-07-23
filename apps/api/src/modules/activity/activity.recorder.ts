@@ -16,14 +16,6 @@ export function registerActivityRecorder(): void {
   registered = true;
 
   on('student-profile.onboarding-completed', ({ userId }) => record(userId, 'onboarding.completed'));
-  on('roadmap.generated', ({ userId, roadmapId, source }) =>
-    record(userId, 'roadmap.generated', { roadmapId, source }));
-  on('roadmap.item.completed', ({ userId, roadmapId, itemId }) =>
-    record(userId, 'roadmap.item.completed', { roadmapId, itemId }));
-  on('assignment.generated', ({ userId, assignmentId }) =>
-    record(userId, 'assignment.generated', { assignmentId }));
-  on('assignment.completed', ({ userId, assignmentId, score }) =>
-    record(userId, 'assignment.completed', { assignmentId, score }));
   on('learning.test.completed', ({ userId, categoryId, testId, percent, passed }) =>
     record(userId, 'learning.test.completed', { categoryId, testId, percent, passed }));
   on('learning.series.completed', ({ userId, categoryId }) =>

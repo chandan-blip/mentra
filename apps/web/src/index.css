@@ -6,13 +6,13 @@
   /* Paint the page (incl. iOS/Android safe-area regions + overscroll) with the app
      canvas so the notch/home-indicator areas never flash white in standalone/PWA mode. */
   html {
-    background-color: #0a0a0a;
+    background-color: #ffffff;
   }
 
-  /* Global slim scrollbar — thin white thumb, transparent track, no arrows. */
+  /* Global slim scrollbar — thin slate thumb, transparent track, no arrows. */
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.45) transparent;
+    scrollbar-color: rgba(15, 23, 42, 0.25) transparent;
   }
   *::-webkit-scrollbar {
     width: 6px;
@@ -22,11 +22,11 @@
     background: transparent;
   }
   *::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.45);
+    background-color: rgba(15, 23, 42, 0.25);
     border-radius: 9999px;
   }
   *::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(15, 23, 42, 0.4);
   }
   /* Kill the scrollbar arrow buttons in WebKit. */
   *::-webkit-scrollbar-button {

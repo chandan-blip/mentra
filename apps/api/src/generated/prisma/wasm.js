@@ -198,123 +198,6 @@ exports.Prisma.RecommendationLogScalarFieldEnum = {
   dismissedAt: 'dismissedAt'
 };
 
-exports.Prisma.RoadmapScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  status: 'status',
-  generatedBy: 'generatedBy',
-  basisAttemptId: 'basisAttemptId',
-  basisProfileVersion: 'basisProfileVersion',
-  totalWeeks: 'totalWeeks',
-  startedOn: 'startedOn',
-  archivedAt: 'archivedAt',
-  notes: 'notes'
-};
-
-exports.Prisma.RoadmapWeekScalarFieldEnum = {
-  id: 'id',
-  roadmapId: 'roadmapId',
-  weekNumber: 'weekNumber',
-  title: 'title',
-  theme: 'theme',
-  startsOn: 'startsOn',
-  endsOn: 'endsOn'
-};
-
-exports.Prisma.RoadmapItemScalarFieldEnum = {
-  id: 'id',
-  weekId: 'weekId',
-  order: 'order',
-  type: 'type',
-  title: 'title',
-  description: 'description',
-  skillIds: 'skillIds',
-  estimatedMin: 'estimatedMin',
-  contentRef: 'contentRef',
-  dependsOnIds: 'dependsOnIds',
-  status: 'status',
-  completedAt: 'completedAt'
-};
-
-exports.Prisma.RoadmapSubtopicScalarFieldEnum = {
-  id: 'id',
-  roadmapId: 'roadmapId',
-  itemId: 'itemId',
-  order: 'order',
-  title: 'title',
-  description: 'description',
-  estimatedMin: 'estimatedMin',
-  generatedBy: 'generatedBy',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.RoadmapTestScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  roadmapId: 'roadmapId',
-  itemId: 'itemId',
-  status: 'status',
-  model: 'model',
-  totalQuestions: 'totalQuestions',
-  maxScore: 'maxScore',
-  passPercent: 'passPercent',
-  startedAt: 'startedAt',
-  completedAt: 'completedAt',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.RoadmapTestQuestionScalarFieldEnum = {
-  id: 'id',
-  testId: 'testId',
-  subtopicId: 'subtopicId',
-  order: 'order',
-  type: 'type',
-  body: 'body',
-  options: 'options',
-  correct: 'correct',
-  explanation: 'explanation',
-  points: 'points'
-};
-
-exports.Prisma.RoadmapTestAnswerScalarFieldEnum = {
-  id: 'id',
-  testId: 'testId',
-  questionId: 'questionId',
-  selected: 'selected',
-  isCorrect: 'isCorrect',
-  pointsAwarded: 'pointsAwarded',
-  answeredAt: 'answeredAt'
-};
-
-exports.Prisma.RoadmapTestResultScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  testId: 'testId',
-  roadmapId: 'roadmapId',
-  itemId: 'itemId',
-  attemptNumber: 'attemptNumber',
-  score: 'score',
-  maxScore: 'maxScore',
-  percent: 'percent',
-  correctCount: 'correctCount',
-  totalQuestions: 'totalQuestions',
-  passed: 'passed',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.AssignmentScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  status: 'status',
-  model: 'model',
-  spec: 'spec',
-  responses: 'responses',
-  score: 'score',
-  createdAt: 'createdAt',
-  completedAt: 'completedAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.StudentProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -367,91 +250,6 @@ exports.Prisma.FeatureFlagScalarFieldEnum = {
   description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
-};
-
-exports.Prisma.SkillScalarFieldEnum = {
-  id: 'id',
-  label: 'label',
-  category: 'category',
-  parentId: 'parentId',
-  active: 'active',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.QuestionScalarFieldEnum = {
-  id: 'id',
-  type: 'type',
-  body: 'body',
-  options: 'options',
-  correct: 'correct',
-  explanation: 'explanation',
-  difficulty: 'difficulty',
-  active: 'active',
-  authoredBy: 'authoredBy',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.QuestionSkillScalarFieldEnum = {
-  questionId: 'questionId',
-  skillId: 'skillId',
-  weight: 'weight'
-};
-
-exports.Prisma.AssessmentTemplateScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  type: 'type',
-  questionCount: 'questionCount',
-  timeLimitSec: 'timeLimitSec',
-  selectionRules: 'selectionRules',
-  active: 'active',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.AssessmentAttemptScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  templateId: 'templateId',
-  status: 'status',
-  startedAt: 'startedAt',
-  expiresAt: 'expiresAt',
-  completedAt: 'completedAt',
-  totalScore: 'totalScore',
-  durationSec: 'durationSec',
-  questionsSnapshot: 'questionsSnapshot',
-  metadata: 'metadata'
-};
-
-exports.Prisma.AssessmentAnswerScalarFieldEnum = {
-  id: 'id',
-  attemptId: 'attemptId',
-  questionId: 'questionId',
-  selected: 'selected',
-  isCorrect: 'isCorrect',
-  timeSpentMs: 'timeSpentMs',
-  answeredAt: 'answeredAt'
-};
-
-exports.Prisma.SkillScoreScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  skillId: 'skillId',
-  score: 'score',
-  confidence: 'confidence',
-  lastAttemptId: 'lastAttemptId',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.SkillScoreHistoryScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  skillId: 'skillId',
-  score: 'score',
-  confidence: 'confidence',
-  source: 'source',
-  recordedAt: 'recordedAt'
 };
 
 exports.Prisma.AuthIdentityScalarFieldEnum = {
@@ -613,6 +411,10 @@ exports.Prisma.LearningCategoryScalarFieldEnum = {
   skillTags: 'skillTags',
   icon: 'icon',
   order: 'order',
+  isShared: 'isShared',
+  experienceLevel: 'experienceLevel',
+  benefit: 'benefit',
+  projects: 'projects',
   generatedBy: 'generatedBy',
   createdAt: 'createdAt'
 };
@@ -659,6 +461,48 @@ exports.Prisma.LearningTestResultScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.CodingTaskScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  difficulty: 'difficulty',
+  createdBy: 'createdBy',
+  visible: 'visible',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CodingQuestionScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  sortOrder: 'sortOrder',
+  title: 'title',
+  description: 'description',
+  languages: 'languages',
+  starterCode: 'starterCode',
+  testCases: 'testCases',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CodingSubmissionScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  questionId: 'questionId',
+  userId: 'userId',
+  language: 'language',
+  code: 'code',
+  status: 'status',
+  passedCount: 'passedCount',
+  totalCount: 'totalCount',
+  percent: 'percent',
+  results: 'results',
+  aiFeedback: 'aiFeedback',
+  aiModel: 'aiModel',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -695,45 +539,6 @@ exports.UserStatus = exports.$Enums.UserStatus = {
   suspended: 'suspended'
 };
 
-exports.RoadmapStatus = exports.$Enums.RoadmapStatus = {
-  active: 'active',
-  archived: 'archived',
-  superseded: 'superseded'
-};
-
-exports.RoadmapItemType = exports.$Enums.RoadmapItemType = {
-  topic: 'topic',
-  project: 'project',
-  assessment: 'assessment',
-  session: 'session',
-  reading: 'reading',
-  practice: 'practice'
-};
-
-exports.RoadmapItemStatus = exports.$Enums.RoadmapItemStatus = {
-  locked: 'locked',
-  available: 'available',
-  in_progress: 'in_progress',
-  completed: 'completed',
-  skipped: 'skipped'
-};
-
-exports.RoadmapTestStatus = exports.$Enums.RoadmapTestStatus = {
-  ready: 'ready',
-  in_progress: 'in_progress',
-  completed: 'completed'
-};
-
-exports.RoadmapTestQuestionType = exports.$Enums.RoadmapTestQuestionType = {
-  single_choice: 'single_choice',
-  multi_choice: 'multi_choice'
-};
-
-exports.AssignmentStatus = exports.$Enums.AssignmentStatus = {
-  ready: 'ready',
-  completed: 'completed'
-};
-
 exports.EducationLevel = exports.$Enums.EducationLevel = {
   high_school: 'high_school',
   undergrad: 'undergrad',
@@ -761,37 +566,6 @@ exports.CareerGoal = exports.$Enums.CareerGoal = {
   upskill: 'upskill'
 };
 
-exports.SkillCategory = exports.$Enums.SkillCategory = {
-  language: 'language',
-  framework: 'framework',
-  tool: 'tool',
-  concept: 'concept',
-  dsa: 'dsa',
-  system_design: 'system_design',
-  soft_skill: 'soft_skill',
-  domain: 'domain'
-};
-
-exports.QuestionType = exports.$Enums.QuestionType = {
-  single_choice: 'single_choice',
-  multi_choice: 'multi_choice',
-  numeric: 'numeric',
-  short_text: 'short_text'
-};
-
-exports.TemplateType = exports.$Enums.TemplateType = {
-  initial: 'initial',
-  periodic: 'periodic',
-  topic: 'topic'
-};
-
-exports.AttemptStatus = exports.$Enums.AttemptStatus = {
-  in_progress: 'in_progress',
-  completed: 'completed',
-  abandoned: 'abandoned',
-  auto_completed: 'auto_completed'
-};
-
 exports.AuthProvider = exports.$Enums.AuthProvider = {
   email: 'email',
   google: 'google',
@@ -806,26 +580,9 @@ exports.Prisma.ModelName = {
   Plan: 'Plan',
   PlanModule: 'PlanModule',
   RecommendationLog: 'RecommendationLog',
-  Roadmap: 'Roadmap',
-  RoadmapWeek: 'RoadmapWeek',
-  RoadmapItem: 'RoadmapItem',
-  RoadmapSubtopic: 'RoadmapSubtopic',
-  RoadmapTest: 'RoadmapTest',
-  RoadmapTestQuestion: 'RoadmapTestQuestion',
-  RoadmapTestAnswer: 'RoadmapTestAnswer',
-  RoadmapTestResult: 'RoadmapTestResult',
-  Assignment: 'Assignment',
   StudentProfile: 'StudentProfile',
   NotificationPreferences: 'NotificationPreferences',
   FeatureFlag: 'FeatureFlag',
-  Skill: 'Skill',
-  Question: 'Question',
-  QuestionSkill: 'QuestionSkill',
-  AssessmentTemplate: 'AssessmentTemplate',
-  AssessmentAttempt: 'AssessmentAttempt',
-  AssessmentAnswer: 'AssessmentAnswer',
-  SkillScore: 'SkillScore',
-  SkillScoreHistory: 'SkillScoreHistory',
   AuthIdentity: 'AuthIdentity',
   Session: 'Session',
   LiveSession: 'LiveSession',
@@ -840,7 +597,10 @@ exports.Prisma.ModelName = {
   LearningCategory: 'LearningCategory',
   LearningTest: 'LearningTest',
   LearningTestQuestion: 'LearningTestQuestion',
-  LearningTestResult: 'LearningTestResult'
+  LearningTestResult: 'LearningTestResult',
+  CodingTask: 'CodingTask',
+  CodingQuestion: 'CodingQuestion',
+  CodingSubmission: 'CodingSubmission'
 };
 
 /**

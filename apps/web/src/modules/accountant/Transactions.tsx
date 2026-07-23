@@ -1,7 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { PageHeader } from '../../components/PageHeader.js';
-import { Check, Receipt, RotateCcw, X } from 'lucide-react';
+import { Check, RotateCcw, X } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
 import type { TransactionStatus, TransactionView } from '@mentra/shared';
 import { useMyAccess } from '../../lib/access.js';
@@ -45,14 +44,6 @@ export function TransactionsPage() {
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
       className="mx-auto w-full max-w-4xl space-y-5"
     >
-      <motion.div variants={fadeUp}>
-        <PageHeader
-          icon={<Receipt />}
-          title="Transactions"
-          subtitle="Approve booking payments, reject, or issue refunds."
-        />
-      </motion.div>
-
       <motion.div variants={fadeUp} className="flex gap-1 rounded-lg bg-surface-sunken p-1">
         <TabButton active={tab === 'pending'} onClick={() => setTab('pending')}>Pending</TabButton>
         <TabButton active={tab === 'approved'} onClick={() => setTab('approved')}>Approved</TabButton>

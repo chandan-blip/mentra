@@ -6,6 +6,7 @@ import { LiveSessionError } from './live-session.errors.js';
 import { MENTOR_MODULE, STUDENT_MODULE } from './live-session.service.js';
 import {
   deleteLike,
+  getAttended,
   getById,
   getChatHistory,
   getLive,
@@ -63,6 +64,8 @@ liveSessionRouter.get('/sessions/:id/summary', mentor, asyncHandler(getSessionSu
 liveSessionRouter.get('/sessions/live', student, asyncHandler(getLive));
 liveSessionRouter.get('/sessions/upcoming', student, asyncHandler(getUpcoming));
 liveSessionRouter.get('/sessions/past', student, asyncHandler(getPast));
+// Sessions the student actually attended (from participation), for their "My Sessions" tab.
+liveSessionRouter.get('/sessions/attended', student, asyncHandler(getAttended));
 
 // Shared by mentor (owner → publish) and students (→ subscribe). Access + grants
 // are resolved in the service, so no single module gate fits here.

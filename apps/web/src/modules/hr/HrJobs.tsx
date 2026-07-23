@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { Building2, Pencil, Plus, Trash2, Wand2, X } from 'lucide-react';
+import { Pencil, Plus, Trash2, Wand2, X } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
 import type {
   CreateJobInput,
@@ -9,7 +9,6 @@ import type {
   JobStatus,
   JobView,
 } from '@mentra/shared';
-import { PageHeader } from '../../components/PageHeader.js';
 import {
   EMPLOYMENT_LABEL,
   EXPERIENCE_LABEL,
@@ -43,31 +42,24 @@ export function HrJobsPage() {
 
   return (
     <div className="mx-auto w-full max-w-8xl py-2">
-      <PageHeader
-        icon={<Building2 />}
-        title="Job Postings"
-        subtitle="Post openings for students and manage the live board."
-        actions={
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setDiscoverOpen(true)}
-              className="inline-flex h-10 items-center gap-2 rounded-md bg-surface-sunken px-4 text-sm font-medium text-ink ring-1 ring-border-subtle transition hover:ring-border-strong"
-            >
-              <Wand2 className="size-4" />
-              Discover with AI
-            </button>
-            <button
-              type="button"
-              onClick={() => setEditing('new')}
-              className="inline-flex h-10 items-center gap-2 rounded-md bg-surface-inverse px-4 text-sm font-semibold text-ink-inverse transition hover:bg-ink"
-            >
-              <Plus className="size-4" />
-              New posting
-            </button>
-          </div>
-        }
-      />
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setDiscoverOpen(true)}
+          className="inline-flex h-10 items-center gap-2 rounded-md bg-surface-sunken px-4 text-sm font-medium text-ink ring-1 ring-border-subtle transition hover:ring-border-strong"
+        >
+          <Wand2 className="size-4" />
+          Discover with AI
+        </button>
+        <button
+          type="button"
+          onClick={() => setEditing('new')}
+          className="inline-flex h-10 items-center gap-2 rounded-md bg-surface-inverse px-4 text-sm font-semibold text-ink-inverse transition hover:bg-ink"
+        >
+          <Plus className="size-4" />
+          New posting
+        </button>
+      </div>
 
       {notice ? (
         <div className="rounded-md bg-surface px-4 py-3 text-sm text-ink-muted ring-1 ring-border-subtle">{notice}</div>

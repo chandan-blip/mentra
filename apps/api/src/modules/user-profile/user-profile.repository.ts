@@ -201,24 +201,6 @@ export async function countPostsByAuthor(userId: string): Promise<number> {
   return Number(rows[0]?.n ?? 0);
 }
 
-/**
- * Completion % (0–100) of the user's active roadmap, or null if they have none.
- * Inlined here (rather than importing the roadmap module) to keep the profile
- * module self-contained — this is a read-only aggregate over roadmap tables.
- */
-export async function activeRoadmapProgress(userId: string): Promise<number | null> {
-  const [rows] = await db.execute<(RowDataPacket & { total: number; completed: number })[]>(
-    "SELECT COUNT(*) AS total, SUM(i.`status` = 'completed') AS completed " +
-      'FROM `RoadmapItem` i JOIN `RoadmapWeek` w ON w.`id` = i.`weekId` ' +
-      "JOIN `Roadmap` r ON r.`id` = w.`roadmapId` WHERE r.`userId` = :userId AND r.`status` = 'active'",
-    { userId },
-  );
-  const total = Number(rows[0]?.total ?? 0);
-  if (total === 0) return null;
-  const completed = Number(rows[0]?.completed ?? 0);
-  return Math.round((completed / total) * 100);
-}
-
 // --- Social graph (Follow) ---
 
 export type DirectoryRow = {

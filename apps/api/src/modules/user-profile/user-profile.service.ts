@@ -14,7 +14,6 @@ import {
   type DirectoryRow,
   type PrefsRow,
   type ProfileRow,
-  activeRoadmapProgress,
   countFollowers,
   countFollowing,
   countPostsByAuthor,
@@ -141,9 +140,8 @@ export async function getPublicProfile(userId: string, viewerId: string): Promis
   if (!profile) throw new ProfileError('NOT_FOUND', 'Profile not found', 404);
 
   const isSelf = viewerId === userId;
-  const [communityPosts, roadmapCompletion, followers, following, followedByViewer] = await Promise.all([
+  const [communityPosts, followers, following, followedByViewer] = await Promise.all([
     countPostsByAuthor(userId),
-    activeRoadmapProgress(userId),
     countFollowers(userId),
     countFollowing(userId),
     isSelf ? Promise.resolve(false) : isFollowing(viewerId, userId),
@@ -170,7 +168,6 @@ export async function getPublicProfile(userId: string, viewerId: string): Promis
     stats: {
       memberSince: new Date(profile.createdAt).toISOString(),
       skillCount: techStack.length,
-      roadmapCompletion,
       communityPosts,
     },
     followers,

@@ -1,9 +1,8 @@
 import { useEffect, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
-import { PageHeader } from '../../components/PageHeader.js';
 import { AvatarUploader } from '../../components/AvatarUploader.js';
-import { ArrowLeft, CalendarClock, MessagesSquare, Plus, Send, Trash2, UserCog, Users, Video, X } from 'lucide-react';
+import { ArrowLeft, CalendarClock, MessagesSquare, Plus, Send, Trash2, Users, Video, X } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
 import type { BookingJoinResponse, MentorBookingView, MentorThreadView, MentorView, SlotAccess, SlotKind } from '@mentra/shared';
 import { getStoredUser } from '../../lib/auth.js';
@@ -71,14 +70,6 @@ export function MentorMentorshipPage() {
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
       className="mx-auto w-full max-w-4xl space-y-5"
     >
-      <motion.div variants={fadeUp}>
-        <PageHeader
-          icon={<UserCog />}
-          title="Mentorship"
-          subtitle="Your profile, availability, bookings, and student doubts."
-        />
-      </motion.div>
-
       <motion.div variants={fadeUp} className="flex gap-1 rounded-lg bg-surface-sunken p-1">
         <TabButton active={tab === 'profile'} onClick={() => setTab('profile')}>Profile</TabButton>
         <TabButton active={tab === 'availability'} onClick={() => setTab('availability')}>Availability</TabButton>

@@ -1,6 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { PageHeader } from '../../components/PageHeader.js';
 import { ArrowLeft, BarChart3, Calendar, Radio, Upload, Users, Video } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
 import type { JoinTokenResponse, LiveSessionView } from '@mentra/shared';
@@ -87,14 +86,6 @@ export function MentorLiveSessionsPage() {
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
       className="mx-auto w-full max-w-3xl space-y-5"
     >
-      <motion.div variants={fadeUp} className="flex items-start justify-between gap-3">
-        <PageHeader
-          icon={<Radio />}
-          title="Go Live"
-          subtitle="Start a live session — your students watch from their Live Sessions tab."
-        />
-      </motion.div>
-
       {!canBroadcast ? (
         <motion.div variants={fadeUp}>
           <Card>
@@ -232,7 +223,7 @@ export function MentorLiveSessionsPage() {
 }
 
 /**
- * Upload a pre-recorded video (≤1 GB). The browser PUTs the file straight to R2 via a
+ * Upload a pre-recorded video (≤5 GB). The browser PUTs the file straight to R2 via a
  * presigned URL, then we finalize → the same FFmpeg HLS pipeline transcodes it, and it
  * shows up in students' recordings once ready.
  */
@@ -285,7 +276,7 @@ function UploadRecordingCard() {
       <div className="flex items-center gap-2">
         <Upload className="size-4 text-ink-muted" />
         <h2 className="text-sm font-medium text-ink">Upload a recording</h2>
-        <span className="text-xs text-ink-faint">up to 1 GB</span>
+        <span className="text-xs text-ink-faint">up to 5 GB</span>
       </div>
 
       <div>
@@ -321,7 +312,7 @@ function UploadRecordingCard() {
         {file ? (
           <p className={`mt-1.5 text-xs ${tooBig ? 'text-accent-red' : 'text-ink-faint'}`}>
             {file.name} · {formatBytes(file.size)}
-            {tooBig ? ' — exceeds the 1 GB limit' : ''}
+            {tooBig ? ' — exceeds the 5 GB limit' : ''}
           </p>
         ) : null}
       </div>

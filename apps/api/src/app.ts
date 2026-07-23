@@ -11,9 +11,7 @@ import { healthRouter } from './modules/health/health.routes.js';
 import { userProfileRouter, userProfilePublicRouter } from './modules/user-profile/index.js';
 import { meRouter, adminRouter } from './modules/access/index.js';
 import { dashboardRouter } from './modules/dashboard/index.js';
-import { roadmapRouter } from './modules/roadmap/index.js';
 import { learningRouter } from './modules/learning/index.js';
-import { assignmentRouter } from './modules/assignment/index.js';
 import { liveSessionRouter, liveSessionPublicRouter, liveSessionWebhookRouter } from './modules/live-session/index.js';
 import { videoAdminRouter } from './modules/video-admin/video-admin.routes.js';
 import { mentorRouter } from './modules/mentor/index.js';
@@ -26,6 +24,7 @@ import { leadsRouter, leadsVapiWebhookRouter, leadsEnquiryRouter } from './modul
 import { activityRouter, registerActivityRecorder } from './modules/activity/index.js';
 import { aiPromptRouter } from './modules/ai-prompt/index.js';
 import { careerChatRouter } from './modules/career-chat/index.js';
+import { codingRouter, codingTasksRouter } from './modules/coding/index.js';
 
 export function createApp(): Express {
   const app = express();
@@ -74,7 +73,8 @@ export function createApp(): Express {
   app.use('/readyz', healthRouter);
   app.use('/api/v1/health', healthRouter);
   app.use('/api/v1/auth', authRouter);
-  // Public (no-auth) shareable videos → /api/v1/public/videos/:id.
+  // Public (no-auth) surfaces → /api/v1/public/*. Registered before their authed siblings.
+  // Only public video share links + their OG previews are exposed without login.
   app.use('/api/v1/public', liveSessionPublicRouter);
   // Public avatar serving (no auth) must be registered before the authed profile
   // router, which gates everything with requireAuth.
@@ -83,13 +83,13 @@ export function createApp(): Express {
   app.use('/api/v1/me', meRouter);
   app.use('/api/v1/admin', adminRouter);
   app.use('/api/v1/dashboard', dashboardRouter);
-  app.use('/api/v1/roadmap', roadmapRouter);
   app.use('/api/v1/learning', learningRouter);
-  app.use('/api/v1/assignment', assignmentRouter);
   app.use('/api/v1/live-session', liveSessionRouter);
   app.use('/api/v1/videos', videoAdminRouter);
   app.use('/api/v1/ai-prompts', aiPromptRouter);
   app.use('/api/v1/career-chat', careerChatRouter);
+  app.use('/api/v1/coding', codingRouter);
+  app.use('/api/v1/coding-tasks', codingTasksRouter);
   app.use('/api/v1/mentor', mentorRouter);
   app.use('/api/v1/transaction', transactionRouter);
   app.use('/api/v1/community', communityRouter);

@@ -11,10 +11,6 @@ export type DomainEventMap = {
   'user.deleted': { userId: string };
   'student-profile.updated': { userId: string; changedFields: string[] };
   'student-profile.onboarding-completed': { userId: string; completedAt: string };
-  'roadmap.generated': { userId: string; roadmapId: string; source: string };
-  'roadmap.item.completed': { userId: string; roadmapId: string; itemId: string };
-  'assignment.generated': { userId: string; assignmentId: string };
-  'assignment.completed': { userId: string; assignmentId: string; score: number };
   'learning.test.completed': {
     userId: string;
     categoryId: string;
@@ -23,6 +19,13 @@ export type DomainEventMap = {
     passed: boolean;
   };
   'learning.series.completed': { userId: string; categoryId: string };
+  'coding.submission.created': {
+    userId: string;
+    taskId: string;
+    questionId: string;
+    status: 'passed' | 'failed' | 'error';
+    percent: number;
+  };
   'live-session.started': { sessionId: string; mentorId: string };
   'live-session.ended': { sessionId: string; mentorId: string };
 };

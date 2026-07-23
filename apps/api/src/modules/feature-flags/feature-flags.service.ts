@@ -12,19 +12,9 @@ type FlagRow = { key: string; enabled: 0 | 1 } & RowDataPacket;
 /** Flags this build knows about, with their default state when no row exists yet. */
 export const FLAG_DEFAULTS: Record<string, { enabled: boolean; description: string }> = {
   'profile.resume.upload': { enabled: true, description: 'Kill switch for the resume upload feature' },
-  'profile.onboarding.required': {
-    enabled: true,
-    description: 'When off, students skip the onboarding wizard',
-  },
   'dashboard.enabled': { enabled: true, description: 'Master kill switch for the dashboard' },
-  'dashboard.widget.roadmap': { enabled: true, description: 'Roadmap widget (ships with 05-roadmap)' },
   'dashboard.widget.dailyTasks': { enabled: false, description: 'Daily tasks widget (later phase)' },
   'dashboard.widget.liveSessions': { enabled: false, description: 'Live sessions widget (later phase)' },
-  'roadmap.enabled': { enabled: true, description: 'Master kill switch for the roadmap' },
-  'roadmap.auto_regenerate.on_profile_change': {
-    enabled: true,
-    description: 'Auto-regenerate roadmap when goal/hours/techStack change',
-  },
 };
 
 export async function isEnabled(key: string): Promise<boolean> {

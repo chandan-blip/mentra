@@ -12,22 +12,35 @@ export class ApiError extends Error {
 
 type ApiEnvelope<T> = { data?: T; error?: { code: string; message: string } };
 
+/** Endpoints reachable without a bearer token (public content, auth, marketing enquiries). */
+const PUBLIC_PATH_PREFIXES = ['/api/v1/public', '/api/v1/auth', '/api/v1/enquiries'];
+const isPublicPath = (path: string): boolean => PUBLIC_PATH_PREFIXES.some((p) => path.startsWith(p));
+
 /**
  * Authenticated fetch against the Mentra API. Adds the bearer token, retries
  * once after a silent refresh on 401, and unwraps the `{ data, error }` envelope.
  */
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const run = async (token: string | null): Promise<Response> => {
+  const token = getAccessToken();
+
+  // Guests (no access token) never hit authenticated endpoints — fail fast with no network
+  // call, so public pages don't fire (and retry) authed requests that would only 401. A
+  // logged-in user always keeps a token in storage (even when expired → refreshed below).
+  if (!token && !isPublicPath(path)) {
+    throw new ApiError('AUTH_REQUIRED', 'Sign in to continue', 401);
+  }
+
+  const run = async (tok: string | null): Promise<Response> => {
     const headers = new Headers(init.headers);
     // Default to JSON, but respect an explicit Content-Type (e.g. binary uploads).
     if (!headers.has('Content-Type') && !(init.body instanceof Blob)) {
       headers.set('Content-Type', 'application/json');
     }
-    if (token) headers.set('Authorization', `Bearer ${token}`);
+    if (tok) headers.set('Authorization', `Bearer ${tok}`);
     return fetch(`${getApiBaseUrl()}${path}`, { ...init, headers, credentials: 'include' });
   };
 
-  let response = await run(getAccessToken());
+  let response = await run(token);
   if (response.status === 401) {
     const refreshed = await refreshAccessToken();
     if (refreshed) response = await run(refreshed);

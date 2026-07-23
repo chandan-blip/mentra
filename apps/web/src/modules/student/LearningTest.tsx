@@ -38,7 +38,8 @@ export function LearningTestPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [testId]);
 
-  const backToCategory = () => navigate(test ? `/learning/${test.categoryId}` : '/learning');
+  // The per-topic ladder page is bypassed — exit/back and finishing a test go straight to the list.
+  const backToList = () => navigate('/learning');
 
   const toggle = (questionId: string, optionIndex: number, multi: boolean) => {
     setAnswers((prev) => {
@@ -102,8 +103,8 @@ export function LearningTestPage() {
   // --- Graded review ---
   if (graded) {
     return (
-      <Shell onBack={backToCategory}>
-        <GradedView test={test} graded={graded} onRetake={retake} onDone={backToCategory} />
+      <Shell onBack={backToList}>
+        <GradedView test={test} graded={graded} onRetake={retake} onDone={backToList} />
       </Shell>
     );
   }
@@ -117,7 +118,7 @@ export function LearningTestPage() {
   const isLast = step === total - 1;
 
   return (
-    <Shell onBack={backToCategory}>
+    <Shell onBack={backToList}>
       {/* Step progress */}
       <div className="mb-1 flex items-center justify-between text-xs text-ink-faint">
         <span className="font-medium text-ink-muted">{test.title} test</span>
@@ -331,7 +332,7 @@ function GradedView({
           onClick={onDone}
           className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-surface-inverse text-sm font-semibold text-ink-inverse transition hover:bg-ink"
         >
-          Back to series
+          Back to topics
         </button>
       </div>
     </motion.div>

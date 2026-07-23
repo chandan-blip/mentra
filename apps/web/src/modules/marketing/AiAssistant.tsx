@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { ExternalLink, Phone, PhoneCall, Sparkles } from 'lucide-react';
+import { ExternalLink, Phone, PhoneCall } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
 import type { LeadCallStatus } from '@mentra/shared';
-import { PageHeader } from '../../components/PageHeader.js';
 import { ApiError } from '../../lib/api.js';
 import { useLeadCalls, useLeadLists, useListMembers, useStartCallRun } from '../../lib/leads.js';
 
@@ -62,12 +61,6 @@ export function AiAssistantPage() {
 
   return (
     <div className="mx-auto w-full max-w-8xl space-y-6 py-2">
-      <PageHeader
-        icon={<Sparkles />}
-        title="AI Assistant"
-        subtitle="Place outbound AI phone calls to a lead list using Vapi, and review the results."
-      />
-
       <Card interactive={false} className="flex flex-col gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <label className="block flex-1">

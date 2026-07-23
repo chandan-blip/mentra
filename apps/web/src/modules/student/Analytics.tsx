@@ -1,11 +1,8 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Activity, ArrowRight, Compass, Flame, GraduationCap, Sparkles, Target, TrendingUp, Trophy } from 'lucide-react';
+import { Activity, ArrowRight, Flame, GraduationCap, Target, Trophy } from 'lucide-react';
 import { Badge, Card, StatCard } from '@mentra/ui';
-import { PageHeader } from '../../components/PageHeader.js';
 import { ActivityHeatmap } from '../../components/ActivityHeatmap.js';
-import { useDashboardOverview } from '../../lib/dashboard.js';
-import { useRoadmapSummary } from '../../lib/roadmap.js';
 import { useLearningProgress } from '../../lib/learning.js';
 import { useActivityFocus, useActivitySummary } from '../../lib/activity.js';
 
@@ -15,13 +12,8 @@ const fadeUp = {
 };
 
 export function AnalyticsPage() {
-  const { data, isLoading } = useDashboardOverview();
-  const { data: roadmap } = useRoadmapSummary();
-  const { data: summary } = useActivitySummary();
+  const { data: summary, isLoading } = useActivitySummary();
   const { data: learning } = useLearningProgress();
-
-  const assignment = data?.assignment;
-  const completed = assignment?.status === 'completed';
 
   if (isLoading) {
     return <div className="grid min-h-[60vh] place-items-center text-ink-muted">Loading…</div>;
@@ -34,27 +26,13 @@ export function AnalyticsPage() {
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
       className="mx-auto w-full max-w-8xl space-y-6"
     >
-      <motion.div variants={fadeUp}>
-        <PageHeader
-          icon={<TrendingUp />}
-          title="Analytics"
-          subtitle="Your activity, momentum, and where to focus next."
-        />
-      </motion.div>
-
       {/* Top stats — activity + learning */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
         <motion.div variants={fadeUp}>
           <StatCard inverse value={String(summary?.currentStreak ?? 0)} unit="days" label="Activity streak" />
         </motion.div>
         <motion.div variants={fadeUp}>
           <StatCard value={String(summary?.weekCount ?? 0)} label="Actions this week" />
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <StatCard value={roadmap?.hasRoadmap ? `${roadmap.percentComplete}%` : '—'} label="Roadmap complete" />
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <StatCard value={completed ? `${assignment?.score ?? 0}%` : '—'} label="Assignment score" />
         </motion.div>
         <motion.div variants={fadeUp}>
           <StatCard value={String(learning?.testsPassed ?? 0)} label="Tests passed" />
@@ -91,42 +69,16 @@ export function AnalyticsPage() {
       {/* Focus */}
       <motion.div variants={fadeUp}><FocusCard /></motion.div>
 
-      {/* Roadmap + milestones */}
-      <div className="grid grid-cols-12 gap-4">
-        <motion.div className="col-span-12 lg:col-span-7" variants={fadeUp}>
-          <Card className="h-full">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="flex items-center gap-2 text-sm font-medium text-ink"><TrendingUp className="size-4" /> Roadmap progress</h3>
-              <Badge variant="outline" size="md">{roadmap?.hasRoadmap ? `Week ${roadmap.currentWeek}` : 'Not started'}</Badge>
-            </div>
-            {roadmap?.hasRoadmap ? (
-              <>
-                <div className="text-display-md">{roadmap.percentComplete}%</div>
-                <div className="mt-1 text-xs text-ink-muted">{roadmap.completedItems} of {roadmap.totalItems} items · {roadmap.totalWeeks} weeks</div>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-surface-sunken">
-                  <div className="h-full rounded-full bg-accent-green" style={{ width: `${roadmap.percentComplete}%` }} />
-                </div>
-              </>
-            ) : (
-              <p className="text-sm leading-6 text-ink-muted">
-                Complete your assignment to generate a roadmap — your weekly progress will chart here.
-              </p>
-            )}
-          </Card>
-        </motion.div>
-
-        <motion.div className="col-span-12 lg:col-span-5" variants={fadeUp}>
-          <Card className="h-full">
-            <h3 className="mb-4 flex items-center gap-2 text-sm font-medium text-ink"><Target className="size-4" /> Milestones</h3>
-            <div className="space-y-2.5">
-              <Milestone icon={<Sparkles className="size-4" />} label="Assignment completed" done={completed} />
-              <Milestone icon={<Compass className="size-4" />} label="Roadmap generated" done={Boolean(roadmap?.hasRoadmap)} />
-              <Milestone icon={<GraduationCap className="size-4" />} label="Passed a test" done={(learning?.testsPassed ?? 0) > 0} />
-              <Milestone icon={<Trophy className="size-4" />} label="Completed a test series" done={(learning?.seriesCompleted ?? 0) > 0} />
-            </div>
-          </Card>
-        </motion.div>
-      </div>
+      {/* Learning milestones */}
+      <motion.div variants={fadeUp}>
+        <Card>
+          <h3 className="mb-4 flex items-center gap-2 text-sm font-medium text-ink"><Target className="size-4" /> Milestones</h3>
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            <Milestone icon={<GraduationCap className="size-4" />} label="Passed a test" done={(learning?.testsPassed ?? 0) > 0} />
+            <Milestone icon={<Trophy className="size-4" />} label="Completed a test series" done={(learning?.seriesCompleted ?? 0) > 0} />
+          </div>
+        </Card>
+      </motion.div>
     </motion.div>
   );
 }

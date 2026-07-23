@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
+  CustomLearningRequestInput,
+  CustomLearningResult,
   LearningCategoryView,
   LearningProgressView,
   LearningTestSubmitResult,
@@ -10,10 +12,10 @@ import { apiFetch } from './api.js';
 
 const base = '/api/v1/learning';
 
-/** The student's test-series categories. Generated (AI) + cached server-side on first fetch. */
+/** Test-series categories: the student's own + the shared library. */
 export function useLearningCategories() {
   return useQuery({
-    queryKey: ['learning', 'categories'],
+    queryKey: ['learning', 'categories', 'me'],
     queryFn: () => apiFetch<LearningCategoryView[]>(`${base}/categories`),
   });
 }
@@ -23,6 +25,34 @@ export function useLearningCategory(categoryId: string | undefined) {
     queryKey: ['learning', 'category', categoryId],
     queryFn: () => apiFetch<LearningCategoryView>(`${base}/categories/${categoryId}`),
     enabled: Boolean(categoryId),
+  });
+}
+
+/** Live topic search (own + shared) for the "an existing topic matches" hint. Skips short queries. */
+export function useSearchTopics(query: string) {
+  const q = query.trim();
+  return useQuery({
+    queryKey: ['learning', 'search', q],
+    queryFn: () => apiFetch<LearningCategoryView[]>(`${base}/search?q=${encodeURIComponent(q)}`),
+    enabled: q.length >= 2,
+    staleTime: 30_000,
+  });
+}
+
+/**
+ * "Build your own" custom quiz — serves an existing shared quiz if one matches the topic +
+ * experience level, otherwise generates and caches a new one (this call may take several
+ * seconds while the AI generates). Returns where to navigate.
+ */
+export function useCreateCustomQuiz() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: CustomLearningRequestInput) =>
+      apiFetch<CustomLearningResult>(`${base}/custom`, {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['learning'] }),
   });
 }
 

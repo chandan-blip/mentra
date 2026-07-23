@@ -2,29 +2,30 @@ import { Router, type Request, type Response } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../auth/auth.middleware.js';
 import { requirePermission } from '../access/access.middleware.js';
-import { requireOnboardingComplete } from '../user-profile/index.js';
 import { LearningError } from './learning.errors.js';
 import {
   getCategories,
   getCategoryById,
   getLearningProgress,
   getTestById,
+  getTopicSearch,
+  postCustomQuiz,
   postStartTest,
   postSubmitTest,
 } from './learning.controller.js';
 
 export const learningRouter: Router = Router();
 
-// Auth + onboarding (categories derive from the profile/roadmap) + student module gate.
-// Note: this is intentionally NOT tied to roadmap completion — any onboarded student
+// Auth + student module gate. Categories derive from the student's profile; any student
 // with learning access can take any test.
 learningRouter.use(requireAuth);
-learningRouter.use(requireOnboardingComplete);
 learningRouter.use(requirePermission('learning', 'read'));
 
 learningRouter.get('/categories', asyncHandler(getCategories));
 learningRouter.get('/categories/:id', asyncHandler(getCategoryById));
 learningRouter.get('/progress', asyncHandler(getLearningProgress));
+learningRouter.get('/search', asyncHandler(getTopicSearch));
+learningRouter.post('/custom', asyncHandler(postCustomQuiz));
 learningRouter.get('/tests/:id', asyncHandler(getTestById));
 learningRouter.post('/tests/:id/start', asyncHandler(postStartTest));
 learningRouter.post('/tests/:id/submit', asyncHandler(postSubmitTest));

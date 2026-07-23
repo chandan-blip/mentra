@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import { useMyAccess } from '../lib/access.js';
+import { getStoredUser } from '../lib/auth.js';
 import { StudentDashboard } from './student/StudentDashboard.js';
 import { MentorDashboard } from './mentor/MentorDashboard.js';
 import { MarketingDashboard } from './marketing/MarketingDashboard.js';
@@ -15,14 +16,15 @@ const DASHBOARDS: Record<string, ComponentType> = {
 /**
  * Role-aware dashboard. The app shell (sidebar/header) is shared and renders
  * conditionally by entitlements; only the content differs per role.
+ *
+ * Picks the dashboard synchronously from the stored role so the chosen dashboard's own data
+ * starts loading IMMEDIATELY — no waiting a round-trip on /me/modules first (that would serialize
+ * the two requests). Once access resolves, its RBAC roleId wins (handles custom roles); for the
+ * common student/mentor/marketing case the stored role already matches, so there's no swap.
  */
 export function DashboardPage() {
-  const { data, isLoading } = useMyAccess();
-
-  if (isLoading) {
-    return <div className="grid min-h-[60vh] place-items-center text-ink-muted">Loading…</div>;
-  }
-
-  const Dashboard = (data && DASHBOARDS[data.roleId]) || StudentDashboard;
+  const { data } = useMyAccess();
+  const roleId = data?.roleId ?? getStoredUser()?.role ?? 'student';
+  const Dashboard = DASHBOARDS[roleId] ?? StudentDashboard;
   return <Dashboard />;
 }

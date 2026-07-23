@@ -1,9 +1,6 @@
 export * from './common.js';
 export * from './profile.js';
-export * from './assessment.js';
-export * from './roadmap.js';
 export * from './learning.js';
-export * from './assignment.js';
 export * from './live-session.js';
 export * from './mentor.js';
 export * from './transaction.js';
@@ -15,3 +12,4 @@ export * from './jobs.js';
 export * from './leads.js';
 export * from './ai-prompt.js';
 export * from './career-chat.js';
+export * from './coding.js';

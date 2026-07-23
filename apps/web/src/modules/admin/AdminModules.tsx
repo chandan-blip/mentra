@@ -49,8 +49,6 @@ export function AdminModulesPage() {
       <div className="mb-4 flex items-center justify-between">
         <p className="text-xs text-ink-faint">
           Placement “Sidebar” shows a module in the nav rail; “Other” keeps it for access control only.
-          Role is an informational tag for the intended audience — it doesn’t affect access (set that under Roles &
-          permissions). Sub-modules nest under a parent.
         </p>
         <button
           type="button"

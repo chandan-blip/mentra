@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, LifeBuoy, Mail, MessageCircle } from 'lucide-react';
+import { ChevronDown, Mail, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@mentra/ui';
-import { PageHeader } from '../../components/PageHeader.js';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 8 },
@@ -12,12 +11,12 @@ const fadeUp = {
 
 const FAQS: { q: string; a: string }[] = [
   {
-    q: 'How is my roadmap created?',
-    a: 'When you finish your personalized assignment, Mentra analyses your answers and profile to generate a week-by-week roadmap tailored to your goals.',
+    q: 'How do I set up my profile?',
+    a: 'Open Settings → Settings and fill in your goals, target roles, education, and tech stack. Mentra uses these to personalize your learning.',
   },
   {
-    q: 'Can I retake my assignment?',
-    a: 'Your assignment is generated once to calibrate your starting point. If you need a fresh assessment, reach out and we can reset it for you.',
+    q: 'How are my learning tracks chosen?',
+    a: 'Your test-series tracks are generated from your profile — your goal, target roles, and tech stack. Update them under Settings to refresh what’s suggested.',
   },
   {
     q: 'How do I change my subscription plan?',
@@ -33,14 +32,6 @@ export function SupportPage() {
   const navigate = useNavigate();
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <div className="mb-6">
-        <PageHeader
-          icon={<LifeBuoy />}
-          title="Support"
-          subtitle="Find answers fast, or get in touch — we usually reply within a day."
-        />
-      </div>
-
       <motion.div
         initial="hidden"
         animate="visible"

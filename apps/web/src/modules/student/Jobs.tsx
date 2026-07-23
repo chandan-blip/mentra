@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Briefcase, Building2, ExternalLink, MapPin, Sparkles, Wand2 } from 'lucide-react';
+import { Building2, ExternalLink, MapPin, Sparkles, Wand2 } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
 import type { JobView } from '@mentra/shared';
-import { PageHeader } from '../../components/PageHeader.js';
 import {
   EMPLOYMENT_LABEL,
   EXPERIENCE_LABEL,
@@ -39,22 +38,15 @@ export function JobsPage() {
 
   return (
     <div className="mx-auto w-full max-w-8xl space-y-6 py-2">
-      <PageHeader
-        icon={<Briefcase />}
-        title="Jobs"
-        subtitle="Openings matched to your skills, target roles and experience."
-        actions={
-          <button
-            type="button"
-            onClick={handleDiscover}
-            disabled={discover.isPending}
-            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-surface-inverse px-4 text-sm font-semibold text-ink-inverse transition hover:bg-ink disabled:opacity-60 sm:w-auto"
-          >
-            <Wand2 className="size-4" />
-            {discover.isPending ? 'Searching the web…' : 'Find with AI'}
-          </button>
-        }
-      />
+      <button
+        type="button"
+        onClick={handleDiscover}
+        disabled={discover.isPending}
+        className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-surface-inverse px-4 text-sm font-semibold text-ink-inverse transition hover:bg-ink disabled:opacity-60 sm:w-auto"
+      >
+        <Wand2 className="size-4" />
+        {discover.isPending ? 'Searching the web…' : 'Find with AI'}
+      </button>
 
       {notice ? (
         <div className="rounded-md bg-surface px-4 py-3 text-sm text-ink-muted ring-1 ring-border-subtle">{notice}</div>

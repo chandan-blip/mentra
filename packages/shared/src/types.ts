@@ -70,8 +70,6 @@ export type PublicProfileStats = {
   memberSince: string;
   /** Number of skills on the tech stack. */
   skillCount: number;
-  /** Active-roadmap completion 0–100, or null if there's no active roadmap. */
-  roadmapCompletion: number | null;
   /** Number of community posts authored. */
   communityPosts: number;
 };
@@ -150,260 +148,6 @@ export type SkillCatalogueEntry = {
   category: 'language' | 'frontend' | 'backend' | 'database' | 'devops' | 'mobile' | 'concept' | 'tool';
 };
 
-// --- Assessment (module 03) ---
-
-export type AssessmentSkillCategory =
-  | 'language'
-  | 'framework'
-  | 'tool'
-  | 'concept'
-  | 'dsa'
-  | 'system_design'
-  | 'soft_skill'
-  | 'domain';
-
-export type SkillRef = {
-  id: string;
-  label: string;
-  category: AssessmentSkillCategory;
-  parentId: string | null;
-};
-
-export type QuestionOption = { id: string; label: string };
-
-/** A question as served during an attempt — never includes the correct answer. */
-export type QuestionView = {
-  id: string;
-  type: 'single_choice' | 'multi_choice' | 'numeric' | 'short_text';
-  body: string;
-  options: QuestionOption[] | null;
-  difficulty: number;
-};
-
-export type TemplateView = {
-  id: string;
-  name: string;
-  description: string | null;
-  type: 'initial' | 'periodic' | 'topic';
-  questionCount: number;
-  timeLimitSec: number;
-};
-
-export type SavedAnswer = {
-  questionId: string;
-  selected: { optionIds?: string[]; value?: number; text?: string };
-};
-
-export type AttemptView = {
-  id: string;
-  templateId: string;
-  status: 'in_progress' | 'completed' | 'abandoned' | 'auto_completed';
-  startedAt: string;
-  expiresAt: string;
-  remainingSec: number;
-  questions: QuestionView[];
-  answers: SavedAnswer[];
-};
-
-export type StartAssessmentResult = {
-  attemptId: string;
-  questions: QuestionView[];
-  expiresAt: string;
-};
-
-export type CompleteAssessmentResult = {
-  status: 'completed' | 'auto_completed';
-  totalScore: number;
-  redirectTo: string;
-};
-
-export type SkillScoreView = {
-  skillId: string;
-  label: string;
-  category: AssessmentSkillCategory;
-  score: number;
-  confidence: number;
-};
-
-export type QuestionResult = {
-  questionId: string;
-  type: 'single_choice' | 'multi_choice' | 'numeric' | 'short_text';
-  body: string;
-  options: QuestionOption[] | null;
-  selected: { optionIds?: string[]; value?: number; text?: string } | null;
-  correct: unknown;
-  isCorrect: boolean | null;
-  explanation: string | null;
-  skills: string[];
-};
-
-export type AssessmentResultView = {
-  attemptId: string;
-  status: 'completed' | 'auto_completed';
-  totalScore: number;
-  durationSec: number | null;
-  completedAt: string | null;
-  skillMatrix: SkillScoreView[];
-  breakdown: QuestionResult[];
-};
-
-export type SkillHistoryPoint = {
-  score: number;
-  confidence: number;
-  source: string;
-  recordedAt: string;
-};
-
-export type AssessmentOverview = {
-  activeAttemptId: string | null;
-  completedCount: number;
-  skillsAssessed: number;
-  latest: {
-    attemptId: string;
-    status: 'completed' | 'auto_completed';
-    totalScore: number;
-    completedAt: string | null;
-  } | null;
-};
-
-// --- Roadmap (module 05) ---
-
-export type RoadmapItemView = {
-  id: string;
-  weekId: string;
-  order: number;
-  type: 'topic' | 'project' | 'assessment' | 'session' | 'reading' | 'practice';
-  title: string;
-  description: string | null;
-  skillIds: string[];
-  estimatedMin: number | null;
-  dependsOnIds: string[];
-  status: 'locked' | 'available' | 'in_progress' | 'completed' | 'skipped';
-  completedAt: string | null;
-};
-
-export type RoadmapWeekView = {
-  id: string;
-  weekNumber: number;
-  title: string;
-  theme: string | null;
-  items: RoadmapItemView[];
-};
-
-export type RoadmapView = {
-  id: string;
-  status: 'active' | 'archived' | 'superseded';
-  generatedBy: string;
-  totalWeeks: number;
-  startedOn: string;
-  currentWeek: number;
-  completedItems: number;
-  totalItems: number;
-  percentComplete: number;
-  weeks: RoadmapWeekView[];
-};
-
-export type RoadmapSummary = {
-  hasRoadmap: boolean;
-  totalWeeks: number;
-  completedItems: number;
-  totalItems: number;
-  percentComplete: number;
-  currentWeek: number;
-};
-
-export type RoadmapHistoryEntry = {
-  id: string;
-  status: 'active' | 'archived' | 'superseded';
-  generatedBy: string;
-  totalWeeks: number;
-  startedOn: string;
-  archivedAt: string | null;
-};
-
-export type RoadmapItemActionResult = {
-  status: RoadmapItemView['status'];
-  unlocked: string[];
-};
-
-// --- Topic subtopics + completion test ---
-
-export type RoadmapSubtopicView = {
-  id: string;
-  itemId: string;
-  order: number;
-  title: string;
-  description: string | null;
-  estimatedMin: number | null;
-};
-
-/** A test question as shown to the student — never includes the correct answers. */
-export type RoadmapTestQuestionView = {
-  id: string;
-  subtopicId: string | null;
-  order: number;
-  type: 'single_choice' | 'multi_choice';
-  body: string;
-  options: string[];
-  points: number;
-};
-
-export type RoadmapTestView = {
-  id: string;
-  itemId: string;
-  roadmapId: string;
-  status: 'ready' | 'in_progress' | 'completed';
-  totalQuestions: number;
-  maxScore: number;
-  passPercent: number;
-  questions: RoadmapTestQuestionView[];
-};
-
-/** Marks for one topic-test attempt (mirrors a RoadmapTestResult row). */
-export type RoadmapTestResultView = {
-  id: string;
-  testId: string;
-  itemId: string;
-  roadmapId: string;
-  attemptNumber: number;
-  score: number;
-  maxScore: number;
-  percent: number;
-  correctCount: number;
-  totalQuestions: number;
-  passed: boolean;
-  createdAt: string;
-};
-
-/** Per-question grading detail returned right after a submission. */
-export type RoadmapTestGradedQuestion = {
-  questionId: string;
-  correct: number[];
-  selected: number[];
-  isCorrect: boolean;
-  pointsAwarded: number;
-  points: number;
-  explanation: string | null;
-};
-
-export type RoadmapTestSubmitResult = {
-  result: RoadmapTestResultView;
-  graded: RoadmapTestGradedQuestion[];
-  itemStatus: RoadmapItemView['status'];
-  unlocked: string[];
-};
-
-/** Aggregated topic drilldown: the subtopics to learn + test state + best marks. */
-export type RoadmapTopicView = {
-  itemId: string;
-  subtopics: RoadmapSubtopicView[];
-  bestResult: RoadmapTestResultView | null;
-  lastResult: RoadmapTestResultView | null;
-  attempts: number;
-  openTestId: string | null;
-  passPercent: number;
-};
-
 // --- Dashboard (module 04) ---
 
 export type DashboardRecommendation = {
@@ -422,11 +166,6 @@ export type DashboardOverview = {
     avatarUrl: string | null;
     onboardingComplete: boolean;
     memberSince: string;
-  };
-  assignment: {
-    exists: boolean;
-    status: 'ready' | 'completed' | null;
-    score: number | null;
   };
   nextSteps: DashboardRecommendation[];
   stats: {
@@ -541,9 +280,25 @@ export type LearningCategoryView = {
   skillTags: string[];
   icon: string | null;
   order: number;
+  /** True for shared "build your own" custom-quiz topics (vs the student's own ladder). */
+  isShared: boolean;
+  /** The 0–10 level a custom quiz targets; null for auto-generated ladders. */
+  experienceLevel: number | null;
+  /** One-line "what this helps you do"; null on categories generated before this existed. */
+  benefit: string | null;
+  /** Short example projects where the topic applies (may be empty). */
+  projects: string[];
   tests: LearningTestSummary[];
   /** True when every test in the ladder has a passing attempt. */
   seriesCompleted: boolean;
+};
+
+/** Result of a custom-quiz request: where to go, and whether it was served from cache. */
+export type CustomLearningResult = {
+  categoryId: string;
+  testId: string;
+  /** True when an existing shared quiz matched (no AI call); false when freshly generated. */
+  cached: boolean;
 };
 
 /** A question as sent to the client — never includes the correct answer. */

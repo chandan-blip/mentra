@@ -1,4 +1,5 @@
 import type {
+  AttendedSessionView,
   ChatMessageView,
   CreateLiveSessionInput,
   CreateUploadInput,
@@ -234,7 +235,7 @@ export async function finalizeUpload(userId: string, id: string): Promise<LiveSe
   if (head.size > MAX_UPLOAD_BYTES) {
     await r2Delete(key).catch(() => {});
     await repo.setRecordingStatus(id, 'failed');
-    throw new LiveSessionError('UPLOAD_TOO_LARGE', 'The file exceeds the 1 GB limit', 413);
+    throw new LiveSessionError('UPLOAD_TOO_LARGE', 'The file exceeds the 5 GB limit', 413);
   }
   await enqueueTranscode(id, key);
   const me = await repo.findUserById(userId);
@@ -253,6 +254,17 @@ export async function listUpcoming(requesterId: string): Promise<LiveSessionView
 
 export async function listPast(requesterId: string): Promise<LiveSessionView[]> {
   return toViews(await repo.listPast(), requesterId);
+}
+
+/** The live sessions a student attended, with their aggregate attendance, newest first. */
+export async function listAttended(userId: string): Promise<AttendedSessionView[]> {
+  const rows = await repo.listAttendedByUser(userId);
+  const views = await toViews(rows, userId);
+  return views.map((v, i) => ({
+    ...v,
+    attendedSeconds: Number(rows[i]!.attendedSeconds ?? 0),
+    attendedAt: iso(rows[i]!.attendedAt) ?? v.createdAt,
+  }));
 }
 
 /** Full view of a single session for the watch page (any authenticated user). */

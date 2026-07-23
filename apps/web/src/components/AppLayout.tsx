@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Lock, LogOut, PanelLeftClose, PanelLeftOpen, Sparkles, Sun } from 'lucide-react';
+import { Lock, LogOut, Sun } from 'lucide-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AppShell, Avatar, Sidebar, TopBar } from '@mentra/ui';
 import type { ModuleEntitlement } from '@mentra/shared';
-import { AppSidebar, FOOTER_MODULE_KEYS, isRouteActive, SidebarLink, SidebarModuleButton } from './AppSidebar.js';
+import { AppSidebar, FOOTER_MODULE_KEYS, SidebarLink, SidebarModuleButton } from './AppSidebar.js';
 import { MobileBottomNav } from './MobileBottomNav.js';
 import { CareerChatFab } from './CareerChatFab.js';
 import { NotificationBell } from './NotificationBell.js';
@@ -33,13 +33,13 @@ export type AppOutletContext = { user: AuthUser | null; loadingUser: boolean };
  * Keep this in sync when adding a new module page.
  */
 const APP_MODULE_ROUTES: { prefix: string; key: string }[] = [
-  { prefix: '/assignment', key: 'assignment' },
-  { prefix: '/roadmap', key: 'roadmap' },
   { prefix: '/learning', key: 'learning' },
   { prefix: '/projects', key: 'projects' },
   { prefix: '/live-sessions', key: 'live-sessions' },
   { prefix: '/jobs', key: 'jobs' },
   { prefix: '/chat-with-mentor', key: 'career-chat' },
+  { prefix: '/coding', key: 'coding' },
+  { prefix: '/manage-coding-tasks', key: 'coding-tasks' },
   { prefix: '/mentor-live-sessions', key: 'mentor-live-sessions' },
   { prefix: '/mentor-mentors', key: 'mentor-mentors' },
   { prefix: '/manage-videos', key: 'manage-videos' },
@@ -77,7 +77,6 @@ const STATIC_PAGE_TITLES: { prefix: string; title: string }[] = [
   { prefix: '/dashboard', title: 'Dashboard' },
   { prefix: '/settings', title: 'Settings' },
   { prefix: '/community', title: 'Community' },
-  { prefix: '/manifesto', title: 'Manifesto' },
 ];
 
 /**
@@ -90,13 +89,6 @@ export function AppLayout() {
   const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
   const [loadingUser, setLoadingUser] = useState(true);
   const [logoutOpen, setLogoutOpen] = useState(false);
-  const [navExpanded, setNavExpanded] = useState(() => {
-    try {
-      return localStorage.getItem('navExpanded') === '1';
-    } catch {
-      return false;
-    }
-  });
 
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   // App-chrome visibility (top bar + bottom nav), driven by pages via useHideChromeOnScroll.
@@ -106,20 +98,8 @@ export function AppLayout() {
     [chromeHidden],
   );
   const isDesktop = useIsDesktop();
-  // On mobile the rail is an off-canvas drawer — always show titles there.
-  const railExpanded = isDesktop ? navExpanded : true;
-
-  function toggleNav() {
-    setNavExpanded((v) => {
-      const next = !v;
-      try {
-        localStorage.setItem('navExpanded', next ? '1' : '0');
-      } catch {
-        /* storage unavailable */
-      }
-      return next;
-    });
-  }
+  // The sidebar is always expanded (labels shown) — the collapse-to-rail toggle was removed.
+  const railExpanded = true;
 
   useEffect(() => {
     let cancelled = false;
@@ -218,7 +198,7 @@ export function AppLayout() {
   return (
     <ChromeContext.Provider value={chromeValue}>
     <AppShell
-      sidebarWidth={navExpanded ? '240px' : '72px'}
+      sidebarWidth="240px"
       chromeHidden={chromeHidden}
       mobileNavOpen={mobileNavOpen}
       onMenuClick={() => setMobileNavOpen(true)}
@@ -230,7 +210,7 @@ export function AppLayout() {
           aria-label="Mentra home"
           className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-inverse text-ink-inverse"
         >
-          <img src="/brand/mentra-icon-black.png" alt="Mentra" className="h-5 w-auto" />
+          <img src="/brand/mentra-icon-white.png" alt="Mentra" className="h-5 w-auto" />
         </button>
       }
       bottomNav={<MobileBottomNav onMenuClick={() => setMobileNavOpen(true)} hidden={chromeHidden} />}
@@ -238,25 +218,15 @@ export function AppLayout() {
         <Sidebar
           expanded={railExpanded}
           brand={
-            <div className={railExpanded ? 'flex items-center gap-2' : 'flex flex-col items-center gap-2'}>
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => navigate('/dashboard')}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-inverse text-ink-inverse"
               >
-                <img src="/brand/mentra-icon-black.png" alt="Mentra" className="h-5 w-auto" />
+                <img src="/brand/mentra-icon-white.png" alt="Mentra" className="h-5 w-auto" />
               </button>
-              {railExpanded ? <span className="flex-1 truncate text-base font-bold text-ink">Mentra</span> : null}
-              {/* Collapse/expand toggle is desktop-only (mobile uses the off-canvas drawer). */}
-              <button
-                type="button"
-                onClick={toggleNav}
-                aria-label={navExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
-                title={navExpanded ? 'Collapse' : 'Expand'}
-                className="hidden size-9 shrink-0 place-items-center rounded-md text-ink-muted transition hover:bg-surface hover:text-ink md:grid [&_svg]:size-5"
-              >
-                {navExpanded ? <PanelLeftClose /> : <PanelLeftOpen />}
-              </button>
+              <span className="flex-1 truncate text-base font-bold text-ink">Mentra</span>
             </div>
           }
           footer={
@@ -264,20 +234,6 @@ export function AppLayout() {
               {footerModules.map((m) => (
                 <SidebarModuleButton key={m.key} module={m} pathname={location.pathname} expanded={railExpanded} />
               ))}
-              {/* Manifesto entry — mobile drawer only (md:hidden never shows on the
-                  desktop rail, which is itself hidden below md), students only. The
-                  dashboard keeps its own floating CTA on desktop. */}
-              {access?.roleId === 'student' ? (
-                <div className="md:hidden">
-                  <SidebarLink
-                    icon={<Sparkles />}
-                    label="Read the Manifesto"
-                    active={isRouteActive('/manifesto', location.pathname)}
-                    expanded={railExpanded}
-                    onClick={() => navigate('/manifesto')}
-                  />
-                </div>
-              ) : null}
               <SidebarLink icon={<LogOut />} label="Sign out" danger expanded={railExpanded} onClick={() => setLogoutOpen(true)} />
             </>
           }
@@ -304,7 +260,7 @@ export function AppLayout() {
               </div>
             </div>
           }
-          searchPlaceholder="Search skills, tasks, roadmap…"
+          searchPlaceholder="Search modules, mentors, tests…"
           right={
             <>
               <NotificationBell />

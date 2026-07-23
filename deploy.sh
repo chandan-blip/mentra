@@ -105,6 +105,10 @@ else
     || echo "⚠️  mentra-egress failed to (re)start — recording stays off. See: journalctl -u mentra-egress"
 fi
 
+# NOTE: the Coding module grades submissions in-process in a QuickJS (WASM) sandbox
+# (apps/api/src/modules/coding/coding.exec.ts) — JavaScript-only, no external execution
+# service, so there is nothing to provision or run here.
+
 systemctl reload nginx
 echo "✅ Redeployed. $PUBLIC_URL"
 echo "   API: $(systemctl is-active mentra-api)  ·  Worker: $(systemctl is-active mentra-worker)  ·  Egress: $(systemctl is-active mentra-egress 2>/dev/null || echo n/a)"

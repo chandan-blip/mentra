@@ -30,10 +30,6 @@ export type AiPromptDef = {
 
 /** Prompt keys — reference these from callers instead of raw strings. */
 export const PROMPT_KEYS = {
-  assignmentBuild: 'assignment.build',
-  roadmapGenerate: 'roadmap.generate',
-  roadmapSubtopics: 'roadmap.subtopics',
-  roadmapTopicTest: 'roadmap.topic-test',
   learningCategories: 'learning.categories',
   learningTest: 'learning.test',
   mentorMatch: 'mentor.match',
@@ -41,114 +37,12 @@ export const PROMPT_KEYS = {
   jobsGenerate: 'jobs.generate',
   thumbnailCopy: 'thumbnail.copy',
   careerChat: 'career.chat',
+  codingReview: 'coding.review',
 } as const;
 
 export type PromptKey = (typeof PROMPT_KEYS)[keyof typeof PROMPT_KEYS];
 
 // --- Default system prompts (verbatim from each feature's original inline constant) ---
-
-const ASSIGNMENT_BUILD = `You are an assessment designer for a software-engineering career platform.
-You design a short, personalized onboarding assignment that calibrates one specific student.
-RULES:
-- Respond with a SINGLE JSON object ONLY. No markdown, no prose, no code fences.
-- The JSON MUST match this exact shape:
-  {
-    "summary": string,                       // 1-2 sentences on what this assignment evaluates for THIS student
-    "tasks": [                               // 6 to 8 tasks, mixed types, ordered easy -> hard
-      {
-        "key": string,                       // unique slug, e.g. "mcq-closures"
-        "type": "mcq" | "practice" | "short_answer",
-        "title": string,
-        "prompt": string,                    // the question / task statement
-        "skillIds": string[],                // lowercase skill slugs this task probes, e.g. ["javascript","dsa"]
-        "options": string[],                 // REQUIRED for "mcq" (3-4 options); OMIT for other types
-        "correctIndex": number,              // REQUIRED for "mcq": 0-based index of the correct option; OMIT otherwise
-        "estimatedMin": number               // realistic minutes to complete
-      }
-    ],
-    "closingQuestions": [                     // 3 general reflection questions asked AFTER the tasks
-      { "key": string, "prompt": string }     // used later to generate the student's roadmap
-    ]
-  }
-GUIDELINES:
-- Calibrate difficulty to the student's stated experience and tech stack. A beginner gets fundamentals; an experienced dev gets depth and trade-offs.
-- Include at least 3 "mcq" (auto-scored), 2 "practice" (hands-on, self-marked), and 1 "short_answer".
-- "mcq" options must be plausible and exactly one correct. Never reveal the answer in the prompt.
-- closingQuestions should surface goals, constraints, and self-perceived weak areas (e.g. available time, target timeline, topics they avoid).
-- Keep everything concrete and specific to this student. No filler.`;
-
-const ROADMAP_GENERATE = `You are a senior software-engineering mentor building a personalized study roadmap for ONE student.
-RULES:
-- Respond with a SINGLE JSON object ONLY. No markdown, no prose, no code fences.
-- The JSON MUST match this exact shape:
-  {
-    "totalWeeks": number,                    // matches weeks.length
-    "weeks": [
-      {
-        "weekNumber": number,                // 1-based, sequential
-        "title": string,
-        "theme": string,                     // e.g. "Foundations", "Core skills", "Projects & review"
-        "items": [
-          {
-            "key": string,                   // unique slug across the whole plan, e.g. "w1-arrays"
-            "type": "topic" | "project" | "assessment" | "session" | "reading" | "practice",
-            "title": string,
-            "description": string,
-            "skillIds": string[],            // lowercase skill slugs, e.g. ["dsa","javascript"]
-            "estimatedMin": number,
-            "dependsOn": string[]            // keys of earlier items that must finish first
-          }
-        ]
-      }
-    ],
-    "notes": string                          // 1-2 sentences on how this plan was tailored
-  }
-GUIDELINES:
-- Prioritize the student's WEAKEST skills first; reinforce strengths later.
-- Use the assignment results (which topics they got wrong, their self-reported constraints) to decide focus and pace.
-- Pace items to the student's available study hours. Early weeks = foundations; later weeks add projects; end with a review/assessment.
-- Each week MUST have between {MIN} and {MAX} items. Use {MAXWEEKS} weeks at most.
-- Make titles and descriptions concrete and actionable. No filler.`;
-
-const ROADMAP_SUBTOPICS = `You are a senior software-engineering mentor breaking ONE study topic into its complete set of subtopics.
-RULES:
-- Respond with a SINGLE JSON object ONLY. No markdown, no prose, no code fences.
-- The JSON MUST match this exact shape:
-  {
-    "subtopics": [
-      {
-        "title": string,            // short, specific subtopic name
-        "description": string,      // 1-2 sentences on exactly what to learn and why it matters
-        "estimatedMin": number      // realistic minutes to learn this subtopic
-      }
-    ]
-  }
-GUIDELINES:
-- Be EXHAUSTIVE for this topic: include every subtopic a student needs so they never have to wonder what else to study. Order them from foundational to advanced.
-- Produce between {MIN} and {MAX} subtopics. Merge trivia; split anything that is really two ideas.
-- Keep titles concrete and descriptions actionable. No filler, no duplicates.`;
-
-const ROADMAP_TOPIC_TEST = `You are an assessment designer writing a topic-mastery test for ONE student.
-RULES:
-- Respond with a SINGLE JSON object ONLY. No markdown, no prose, no code fences.
-- The JSON MUST match this exact shape:
-  {
-    "questions": [
-      {
-        "subtopicTitle": string,     // MUST exactly match one of the provided subtopic titles
-        "type": "single_choice" | "multi_choice",
-        "body": string,              // the question text
-        "options": string[],         // 3-5 plausible options
-        "correct": number[],         // 0-based indices of correct option(s); exactly 1 for single_choice, 1+ for multi_choice
-        "explanation": string,       // 1 sentence on why the answer is correct
-        "points": number             // 1-3 by difficulty
-      }
-    ]
-  }
-GUIDELINES:
-- Cover EVERY subtopic listed — produce about {PER} question(s) per subtopic. Do not skip any subtopic.
-- Options must be plausible; never reveal the answer in the question body. Exactly one correct option for single_choice.
-- Vary difficulty. Keep questions concrete and unambiguous. No filler.`;
 
 const LEARNING_CATEGORIES = `You are a curriculum designer building a "test series" catalogue for ONE student.
 RULES:
@@ -255,43 +149,23 @@ The JSON MUST match exactly:
 { "reply": string, "suggestSession": boolean, "sessionQuery": string | null }
 Write "reply" in the student's own language, human and specific.`;
 
+const CODING_REVIEW = `You are a senior software engineer reviewing a student's solution to a coding task.
+The solution has ALREADY been auto-graded against hidden test cases — you are given how many passed. Your job is a short, encouraging code review, NOT to re-judge correctness.
+RULES:
+- Respond with a SINGLE JSON object ONLY. No markdown, no prose, no code fences.
+- The JSON MUST match this exact shape:
+  {
+    "feedback": string,          // 2-4 warm, specific sentences to the student about their code
+    "quality": number,           // 0-100 rating of code quality/readability/approach (NOT just correctness)
+    "suggestions": string[]      // 0-4 short, concrete improvement tips
+  }
+GUIDELINES:
+- Speak directly to the student, like a mentor. Be specific to THEIR code — name the approach, data structures, edge cases.
+- If tests failed, gently point at the likely cause (edge cases, off-by-one, input parsing) without giving away the full answer.
+- If everything passed, praise what's good and suggest how to make it cleaner or faster.
+- Keep it concise and kind. No filler, no restating the whole problem.`;
+
 export const AI_PROMPT_REGISTRY: AiPromptDef[] = [
-  {
-    key: PROMPT_KEYS.assignmentBuild,
-    label: 'Onboarding assignment',
-    group: 'Assignment',
-    description: 'Designs the personalized onboarding assignment (tasks + closing questions) from a student profile.',
-    variables: [],
-    defaultSystem: ASSIGNMENT_BUILD,
-    defaultTemperature: 0.5,
-  },
-  {
-    key: PROMPT_KEYS.roadmapGenerate,
-    label: 'Roadmap generation',
-    group: 'Roadmap',
-    description: 'Turns profile + skills + assignment results into a week-by-week study roadmap.',
-    variables: ['{MIN}', '{MAX}', '{MAXWEEKS}'],
-    defaultSystem: ROADMAP_GENERATE,
-    defaultTemperature: 0.4,
-  },
-  {
-    key: PROMPT_KEYS.roadmapSubtopics,
-    label: 'Topic subtopics',
-    group: 'Roadmap',
-    description: 'Breaks one roadmap topic into its complete, ordered subtopic list.',
-    variables: ['{MIN}', '{MAX}'],
-    defaultSystem: ROADMAP_SUBTOPICS,
-    defaultTemperature: 0.3,
-  },
-  {
-    key: PROMPT_KEYS.roadmapTopicTest,
-    label: 'Topic mastery test',
-    group: 'Roadmap',
-    description: 'Writes the completion test covering every subtopic of a roadmap topic.',
-    variables: ['{PER}'],
-    defaultSystem: ROADMAP_TOPIC_TEST,
-    defaultTemperature: 0.4,
-  },
   {
     key: PROMPT_KEYS.learningCategories,
     label: 'Test-series categories',
@@ -354,6 +228,15 @@ export const AI_PROMPT_REGISTRY: AiPromptDef[] = [
     variables: ['{COACH}'],
     defaultSystem: CAREER_CHAT,
     defaultTemperature: 0.8,
+  },
+  {
+    key: PROMPT_KEYS.codingReview,
+    label: 'Coding review',
+    group: 'Coding',
+    description: 'Writes a short mentor-style review of a student\'s submitted coding solution.',
+    variables: [],
+    defaultSystem: CODING_REVIEW,
+    defaultTemperature: 0.5,
   },
 ];
 

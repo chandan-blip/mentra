@@ -54,5 +54,26 @@ Policy (architecture §7): **one DDL change per migration file. Never bundle.**
 | `202606020002_add_unique_assignment_open_per_user` | Unique on `openKey` (one open assignment/user; AI-cache guard) |
 | `202606020003_add_index_assignment_userid` | Index `Assignment.userId` |
 | `202606030001_widen_module_description` | Widen `Module.description` to `TEXT` (detailed module descriptions) |
+| `202607200001_add_is_shared_to_learning_category` | Add `LearningCategory.isShared` (shared/global custom-quiz topics) |
+| `202607200002_add_experience_level_to_learning_category` | Add `LearningCategory.experienceLevel` (0–10 target level for custom quizzes) |
+| `202607200003_add_index_learning_category_is_shared` | Index `LearningCategory.isShared` (landing unions own + shared) |
+| `202607200004_add_benefit_to_learning_category` | Add `LearningCategory.benefit` (one-line "what this helps with" for the card) |
+| `202607200005_add_projects_to_learning_category` | Add `LearningCategory.projects` (example projects where the topic applies) |
+| `202607200006_add_is_public_to_module` | Add `Module.isPublic` (admin flag: content browsable by logged-out visitors) |
+| `202607220001_create_coding_task_table` | Create `CodingTask` (manager-authored task — a container of questions) |
+| `202607220002_add_index_coding_task_visible` | Index `CodingTask.visible` (student list shows visible only) |
+| `202607220003_add_index_coding_task_created_by` | Index `CodingTask.createdBy` |
+| `202607220004_create_coding_question_table` | Create `CodingQuestion` (one problem per row; JSON languages + test cases) |
+| `202607220005_add_index_coding_question_task` | Index `CodingQuestion.taskId` |
+| `202607220006_create_coding_submission_table` | Create `CodingSubmission` (sandbox-graded per-question submissions) |
+| `202607220007_add_index_coding_submission_task` | Index `CodingSubmission.taskId` |
+| `202607220008_add_index_coding_submission_question` | Index `CodingSubmission.questionId` |
+| `202607220009_add_index_coding_submission_user` | Index `CodingSubmission.userId` |
+| `202607220010_add_index_coding_submission_question_user` | Index `(questionId, userId)` (per-student question stats) |
+| `202607220011_drop_is_public_from_module` | Drop `Module.isPublic` (public-module/guest access removed; login required for all modules) |
+| `202607230001_remove_assignment_roadmap_modules` | Delete `assignment`/`roadmap` Module + RolePermission + PlanModule rows (features removed) |
+| `202607230012_drop_assignment_table` | Drop `Assignment` (assignment feature removed) |
+| `202607230013_drop_roadmap_table` … `202607230020_drop_roadmap_test_result_table` | Drop the Roadmap cluster (Roadmap, RoadmapWeek, RoadmapItem, RoadmapSubtopic, RoadmapTest, RoadmapTestQuestion, RoadmapTestAnswer, RoadmapTestResult) |
+| `202607230021_drop_skill_table` … `202607230028_drop_skill_score_history_table` | Drop the leftover Assessment cluster (Skill, Question, QuestionSkill, AssessmentTemplate, AssessmentAttempt, AssessmentAnswer, SkillScore, SkillScoreHistory) |
 
-Note: per project rule, these tables use **no foreign keys** — relationships are by stored id and enforced in the app.
+Note: per project rule, these tables use **no foreign keys** — relationships are by stored id and enforced in the app. The assessment-cluster drops wrap `SET FOREIGN_KEY_CHECKS` because those older tables did carry FK constraints.

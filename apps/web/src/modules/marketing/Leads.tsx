@@ -1,9 +1,8 @@
 import { useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ListPlus, Mail, Pencil, Plus, Sparkles, Trash2, UserPlus, X } from 'lucide-react';
+import { ListPlus, Mail, Pencil, Plus, Sparkles, Trash2, X } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
 import type { CreateLeadInput, LeadStatus, LeadView } from '@mentra/shared';
-import { PageHeader } from '../../components/PageHeader.js';
 import { ApiError } from '../../lib/api.js';
 import {
   useAddToList,
@@ -78,20 +77,13 @@ export function LeadsPage() {
 
   return (
     <div className="mx-auto w-full max-w-8xl space-y-6 py-2">
-      <PageHeader
-        icon={<UserPlus />}
-        title="Leads"
-        subtitle="Your contacts and segments. Group leads into lists, then call or email them in bulk."
-        actions={
-          <button
-            type="button"
-            onClick={() => setEditing('new')}
-            className="inline-flex h-10 items-center gap-2 rounded-md bg-surface-inverse px-4 text-sm font-semibold text-ink-inverse transition hover:bg-ink"
-          >
-            <Plus className="size-4" /> New lead
-          </button>
-        }
-      />
+      <button
+        type="button"
+        onClick={() => setEditing('new')}
+        className="inline-flex h-10 items-center gap-2 rounded-md bg-surface-inverse px-4 text-sm font-semibold text-ink-inverse transition hover:bg-ink"
+      >
+        <Plus className="size-4" /> New lead
+      </button>
 
       {notice ? (
         <div className="rounded-md bg-surface px-4 py-3 text-sm text-ink-muted ring-1 ring-border-subtle">{notice}</div>

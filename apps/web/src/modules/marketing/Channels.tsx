@@ -1,8 +1,7 @@
 import { useState, type ComponentType, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { PageHeader } from '../../components/PageHeader.js';
 import { useSearchParams } from 'react-router-dom';
-import { Check, ExternalLink, Eye, Facebook, Heart, Image as ImageIcon, Link2, Linkedin, Mail, MessageSquare, Plug, RefreshCw, Send, Share2, TrendingUp, X } from 'lucide-react';
+import { Check, ExternalLink, Eye, Facebook, Heart, Image as ImageIcon, Linkedin, Mail, MessageSquare, Plug, RefreshCw, Send, Share2, TrendingUp, X } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
 import type { MarketingChannel, MarketingPostView } from '@mentra/shared';
 import {
@@ -171,14 +170,6 @@ export function ConnectProfilePage() {
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
       className="mx-auto w-full max-w-3xl space-y-5"
     >
-      <motion.div variants={fadeUp}>
-        <PageHeader
-          icon={<Link2 />}
-          title="Connect profiles"
-          subtitle="Link your marketing accounts so you can publish and track from each channel."
-        />
-      </motion.div>
-
       <motion.div variants={fadeUp} className="grid gap-4 sm:grid-cols-2">
         <ChannelConnectCard channel="linkedin" />
         <ChannelConnectCard channel="facebook" />
@@ -191,7 +182,6 @@ export function ConnectProfilePage() {
 /** A single channel page: connect → compose a post → see posts with engagement. */
 function ChannelPage({ channel }: { channel: MarketingChannel }) {
   const meta = CHANNELS[channel];
-  const Icon = meta.icon;
   const connections = useConnections();
   const connected = (connections.data ?? []).some((c) => c.channel === channel);
   const [params] = useSearchParams();
@@ -204,14 +194,6 @@ function ChannelPage({ channel }: { channel: MarketingChannel }) {
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
       className="mx-auto w-full max-w-3xl space-y-5"
     >
-      <motion.div variants={fadeUp}>
-        <PageHeader
-          icon={<Icon />}
-          title={meta.label}
-          subtitle={`Post to ${meta.label} and track engagement — all from here.`}
-        />
-      </motion.div>
-
       {oauthResult === 'ok' ? (
         <motion.div variants={fadeUp}>
           <Card className="flex items-center gap-2 text-sm text-accent-green"><Check className="size-4" /> LinkedIn connected.</Card>

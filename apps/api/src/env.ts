@@ -121,6 +121,9 @@ const EnvSchema = z.object({
   VAPI_WEBHOOK_SECRET: z.string().default(''),
   // Safety cap on how many leads a single list "call" run will dial.
   VAPI_MAX_CALLS_PER_RUN: z.coerce.number().int().positive().default(50),
+
+  // Coding module — JavaScript-only, graded in-process in a QuickJS (WASM) sandbox
+  // (see coding.exec.ts). No external execution service, so no config needed here.
 });
 
 const parsed = EnvSchema.safeParse(process.env);

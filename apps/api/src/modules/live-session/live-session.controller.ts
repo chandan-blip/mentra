@@ -18,6 +18,7 @@ import {
   getPublicVideo,
   getSummary,
   likeSession,
+  listAttended,
   listLive,
   listMine,
   listPast,
@@ -102,6 +103,10 @@ export async function getUpcoming(req: Request, res: Response): Promise<void> {
 
 export async function getPast(req: Request, res: Response): Promise<void> {
   res.json({ data: await listPast(uid(req)) });
+}
+
+export async function getAttended(req: Request, res: Response): Promise<void> {
+  res.json({ data: await listAttended(uid(req)) });
 }
 
 export async function getChatHistory(req: Request, res: Response): Promise<void> {

@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useNavigate } from 'react-router-dom';
-import { PageHeader } from '../../components/PageHeader.js';
 import { MessageSquare, Play, Users, Video } from 'lucide-react';
 import { Avatar } from '@mentra/ui';
 import type { LiveSessionView } from '@mentra/shared';
@@ -47,14 +46,6 @@ export function LiveSessionsPage() {
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
       className="mx-auto w-full max-w-8xl sm:space-y-6"
     >
-      <motion.div variants={fadeUp} className="flex items-start justify-between gap-3">
-        <PageHeader
-          icon={<Video />}
-          title="Sessions"
-          subtitle="Watch mentors teach live and ask questions in real time."
-        />
-      </motion.div>
-
       <motion.div variants={fadeUp}>
         {loading && sessions.length === 0 ? (
           <div className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
+  AttendedSessionView,
   ChatMessageView,
   CreateLiveSessionInput,
   CreateUploadInput,
@@ -83,6 +84,14 @@ export function usePastSessions() {
   return useQuery({
     queryKey: ['live', 'past'],
     queryFn: () => apiFetch<LiveSessionView[]>(`${base}/sessions/past`),
+  });
+}
+
+/** Live sessions the current student has attended (joined), for the "My Sessions" tab. */
+export function useAttendedSessions() {
+  return useQuery({
+    queryKey: ['live', 'attended'],
+    queryFn: () => apiFetch<AttendedSessionView[]>(`${base}/sessions/attended`),
   });
 }
 

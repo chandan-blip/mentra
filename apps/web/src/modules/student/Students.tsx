@@ -6,7 +6,6 @@ import type { ReactNode } from 'react';
 import { Avatar, Card } from '@mentra/ui';
 import type { PublicProfileCardView } from '@mentra/shared';
 import { resolveAvatarUrl } from '../../lib/auth.js';
-import { PageHeader } from '../../components/PageHeader.js';
 import { useDirectory, useToggleFollow } from '../../lib/profile.js';
 
 /**
@@ -30,14 +29,6 @@ export function StudentsPage() {
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.04 } } }}
       className="mx-auto w-full sm:space-y-6 max-w-8xl"
     >
-      <motion.div variants={fadeUp}>
-        <PageHeader
-          icon={<Users />}
-          title="Students"
-          subtitle="Discover people on the platform — follow, learn, and share."
-        />
-      </motion.div>
-
       <motion.div variants={fadeUp} className="relative mb-5">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-faint" />
         <input

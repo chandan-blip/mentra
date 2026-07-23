@@ -64,6 +64,7 @@ export function useMentorDetail(mentorId: string | undefined) {
   });
 }
 
+/** The Find-a-mentor list: AI-matched mentors (with score + reason) for the logged-in student. */
 export function useMentorMatches() {
   return useQuery({
     queryKey: ['mentor', 'matches'],

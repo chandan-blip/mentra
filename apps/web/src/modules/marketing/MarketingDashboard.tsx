@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
-import { PageHeader } from '../../components/PageHeader.js';
-import { Megaphone, Send, Tag, TrendingUp, Users } from 'lucide-react';
+import { Send, Tag, TrendingUp, Users } from 'lucide-react';
 import { Badge, Card, StatCard } from '@mentra/ui';
 
 /**
@@ -29,14 +28,6 @@ export function MarketingDashboard() {
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
       className="mx-auto max-w-8xl space-y-5"
     >
-      <motion.div variants={fadeUp}>
-        <PageHeader
-          icon={<Megaphone />}
-          title="Marketing overview"
-          subtitle="Grow reach, run campaigns, and track conversion. More tools land soon."
-        />
-      </motion.div>
-
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <motion.div variants={fadeUp}><StatCard inverse value="0" label="Active campaigns" /></motion.div>
         <motion.div variants={fadeUp}><StatCard value="0" label="Reach this month" /></motion.div>

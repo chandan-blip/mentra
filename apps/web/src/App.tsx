@@ -1,13 +1,7 @@
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { AuthPage } from './modules/auth/Auth.js';
 import { DashboardPage } from './modules/DashboardRouter.js';
-import { OnboardingPage } from './modules/account/Onboarding.js';
 import { SettingsPage } from './modules/account/Settings.js';
-import { AssignmentPage } from './modules/student/Assignment.js';
-import { RoadmapPage } from './modules/student/Roadmap.js';
-import { RoadmapAllPage } from './modules/student/RoadmapAll.js';
-import { RoadmapItemPage } from './modules/student/RoadmapItem.js';
-import { RoadmapHistoryPage } from './modules/student/RoadmapHistory.js';
 import { SubscriptionsPage } from './modules/student/Subscriptions.js';
 import { AnalyticsPage } from './modules/student/Analytics.js';
 import { SupportPage } from './modules/student/Support.js';
@@ -18,16 +12,17 @@ import { ProjectsPage } from './modules/student/Projects.js';
 import { LiveSessionsPage } from './modules/student/LiveSessions.js';
 import { WatchSessionPage } from './modules/student/WatchSession.js';
 import { MentorsPage } from './modules/student/Mentors.js';
-import { MentorDetailPage } from './modules/mentor/MentorDetail.js';
 import { CommunityPage } from './modules/student/Community.js';
 import { StudentsPage } from './modules/student/Students.js';
 import { StudentProfilePage } from './modules/student/StudentProfile.js';
-import { ManifestoPage } from './modules/student/Manifesto.js';
 import { JobsPage } from './modules/student/Jobs.js';
 import { ChatWithMentorPage } from './modules/student/ChatWithMentor.js';
+import { CodingPage } from './modules/student/Coding.js';
+import { CodingTaskPage } from './modules/student/CodingTask.js';
 import { MentorLiveSessionsPage } from './modules/mentor/MentorLiveSessions.js';
 import { ManageVideosPage } from './modules/manager/ManageVideos.js';
 import { ManageAiPromptsPage } from './modules/manager/ManageAiPrompts.js';
+import { ManageCodingTasksPage } from './modules/manager/ManageCodingTasks.js';
 import { PublicWatchPage } from './modules/public/PublicWatch.js';
 import { MentorMentorshipPage } from './modules/mentor/MentorMentorship.js';
 import { HrJobsPage } from './modules/hr/HrJobs.js';
@@ -45,29 +40,22 @@ import { AdminSubscriptionsPage } from './modules/admin/AdminSubscriptions.js';
 import { AdminModulesPage } from './modules/admin/AdminModules.js';
 import { AppLayout } from './components/AppLayout.js';
 import { getAccessToken } from './lib/auth.js';
-import { useProfile } from './lib/profile.js';
 import { useMyAccess } from './lib/access.js';
 
 export function App() {
   return (
     <Routes>
+      {/* Root sends logged-in users to their home surface; logged-out visitors to /auth. */}
+      <Route path="/" element={<RootLanding />} />
       {/* Full-screen (no app shell) */}
-      <Route path="/" element={<PublicOnlyRoute element={<AuthPage />} />} />
       <Route path="/auth" element={<PublicOnlyRoute element={<AuthPage />} />} />
       {/* Public shareable video — no auth, no shell; anyone with the link can watch. */}
       <Route path="/watch/:id" element={<PublicWatchPage />} />
-      <Route path="/onboarding" element={<ProtectedRoute element={<OnboardingPage />} />} />
-      <Route path="/manifesto" element={<ProtectedRoute element={<ManifestoPage />} />} />
 
-      {/* Student / mentor shell: entitlement-driven sidebar + header */}
-      <Route element={<ProtectedRoute element={<RequireOnboarded element={<AppLayout />} />} />}>
+      {/* App shell — login required. Logged-out visitors bounce to /auth. */}
+      <Route element={<ProtectedRoute element={<AppLayout />} />}>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/assignment" element={<AssignmentPage />} />
-        <Route path="/roadmap" element={<RoadmapPage />} />
-        <Route path="/roadmap/all" element={<RoadmapAllPage />} />
-        <Route path="/roadmap/history" element={<RoadmapHistoryPage />} />
-        <Route path="/roadmap/item/:id" element={<RoadmapItemPage />} />
         <Route path="/learning" element={<LearningPage />} />
         <Route path="/learning/:categoryId" element={<LearningCategoryPage />} />
         <Route path="/learning/test/:testId" element={<LearningTestPage />} />
@@ -76,8 +64,9 @@ export function App() {
         <Route path="/live-sessions/:id" element={<WatchSessionPage />} />
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/chat-with-mentor" element={<ChatWithMentorPage />} />
+        <Route path="/coding" element={<CodingPage />} />
+        <Route path="/coding/:taskId" element={<CodingTaskPage />} />
         <Route path="/mentors" element={<MentorsPage />} />
-        <Route path="/mentors/:id" element={<MentorDetailPage />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/students/:id" element={<StudentProfilePage />} />
@@ -88,6 +77,7 @@ export function App() {
         <Route path="/mentor-mentors" element={<MentorMentorshipPage />} />
         <Route path="/manage-videos" element={<ManageVideosPage />} />
         <Route path="/manage-ai-prompts" element={<ManageAiPromptsPage />} />
+        <Route path="/manage-coding-tasks" element={<ManageCodingTasksPage />} />
         <Route path="/hr-jobs" element={<HrJobsPage />} />
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/connect-profile" element={<ConnectProfilePage />} />
@@ -150,6 +140,14 @@ function PublicOnlyRoute({ element }: { element: JSX.Element }) {
   return getAccessToken() ? <RoleHome /> : element;
 }
 
+/**
+ * Root path (`/`): logged-in users route to their home surface (admins → /admin, everyone
+ * else → /dashboard); logged-out visitors go straight to /auth.
+ */
+function RootLanding() {
+  return getAccessToken() ? <RoleHome /> : <Navigate to="/auth" replace />;
+}
+
 /** Sends an authenticated user to their home surface: admins to /admin, everyone else to /dashboard. */
 function RoleHome() {
   const { data, isLoading } = useMyAccess();
@@ -157,18 +155,6 @@ function RoleHome() {
     return <div className="grid min-h-screen place-items-center bg-canvas text-ink-muted">Loading…</div>;
   }
   return <Navigate to={data?.isAdmin ? '/admin' : '/dashboard'} replace />;
-}
-
-/** Bounces to the onboarding wizard until the profile is complete. */
-function RequireOnboarded({ element }: { element: JSX.Element }) {
-  const { data, isLoading, isError } = useProfile();
-  if (isLoading) {
-    return <div className="grid min-h-screen place-items-center bg-canvas text-ink-muted">Loading…</div>;
-  }
-  if (!isError && data && !data.profile.onboardingComplete) {
-    return <Navigate to="/onboarding" replace />;
-  }
-  return element;
 }
 
 /** Admin-only gate based on the user's resolved RBAC role. */

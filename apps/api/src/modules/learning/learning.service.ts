@@ -1,4 +1,6 @@
 import type {
+  CustomLearningRequestInput,
+  CustomLearningResult,
   LearningCategoryView,
   LearningDifficulty,
   LearningProgressView,
@@ -11,24 +13,28 @@ import type {
 } from '@mentra/shared';
 import { logger } from '../../logger.js';
 import { emit } from '../../core/events.js';
-import { getActiveRoadmap } from '../roadmap/index.js';
 import { getProfile } from '../user-profile/index.js';
 import { generateCategories } from './category.ai.js';
-import { generateTestQuestions } from './test.ai.js';
+import { generateCustomQuizQuestions, generateTestQuestions } from './test.ai.js';
 import { LearningError } from './learning.errors.js';
 import {
   countAttempts,
   countCategoriesByUser,
   createCategoriesWithTests,
   findCategoryById,
+  findSharedCategoryBySlug,
   findTestById,
   insertResult,
+  insertSharedCategoryWithTest,
   listCategoriesByUser,
+  listOwnCategories,
   listQuestions,
   listResultsByUser,
   listTestsByCategory,
   listTestsByUser,
   saveGeneratedQuestions,
+  searchCategories,
+  SHARED_OWNER,
   type LearningCategoryRow,
   type LearningTestQuestionRow,
   type LearningTestResultRow,
@@ -39,6 +45,29 @@ import {
 
 const PASS_PERCENT = 70;
 const QUESTIONS_PER_TEST = 10;
+
+/** Map a 0–10 self-rated experience level onto the difficulty ladder used for a custom quiz. */
+function bucketDifficulty(level: number): LearningDifficulty {
+  return level <= 3 ? 'beginner' : level <= 7 ? 'intermediate' : 'advanced';
+}
+
+/** kebab-case key for a free-text topic; combined with the difficulty bucket to form the cache key. */
+function slugifyTopic(topic: string): string {
+  const slug = topic
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48);
+  return slug || 'topic';
+}
+
+function titleCase(topic: string): string {
+  return topic
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 /** The fixed difficulty ladder every category gets, in order. */
 const LADDER: { difficulty: LearningDifficulty; title: string }[] = [
@@ -53,18 +82,14 @@ const LADDER: { difficulty: LearningDifficulty; title: string }[] = [
 async function ensureCategories(userId: string): Promise<void> {
   if ((await countCategoriesByUser(userId)) > 0) return;
 
-  const [profile, roadmap] = await Promise.all([getProfile(userId), getActiveRoadmap(userId)]);
-  const topicTitles = (roadmap?.weeks ?? [])
-    .flatMap((w) => w.items)
-    .filter((i) => i.type === 'topic')
-    .map((i) => i.title);
+  const profile = await getProfile(userId);
 
-  logger.info({ userId, topics: topicTitles.length }, 'learning.categories.generate');
+  logger.info({ userId }, 'learning.categories.generate');
   const { model, categories } = await generateCategories({
     goal: profile.goal,
     targetRoles: profile.targetRoles,
     techStack: profile.techStack,
-    topicTitles,
+    topicTitles: [],
   });
 
   await createCategoriesWithTests({
@@ -77,6 +102,8 @@ async function ensureCategories(userId: string): Promise<void> {
       skillTags: c.skillTags,
       icon: null,
       order: i,
+      benefit: c.benefit || null,
+      projects: c.projects,
       tests: LADDER.map((l, j) => ({
         difficulty: l.difficulty,
         order: j,
@@ -124,6 +151,10 @@ function toCategoryView(
     skillTags: category.skillTags,
     icon: category.icon,
     order: category.order,
+    isShared: category.isShared,
+    experienceLevel: category.experienceLevel,
+    benefit: category.benefit,
+    projects: category.projects,
     tests: summaries,
     seriesCompleted: summaries.length > 0 && summaries.every((s) => s.passed),
   };
@@ -164,7 +195,7 @@ export async function listCategories(userId: string): Promise<LearningCategoryVi
 
 export async function getCategory(userId: string, categoryId: string): Promise<LearningCategoryView> {
   const category = await findCategoryById(categoryId);
-  if (!category || category.userId !== userId) {
+  if (!category || (category.userId !== userId && !category.isShared)) {
     throw new LearningError('CATEGORY_NOT_FOUND', 'Category not found', 404);
   }
   const [tests, results] = await Promise.all([
@@ -172,6 +203,94 @@ export async function getCategory(userId: string, categoryId: string): Promise<L
     listResultsByUser(userId),
   ]);
   return toCategoryView(category, tests, results);
+}
+
+/**
+ * Free-text topic search across the student's own categories + all shared custom-quiz topics.
+ * Powers the "an existing topic matches your search — open it" hint. Empty/short query → [].
+ */
+export async function searchTopics(userId: string, q: string): Promise<LearningCategoryView[]> {
+  const query = q.trim();
+  if (query.length < 2) return [];
+  const [categories, tests, results] = await Promise.all([
+    searchCategories(userId, query),
+    listTestsByUser(userId),
+    listResultsByUser(userId),
+  ]);
+  return categories.map((c) => toCategoryView(c, tests, results));
+}
+
+/**
+ * "Build your own" custom quiz. Serves an existing shared quiz keyed by topic + experience
+ * bucket (no AI call); otherwise generates one via Groq and persists it as a shared topic so
+ * every future student who searches the same thing is served the cached version.
+ */
+export async function createCustomQuiz(
+  userId: string,
+  input: CustomLearningRequestInput,
+): Promise<CustomLearningResult> {
+  const difficulty = bucketDifficulty(input.experienceLevel);
+  const cacheKey = `${slugifyTopic(input.topic)}-${difficulty}`;
+
+  // 1) Serve an already-generated shared quiz for this topic + level.
+  const existing = await findSharedCategoryBySlug(cacheKey);
+  if (existing) {
+    const [test] = await listTestsByCategory(existing.id);
+    if (test) {
+      logger.info({ userId, topic: input.topic, cacheKey }, 'learning.custom.cache_hit');
+      return { categoryId: existing.id, testId: test.id, cached: true };
+    }
+  }
+
+  // 2) Generate a new one and cache it for everyone.
+  logger.info({ userId, topic: input.topic, difficulty, count: input.questionCount }, 'learning.custom.generate');
+  const { model, benefit, projects, questions } = await generateCustomQuizQuestions({
+    topic: input.topic,
+    experienceLevel: input.experienceLevel,
+    languages: input.languages,
+    difficulty,
+    count: input.questionCount,
+  });
+
+  const title = titleCase(input.topic);
+  const description =
+    `Custom ${difficulty} quiz on ${title}` +
+    (input.languages.length ? ` · ${input.languages.join(', ')}` : '') +
+    '.';
+  const inserted = await insertSharedCategoryWithTest({
+    slug: cacheKey,
+    title,
+    description: description.slice(0, 240),
+    skillTags: input.languages,
+    experienceLevel: input.experienceLevel,
+    benefit: benefit || null,
+    projects,
+    difficulty,
+    testTitle: `${title} · ${input.questionCount} questions`,
+    passPercent: PASS_PERCENT,
+    generatedBy: model,
+  });
+
+  // Lost the insert race to a concurrent request — serve the winner's cached quiz.
+  if (!inserted.created) {
+    logger.info({ userId, topic: input.topic, cacheKey }, 'learning.custom.race_lost');
+    return { categoryId: inserted.categoryId, testId: inserted.testId, cached: true };
+  }
+
+  await saveGeneratedQuestions({
+    testId: inserted.testId,
+    model,
+    questions: questions.map((q) => ({
+      type: q.type,
+      body: q.body,
+      options: q.options,
+      correct: [...new Set(q.correct.filter((i) => i >= 0 && i < q.options.length))],
+      explanation: q.explanation ?? null,
+      points: q.points,
+    })),
+  });
+
+  return { categoryId: inserted.categoryId, testId: inserted.testId, cached: false };
 }
 
 /** Start a test — generates + caches the MCQs on first start, then returns the test. */
@@ -283,8 +402,9 @@ export async function submitTest(
 }
 
 export async function getProgress(userId: string): Promise<LearningProgressView> {
+  // Personal progress counts only the student's own ladder — not the shared custom-quiz library.
   const [categories, tests, results] = await Promise.all([
-    listCategoriesByUser(userId),
+    listOwnCategories(userId),
     listTestsByUser(userId),
     listResultsByUser(userId),
   ]);
@@ -303,9 +423,10 @@ export async function getProgress(userId: string): Promise<LearningProgressView>
 
 // --- Helpers ---
 
+/** Load a test the caller may take: their own, or any shared custom-quiz test. */
 async function requireOwnedTest(userId: string, testId: string): Promise<LearningTestRow> {
   const test = await findTestById(testId);
-  if (!test || test.userId !== userId) {
+  if (!test || (test.userId !== userId && test.userId !== SHARED_OWNER)) {
     throw new LearningError('TEST_NOT_FOUND', 'Test not found', 404);
   }
   return test;

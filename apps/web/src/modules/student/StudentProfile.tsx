@@ -171,12 +171,7 @@ function ProfileBody({ profile, isSelf }: { profile: PublicProfileView; isSelf: 
         {/* Achievement stat shelf — computed from real activity */}
         <motion.div variants={fadeUp}>
           <h2 className="mb-3 text-sm font-semibold text-ink">Achievements</h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatCard
-              value={profile.stats.roadmapCompletion ?? '—'}
-              unit={profile.stats.roadmapCompletion == null ? undefined : '%'}
-              label="Roadmap done"
-            />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <StatCard value={profile.stats.skillCount} label="Skills" />
             <StatCard value={profile.stats.communityPosts} label="Posts shared" />
             <StatCard value={memberSinceLabel(profile.stats.memberSince)} label="Member since" />

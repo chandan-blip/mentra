@@ -26,8 +26,8 @@ export const updateLiveSessionSchema = z.object({
 });
 export type UpdateLiveSessionInput = z.infer<typeof updateLiveSessionSchema>;
 
-/** Max size for a mentor-uploaded recording (1 GB). Enforced client- and server-side. */
-export const MAX_UPLOAD_BYTES = 1024 * 1024 * 1024;
+/** Max size for a mentor-uploaded recording (5 GB). Enforced client- and server-side. */
+export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024 * 1024;
 
 /** Mentor starts an upload — returns a presigned URL; the browser PUTs the file to R2. */
 export const createUploadSchema = z.object({
@@ -85,6 +85,14 @@ export type LiveSessionView = {
   /** Whether the requesting user has liked this session. */
   likedByViewer: boolean;
   createdAt: string;
+};
+
+/** A live session the student attended, plus their aggregate attendance. */
+export type AttendedSessionView = LiveSessionView & {
+  /** Total seconds the student was present, summed across joins. */
+  attendedSeconds: number;
+  /** ISO time of the student's most recent join. */
+  attendedAt: string;
 };
 
 /** Returned by like / unlike — lets the client update the button + count in place. */

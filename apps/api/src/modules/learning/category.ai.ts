@@ -33,6 +33,8 @@ function buildUserPrompt(input: CategoryGenInput): string {
     `Target roles: ${roles}`,
     `Tech stack: ${stack}`,
     `Roadmap topics:\n${topics}`,
+    'For each category also include a "benefit" (one line on what mastering it helps the student do) ' +
+      'and "projects" (2–3 short example projects where the topic applies, e.g. "REST API backend").',
     'Return ONLY the JSON object of test-series categories.',
   ].join('\n\n');
 }
@@ -40,13 +42,13 @@ function buildUserPrompt(input: CategoryGenInput): string {
 /** Curated default catalogue used when the model is unavailable. */
 function fallbackCategories(input: CategoryGenInput): LearningCategoryGenItem[] {
   const base: LearningCategoryGenItem[] = [
-    { slug: 'interview-prep', title: 'Interview Prep', description: 'Common technical interview questions across topics.', skillTags: ['interview', 'problem-solving'] },
-    { slug: 'oop-concepts', title: 'OOP Concepts', description: 'Object-oriented programming principles and patterns.', skillTags: ['oop', 'design-patterns'] },
-    { slug: 'data-structures', title: 'Data Structures & Algorithms', description: 'Core DSA fundamentals and complexity.', skillTags: ['dsa', 'algorithms'] },
-    { slug: 'system-design', title: 'System Design', description: 'Designing scalable systems and trade-offs.', skillTags: ['architecture', 'scalability'] },
-    { slug: 'databases', title: 'Databases', description: 'SQL, indexing, transactions, and modeling.', skillTags: ['sql', 'databases'] },
-    { slug: 'devops', title: 'DevOps', description: 'Containers, deployment, and infrastructure basics.', skillTags: ['docker', 'infra'] },
-    { slug: 'ci-cd', title: 'CI/CD', description: 'Continuous integration and delivery pipelines.', skillTags: ['ci', 'automation'] },
+    { slug: 'interview-prep', title: 'Interview Prep', description: 'Common technical interview questions across topics.', skillTags: ['interview', 'problem-solving'], benefit: 'Walk into technical interviews confident on the questions that come up most.', projects: ['Coding interview prep', 'Take-home assignments'] },
+    { slug: 'oop-concepts', title: 'OOP Concepts', description: 'Object-oriented programming principles and patterns.', skillTags: ['oop', 'design-patterns'], benefit: 'Model real domains with clean, maintainable class designs.', projects: ['E-commerce domain model', 'Game engine', 'Library management app'] },
+    { slug: 'data-structures', title: 'Data Structures & Algorithms', description: 'Core DSA fundamentals and complexity.', skillTags: ['dsa', 'algorithms'], benefit: 'Write efficient code and reason about time/space trade-offs.', projects: ['Search/autocomplete', 'Route finder', 'Rate limiter'] },
+    { slug: 'system-design', title: 'System Design', description: 'Designing scalable systems and trade-offs.', skillTags: ['architecture', 'scalability'], benefit: 'Design systems that scale and defend the trade-offs.', projects: ['URL shortener', 'Chat backend', 'News feed'] },
+    { slug: 'databases', title: 'Databases', description: 'SQL, indexing, transactions, and modeling.', skillTags: ['sql', 'databases'], benefit: 'Model data and write fast, correct queries.', projects: ['Analytics dashboard', 'Booking system', 'Inventory tracker'] },
+    { slug: 'devops', title: 'DevOps', description: 'Containers, deployment, and infrastructure basics.', skillTags: ['docker', 'infra'], benefit: 'Ship and run your apps reliably in production.', projects: ['Containerized app', 'Zero-downtime deploy'] },
+    { slug: 'ci-cd', title: 'CI/CD', description: 'Continuous integration and delivery pipelines.', skillTags: ['ci', 'automation'], benefit: 'Automate testing and releases so shipping is boring.', projects: ['GitHub Actions pipeline', 'Automated release flow'] },
   ];
   // Fold in the student's tech stack as extra tagged categories where sensible.
   const extra = input.techStack.slice(0, 2).map((tech) => ({
@@ -54,6 +56,8 @@ function fallbackCategories(input: CategoryGenInput): LearningCategoryGenItem[] 
     title: tech,
     description: `Test your knowledge of ${tech}.`,
     skillTags: [tech.toLowerCase()],
+    benefit: `Apply ${tech} confidently in real projects.`,
+    projects: [`${tech} project`],
   }));
   const seen = new Set<string>();
   return [...base, ...extra].filter((c) => (seen.has(c.slug) ? false : (seen.add(c.slug), true)));

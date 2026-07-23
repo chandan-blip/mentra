@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
-import { Calendar, ClipboardCheck, MessagesSquare, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Calendar, MessagesSquare, Users } from 'lucide-react';
 import { Badge, Card, StatCard } from '@mentra/ui';
 
 const fadeUp = {
@@ -30,8 +29,6 @@ const panels = [
 ];
 
 export function MentorDashboard() {
-  const navigate = useNavigate();
-
   return (
     <motion.div
       initial="hidden"
@@ -71,24 +68,6 @@ export function MentorDashboard() {
           );
         })}
       </div>
-
-      <motion.div variants={fadeUp}>
-        <Card>
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h3 className="text-sm font-medium text-ink">Try the student experience</h3>
-              <p className="mt-1 text-sm text-ink-muted">Take the assessment yourself to see what your students go through.</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => navigate('/assessment')}
-              className="flex h-10 shrink-0 items-center gap-2 rounded-md bg-surface-inverse px-4 text-sm font-semibold text-ink-inverse transition hover:bg-ink"
-            >
-              <ClipboardCheck className="size-4" /> Open assessment
-            </button>
-          </div>
-        </Card>
-      </motion.div>
     </motion.div>
   );
 }

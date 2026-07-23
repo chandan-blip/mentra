@@ -109,6 +109,27 @@ export async function listPast(limit = 50): Promise<LiveSessionRow[]> {
   return rows;
 }
 
+export type AttendedSessionRow = LiveSessionRow & { attendedSeconds: number; attendedAt: Date };
+
+/**
+ * Live sessions the given student actually joined (attended), most-recent join first.
+ * Aggregates a student's participation rows (they may join/leave more than once) per session.
+ * Grouped by the session PK so ONLY_FULL_GROUP_BY is satisfied for the selected session columns.
+ */
+export async function listAttendedByUser(userId: string, limit = 50): Promise<AttendedSessionRow[]> {
+  const cols = COLS.replace(/`(\w+)`/g, 's.`$1`');
+  const [rows] = await db.query<(AttendedSessionRow & RowDataPacket)[]>(
+    `SELECT ${cols}, CAST(SUM(p.\`attendedSeconds\`) AS UNSIGNED) AS \`attendedSeconds\`, MAX(p.\`joinedAt\`) AS \`attendedAt\`
+       FROM \`SessionParticipant\` p JOIN \`LiveSession\` s ON s.\`id\` = p.\`sessionId\`
+      WHERE p.\`userId\` = ? AND p.\`roleAtJoin\` = 'student'
+      GROUP BY s.\`id\`
+      ORDER BY \`attendedAt\` DESC
+      LIMIT ?`,
+    [userId, limit],
+  );
+  return rows;
+}
+
 // --- Videos management (role-gated 'manage-videos' module) ---
 
 /**

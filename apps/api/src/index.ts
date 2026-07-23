@@ -6,8 +6,6 @@ import { attachRealtime } from './core/realtime.js';
 import { seedFlags } from './modules/feature-flags/feature-flags.service.js';
 import { registerUserProfileListeners } from './modules/user-profile/index.js';
 import { registerAccessListeners } from './modules/access/index.js';
-import { registerRoadmapListeners } from './modules/roadmap/index.js';
-import { registerAssignmentListeners } from './modules/assignment/index.js';
 import {
   registerLiveSessionListeners,
   registerLiveSessionSocket,
@@ -17,8 +15,6 @@ import {
 // --- Boot-time wiring ---
 registerUserProfileListeners();
 registerAccessListeners();
-registerAssignmentListeners();
-registerRoadmapListeners();
 registerLiveSessionListeners();
 startCleanupWorker();
 startChatFlusher();

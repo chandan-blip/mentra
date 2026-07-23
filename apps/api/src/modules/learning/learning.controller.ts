@@ -1,10 +1,12 @@
 import type { Request, Response } from 'express';
-import { submitLearningTestSchema } from '@mentra/shared';
+import { customLearningRequestSchema, submitLearningTestSchema } from '@mentra/shared';
 import {
+  createCustomQuiz,
   getCategory,
   getProgress,
   getTest,
   listCategories,
+  searchTopics,
   startTest,
   submitTest,
 } from './learning.service.js';
@@ -38,4 +40,14 @@ export async function postSubmitTest(req: Request, res: Response): Promise<void>
 
 export async function getLearningProgress(req: Request, res: Response): Promise<void> {
   res.json({ data: await getProgress(uid(req)) });
+}
+
+export async function getTopicSearch(req: Request, res: Response): Promise<void> {
+  const q = typeof req.query.q === 'string' ? req.query.q : '';
+  res.json({ data: await searchTopics(uid(req), q) });
+}
+
+export async function postCustomQuiz(req: Request, res: Response): Promise<void> {
+  const body = customLearningRequestSchema.parse(req.body ?? {});
+  res.json({ data: await createCustomQuiz(uid(req), body) });
 }
