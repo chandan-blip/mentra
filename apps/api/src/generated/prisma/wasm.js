@@ -297,6 +297,20 @@ exports.Prisma.LiveSessionScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.StudentReviewScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  studentName: 'studentName',
+  body: 'body',
+  mediaType: 'mediaType',
+  mediaUrl: 'mediaUrl',
+  thumbnailUrl: 'thumbnailUrl',
+  visible: 'visible',
+  sortOrder: 'sortOrder',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SessionParticipantScalarFieldEnum = {
   id: 'id',
   sessionId: 'sessionId',
@@ -586,6 +600,7 @@ exports.Prisma.ModelName = {
   AuthIdentity: 'AuthIdentity',
   Session: 'Session',
   LiveSession: 'LiveSession',
+  StudentReview: 'StudentReview',
   SessionParticipant: 'SessionParticipant',
   ChatMessage: 'ChatMessage',
   WatchProgress: 'WatchProgress',

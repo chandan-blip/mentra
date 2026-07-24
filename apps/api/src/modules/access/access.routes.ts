@@ -1,8 +1,10 @@
 import { Router, type Request, type Response } from 'express';
 import { z } from 'zod';
+import type { AdminSettings } from '@mentra/shared';
 import { requireAuth } from '../auth/auth.middleware.js';
 import { requireAdmin } from './access.middleware.js';
 import { AccessError } from './access.service.js';
+import { isEnabled, setEnabled, RECORD_LIVE_SESSIONS_FLAG } from '../feature-flags/feature-flags.service.js';
 import {
   assignUser,
   deleteModule,
@@ -39,6 +41,28 @@ adminRouter.get('/plans', asyncHandler(listPlans));
 adminRouter.post('/plans', asyncHandler(savePlan));
 adminRouter.get('/users', asyncHandler(listUsers));
 adminRouter.post('/users/assign', asyncHandler(assignUser));
+
+// Global platform settings (admin-settings). Backed by feature flags.
+adminRouter.get('/settings', asyncHandler(getSettings));
+adminRouter.put('/settings', asyncHandler(updateSettings));
+
+async function loadSettings(): Promise<AdminSettings> {
+  return { recordLiveSessions: await isEnabled(RECORD_LIVE_SESSIONS_FLAG) };
+}
+
+async function getSettings(_req: Request, res: Response): Promise<void> {
+  res.json({ data: await loadSettings() });
+}
+
+const updateSettingsSchema = z.object({ recordLiveSessions: z.boolean().optional() });
+
+async function updateSettings(req: Request, res: Response): Promise<void> {
+  const patch = updateSettingsSchema.parse(req.body ?? {});
+  if (patch.recordLiveSessions !== undefined) {
+    await setEnabled(RECORD_LIVE_SESSIONS_FLAG, patch.recordLiveSessions);
+  }
+  res.json({ data: await loadSettings() });
+}
 
 function asyncHandler(handler: (req: Request, res: Response) => Promise<void>) {
   return (req: Request, res: Response) => {

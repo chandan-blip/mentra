@@ -7,7 +7,6 @@ import {
   BookOpen,
   Briefcase,
   CalendarClock,
-  Clock,
   Code2,
   Flame,
   FolderGit2,
@@ -15,20 +14,23 @@ import {
   PlayCircle,
   Radio,
   Sparkles,
+  Star,
   Target,
   Users,
   Video,
 } from 'lucide-react';
 import { Badge, Card } from '@mentra/ui';
-import type { LiveSessionView, MentorMatchView } from '@mentra/shared';
-import { getStoredUser, resolveAvatarUrl } from '../../lib/auth.js';
+import type { LiveSessionView, StudentReviewView } from '@mentra/shared';
+import { getStoredUser } from '../../lib/auth.js';
 import { useDashboardOverview } from '../../lib/dashboard.js';
 import { useProfile } from '../../lib/profile.js';
 import { useActivityFocus, useActivitySummary } from '../../lib/activity.js';
 import { useLiveSessions, useUpcomingOpen } from '../../lib/live.js';
 import { useLearningProgress } from '../../lib/learning.js';
 import { useCodingProgress } from '../../lib/coding.js';
-import { formatPrice, formatSlot, useMentorMatches } from '../../lib/mentors.js';
+import { useReviews } from '../../lib/reviews.js';
+import { useMyAccess } from '../../lib/access.js';
+import { formatSlot } from '../../lib/mentors.js';
 import { ActivityHeatmap } from '../../components/ActivityHeatmap.js';
 
 const fadeUp = {
@@ -53,10 +55,6 @@ function greeting(): string {
   return 'Good evening';
 }
 
-function initials(name: string): string {
-  return name.trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase() || 'U';
-}
-
 /**
  * Student home. Frames the whole journey — 1:1 mentorship + mock interviews, coding practice,
  * and learning tracks — around the one thing that matters to the student: getting placed.
@@ -67,6 +65,13 @@ export function StudentDashboard() {
   const { data: summary } = useActivitySummary();
   const learning = useLearningProgress().data;
   const coding = useCodingProgress().data;
+  const { data: access } = useMyAccess();
+
+  // A module is "active" for this user when the admin has it enabled AND their role can
+  // reach it (present in the server-filtered access list with a real route). Admins bypass.
+  // Cards below are hidden when their backing module isn't active.
+  const active = (key: string) =>
+    !!access?.isAdmin || (access?.modules ?? []).some((m) => m.key === key && !!m.route);
 
   const name = overview?.profile.name ?? getStoredUser()?.name ?? 'there';
   const firstName = name.split(' ')[0];
@@ -130,58 +135,142 @@ export function StudentDashboard() {
 
       {/* Sessions + focus */}
       <div className="grid grid-cols-12 gap-6">
-        <motion.div variants={fadeUp} className="col-span-12 lg:col-span-8">
-          <SessionsCard />
-        </motion.div>
-        <motion.div variants={fadeUp} className="col-span-12 lg:col-span-4">
+        {active('live-sessions') ? (
+          <motion.div variants={fadeUp} className="col-span-12 lg:col-span-8">
+            <SessionsCard />
+          </motion.div>
+        ) : null}
+        <motion.div
+          variants={fadeUp}
+          className={active('live-sessions') ? 'col-span-12 lg:col-span-4' : 'col-span-12'}
+        >
           <FocusCard />
         </motion.div>
       </div>
 
       {/* Three pillars */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <motion.div variants={fadeUp}>
-          <Pillar
-            to="/mentors"
-            icon={Users}
-            tint="blue"
-            title="Mentorship & mock interviews"
-            desc="Get paired with working engineers for every round — DSA, system design, HR."
-            stat="Book a 1:1"
-          />
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <Pillar
-            to="/coding"
-            icon={Code2}
-            tint="green"
-            title="Coding practice"
-            desc="Sharpen DSA and problem-solving in the in-app editor, graded instantly."
-            stat={coding ? `${coding.solved}/${coding.totalQuestions} solved` : 'Start solving'}
-          />
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <Pillar
-            to="/learning"
-            icon={BookOpen}
-            tint="amber"
-            title="Learning tracks"
-            desc="AI test-series tuned to your target roles — beginner to advanced."
-            stat={learning ? `${learning.testsPassed} tests passed` : 'Explore tracks'}
-          />
-        </motion.div>
-      </div>
+      {active('mentors') || active('coding') || active('learning') ? (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {active('mentors') ? (
+            <motion.div variants={fadeUp}>
+              <Pillar
+                to="/mentors"
+                icon={Users}
+                tint="blue"
+                title="Mentorship & mock interviews"
+                desc="Get paired with working engineers for every round — DSA, system design, HR."
+                stat="Book a 1:1"
+              />
+            </motion.div>
+          ) : null}
+          {active('coding') ? (
+            <motion.div variants={fadeUp}>
+              <Pillar
+                to="/coding"
+                icon={Code2}
+                tint="green"
+                title="Coding practice"
+                desc="Sharpen DSA and problem-solving in the in-app editor, graded instantly."
+                stat={coding ? `${coding.solved}/${coding.totalQuestions} solved` : 'Start solving'}
+              />
+            </motion.div>
+          ) : null}
+          {active('learning') ? (
+            <motion.div variants={fadeUp}>
+              <Pillar
+                to="/learning"
+                icon={BookOpen}
+                tint="amber"
+                title="Learning tracks"
+                desc="AI test-series tuned to your target roles — beginner to advanced."
+                stat={learning ? `${learning.testsPassed} tests passed` : 'Explore tracks'}
+              />
+            </motion.div>
+          ) : null}
+        </div>
+      ) : null}
 
-      {/* Consistency + mentors */}
+      {/* Consistency + reviews */}
       <div className="grid grid-cols-12 gap-6">
-        <motion.div variants={fadeUp} className="col-span-12 lg:col-span-7">
+        <motion.div
+          variants={fadeUp}
+          className={active('reviews') ? 'col-span-12 lg:col-span-7' : 'col-span-12'}
+        >
           <ConsistencyCard />
         </motion.div>
-        <motion.div variants={fadeUp} className="col-span-12 lg:col-span-5">
-          <MentorsCard />
-        </motion.div>
+        {active('reviews') ? (
+          <motion.div variants={fadeUp} className="col-span-12 lg:col-span-5">
+            <ReviewsCard />
+          </motion.div>
+        ) : null}
       </div>
     </motion.div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Reviews & Feedback                                                 */
+/* ------------------------------------------------------------------ */
+
+function ReviewsCard() {
+  const reviews = useReviews().data ?? [];
+  const top = reviews.slice(0, 3);
+
+  return (
+    <Card className="flex h-full flex-col">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
+          <Star className="size-4 text-accent-amber" /> Reviews &amp; Feedback
+        </h3>
+        <Link
+          to="/reviews"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-ink-muted transition hover:text-ink"
+        >
+          See all <ArrowRight className="size-3.5" />
+        </Link>
+      </div>
+
+      {top.length === 0 ? (
+        <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-md bg-surface-sunken py-8 text-center ring-1 ring-border-subtle">
+          <Star className="size-6 text-ink-faint" />
+          <p className="text-sm text-ink-muted">Hear how other students landed their roles.</p>
+          <Link to="/reviews" className="text-xs font-semibold text-accent-blue hover:underline">
+            Watch reviews →
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {top.map((r) => (
+            <ReviewRow key={r.id} review={r} />
+          ))}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function ReviewRow({ review }: { review: StudentReviewView }) {
+  const poster = review.thumbnailUrl ?? (review.mediaType === 'image' ? review.mediaUrl : null);
+  return (
+    <Link
+      to="/reviews"
+      className="flex items-center gap-3 rounded-lg bg-surface-sunken p-3 ring-1 ring-border-subtle transition hover:ring-border-strong"
+    >
+      <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-md bg-surface text-ink-faint ring-1 ring-border-subtle">
+        {poster ? (
+          <img src={poster} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <Star className="size-4" />
+        )}
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-sm font-semibold text-ink">{review.title}</div>
+        <div className="truncate text-xs text-ink-muted">
+          {review.studentName ?? (review.mediaType === 'video' ? 'Video review' : 'Screenshot')}
+        </div>
+      </div>
+      {review.mediaType === 'video' ? <PlayCircle className="size-4 shrink-0 text-ink-faint" /> : null}
+    </Link>
   );
 }
 
@@ -431,71 +520,3 @@ function MiniStat({ value, label }: { value: number; label: string }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Mentors for you                                                    */
-/* ------------------------------------------------------------------ */
-
-function MentorsCard() {
-  const matches = useMentorMatches().data ?? [];
-  const top = matches.slice(0, 2);
-
-  return (
-    <Card className="flex h-full flex-col">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
-          <Users className="size-4 text-accent-blue" /> Mentors for you
-        </h3>
-        <Link to="/mentors" className="inline-flex items-center gap-1 text-xs font-semibold text-ink-muted transition hover:text-ink">
-          See all <ArrowRight className="size-3.5" />
-        </Link>
-      </div>
-
-      {top.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-md bg-surface-sunken py-8 text-center ring-1 ring-border-subtle">
-          <GraduationCap className="size-6 text-ink-faint" />
-          <p className="text-sm text-ink-muted">Working professionals ready to prep you for every round.</p>
-          <Link to="/mentors" className="text-xs font-semibold text-accent-blue hover:underline">
-            Explore mentors →
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {top.map((m) => (
-            <MentorRow key={m.mentor.userId} match={m} />
-          ))}
-        </div>
-      )}
-    </Card>
-  );
-}
-
-function MentorRow({ match: m }: { match: MentorMatchView }) {
-  const mentor = m.mentor;
-  return (
-    <Link
-      to="/mentors"
-      className="flex items-center gap-3 rounded-lg bg-surface-sunken p-3 ring-1 ring-border-subtle transition hover:ring-border-strong"
-    >
-      <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-surface text-sm font-semibold text-ink-muted ring-1 ring-border-subtle">
-        {mentor.avatarUrl ? (
-          <img src={resolveAvatarUrl(mentor.avatarUrl)} alt={mentor.name} className="h-full w-full object-cover" />
-        ) : (
-          initials(mentor.name)
-        )}
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <span className="truncate text-sm font-semibold text-ink">{mentor.name}</span>
-          {mentor.openSlotCount > 0 ? <Badge variant="success" size="sm">Open</Badge> : null}
-        </div>
-        <div className="truncate text-xs text-ink-muted">{mentor.headline ?? (mentor.expertise.slice(0, 3).join(' · ') || 'Mentor')}</div>
-      </div>
-      <div className="shrink-0 text-right">
-        <div className="text-sm font-semibold text-ink">{formatPrice(mentor.sessionPriceCents)}</div>
-        <div className="inline-flex items-center gap-0.5 text-[11px] font-medium text-accent-blue">
-          Book <Clock className="size-3" />
-        </div>
-      </div>
-    </Link>
-  );
-}

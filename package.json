@@ -2,7 +2,7 @@
   "name": "mentra",
   "version": "0.0.0",
   "private": true,
-  "description": "Mentra — Personalized Software Engineering Career OS",
+  "description": "Mentra — structured mentorship that takes CS graduates to their first Software Developer job",
   "packageManager": "pnpm@10.33.4",
   "engines": {
     "node": ">=20.0.0",

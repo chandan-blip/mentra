@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, type RefObject } from 'react';
+import { createContext, useContext, type RefObject } from 'react';
 
 /**
  * App-chrome visibility — lets a page hide the shell's top bar and mobile bottom
@@ -17,74 +17,11 @@ export function useChrome(): ChromeContextValue {
 }
 
 /**
- * Hide the app chrome while scrolling down inside a container and reveal it on
- * scroll up — the familiar mobile pattern. Mobile-only (a no-op at md+), and it
- * always restores the chrome when the page unmounts.
- *
- * Pass a ref to the page's own scroll element; omit it to watch the app's main
- * scroll root (`#app-scroll-root`).
+ * No-op. Auto-hide-on-scroll has been removed — the app chrome (top bar + bottom nav)
+ * now stays pinned while scrolling. Kept as a no-op for call-site compatibility; pages
+ * that still call it (with or without a scroll-container ref) simply keep their chrome.
+ * The `useChrome().setHidden` escape hatch (e.g. the immersive watch page) is unaffected.
  */
-export function useHideChromeOnScroll(ref?: RefObject<HTMLElement | null>): void {
-  const { setHidden } = useChrome();
-
-  useEffect(() => {
-    const el = ref?.current ?? document.getElementById('app-scroll-root');
-    if (!el) return;
-
-    const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
-    // px of sustained same-direction movement required before toggling. Hysteresis:
-    // the accumulator resets when the scroll direction flips, so momentum wobble and
-    // the reflow from collapsing the top bar can't ping-pong the state (the flicker).
-    const THRESHOLD = 28;
-    let lastY = el.scrollTop;
-    let accum = 0;
-    let hiddenNow = false;
-    let ticking = false;
-
-    const set = (v: boolean) => {
-      if (v === hiddenNow) return; // only cross the boundary once
-      hiddenNow = v;
-      setHidden(v);
-      accum = 0;
-    };
-
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        ticking = false;
-        if (!isMobile()) {
-          set(false); // desktop keeps the chrome pinned
-          return;
-        }
-        const y = el.scrollTop;
-        const dy = y - lastY;
-        lastY = y;
-        if (y <= 8) return set(false); // always show at the very top
-        // Reset the run when direction flips, then require sustained travel.
-        if ((dy > 0 && accum < 0) || (dy < 0 && accum > 0)) accum = 0;
-        accum += dy;
-        if (accum > THRESHOLD && y > 48) set(true);
-        else if (accum < -THRESHOLD) set(false);
-      });
-    };
-
-    el.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      el.removeEventListener('scroll', onScroll);
-      setHidden(false); // reveal when leaving the page
-    };
-  }, [ref, setHidden]);
-}
-
-/**
- * Renderless global watcher — enables hide-on-scroll for every page that scrolls in
- * the app's main scroll root. Mount it inside the ChromeContext provider (so it reads
- * the real state) and re-key it per route so it re-anchors and reveals on navigation.
- * Pages with their own scroll container (e.g. Community's feed) call
- * {@link useHideChromeOnScroll} directly instead.
- */
-export function ChromeScrollWatcher(): null {
-  useHideChromeOnScroll();
-  return null;
+export function useHideChromeOnScroll(_ref?: RefObject<HTMLElement | null>): void {
+  // Intentionally empty — chrome is always visible while scrolling.
 }

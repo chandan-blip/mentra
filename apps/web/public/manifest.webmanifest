@@ -1,7 +1,7 @@
 {
-  "name": "Mentra — AI Career OS",
+  "name": "Mentra — Interview Prep & Mentorship",
   "short_name": "Mentra",
-  "description": "Your AI-powered Software Engineering Career OS — AI assignment, tailored roadmap, live mentorship, and real projects.",
+  "description": "Get your first Software Developer job — a step-by-step interview-prep plan, daily practice, mock HR and technical rounds, live mentors, and resume review.",
   "id": "/",
   "start_url": "/",
   "scope": "/",

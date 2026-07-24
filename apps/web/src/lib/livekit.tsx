@@ -11,7 +11,7 @@ import {
   VideoTrack,
   type TrackReference,
 } from '@livekit/components-react';
-import { Track, VideoPresets, type RoomOptions } from 'livekit-client';
+import { AudioPresets, Track, VideoPresets, type RoomOptions } from 'livekit-client';
 import { Maximize2, Mic, MicOff, Minimize2, Video as VideoIcon, VideoOff } from 'lucide-react';
 import { Avatar } from '@mentra/ui';
 import '@livekit/components-styles';
@@ -19,30 +19,39 @@ import '@livekit/components-styles';
 /**
  * Publish quality (Phase 0 — explicit simulcast ladder).
  *
- * Broadcast: capture at 1080p and publish a 3-rung simulcast ladder (1080/720/360) so
+ * Broadcast: capture at 720p and publish a 2-rung simulcast ladder (720/360) so
  * `adaptiveStream` + `dynacast` can hand each viewer the rung their connection supports
  * — no buffering on weak links, full quality on strong ones. Screen-share simulcasts
- * too (LiveKit leaves that off by default). Audio enables DTX (silence suppression) +
- * RED (redundant encoding) for resilience on lossy networks.
+ * too (LiveKit leaves that off by default).
  *
- * Note: WebRTC simulcast tops out at 3 spatial layers, so the finer 1080/720/480/360
- * ladder from the spec is produced for *recordings* by the FFmpeg/HLS pipeline (Phase 2),
- * not for the live stream.
+ * IMPORTANT (audio reliability): we deliberately do NOT capture at 1080p or publish a
+ * third (1080) layer. Encoding a 1080 + 720 + 360 ladder pegs the CPU on ordinary
+ * machines, which starves the audio encoder and makes the mentor's voice choppy/drop
+ * out. 720p + a 2-rung ladder leaves ample headroom for smooth, continuous audio.
+ *
+ * Audio: RED (redundant encoding) for packet-loss resilience, a music-grade Opus preset
+ * for clear voice, and DTX turned OFF so audio streams continuously — DTX's silence
+ * suppression was clipping the start of speech and stalling audio on some networks.
+ *
+ * Note: the finer 1080/720/480/360 recording ladder is produced by the FFmpeg/HLS
+ * pipeline (Phase 2) from the egress, not by the live stream.
  */
 const BROADCAST_OPTIONS: RoomOptions = {
   adaptiveStream: true,
   dynacast: true,
   publishDefaults: {
     simulcast: true,
-    videoSimulcastLayers: [VideoPresets.h360, VideoPresets.h720],
-    screenShareSimulcastLayers: [VideoPresets.h360, VideoPresets.h720],
+    videoSimulcastLayers: [VideoPresets.h360],
+    screenShareSimulcastLayers: [VideoPresets.h360],
     red: true,
-    dtx: true,
+    dtx: false,
+    audioPreset: AudioPresets.music,
   },
-  videoCaptureDefaults: { resolution: VideoPresets.h1080.resolution },
+  videoCaptureDefaults: { resolution: VideoPresets.h720.resolution },
 };
 
-/** 1:1 calls don't need a 1080 ladder — capture 720 with a light 2-rung simulcast. */
+/** 1:1 calls don't need a 1080 ladder — capture 720 with a light 2-rung simulcast.
+ *  Same audio policy as the broadcast: RED on, music preset, DTX off for continuous voice. */
 const CALL_OPTIONS: RoomOptions = {
   adaptiveStream: true,
   dynacast: true,
@@ -50,7 +59,8 @@ const CALL_OPTIONS: RoomOptions = {
     simulcast: true,
     videoSimulcastLayers: [VideoPresets.h180, VideoPresets.h360],
     red: true,
-    dtx: true,
+    dtx: false,
+    audioPreset: AudioPresets.music,
   },
   videoCaptureDefaults: { resolution: VideoPresets.h720.resolution },
 };

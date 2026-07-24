@@ -61,6 +61,8 @@ export type LiveSessionView = {
   endedAt: string | null;
   currentViewers: number;
   peakViewers: number;
+  /** Distinct viewers of the recording/upload (VOD) — the "views" count shown on non-live cards. */
+  views: number;
   /** Number of chat messages on the session (used as the "comments" count). */
   chatCount: number;
   /** True when the requesting user is the owning mentor. */

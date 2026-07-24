@@ -154,19 +154,20 @@ function ImageCard({ hue, icon, label, image }: { hue: number; icon: ReactNode; 
 function AboutUs() {
   return (
     <div>
-      <Hero hue={250} icon={<Sparkles />} kicker="Our story" title="A personal engineering career coach, powered by AI and real mentors." image="/assets/about/about-us.png" />
+      <Hero hue={250} icon={<Sparkles />} kicker="Our story" title="Structured mentorship that takes graduates to their first developer job." image="/assets/about/about-us.png" />
 
       <Prose>
         <p>
-          Mentra is a Personalized Software Engineering Career Operating System. We help students go from
-          “learning to code” to “job-ready engineer” with an AI-built assignment, a tailored roadmap, live
-          mentorship, and real projects — all in one place.
+          Mentra is structured mentorship for Computer Science graduates. We help you turn the degree you
+          already have into a real Software Developer job — with a step-by-step interview-prep plan, daily
+          practice on the questions real interviews ask, mock technical and HR rounds, resume review, and
+          mentors who keep you accountable until you’re hired.
         </p>
       </Prose>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <ImageCard hue={160} icon={<Target />} label="Assess your level" image="/assets/about/assess-your-level.png" />
-        <ImageCard hue={250} icon={<Sparkles />} label="Follow your roadmap" image="/assets/about/follow-your-roadmap.png" />
+        <ImageCard hue={250} icon={<Sparkles />} label="Follow your prep plan" image="/assets/about/follow-your-roadmap.png" />
         <ImageCard hue={20} icon={<Users />} label="Learn with mentors" image="/assets/about/learn-with-mentors.png" />
       </div>
 

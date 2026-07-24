@@ -1,6 +1,7 @@
 import { on } from '../../core/events.js';
 import { logger } from '../../logger.js';
 import { egressEnabled, startEgress, stopEgress } from '../../core/livekit.js';
+import { isEnabled, RECORD_LIVE_SESSIONS_FLAG } from '../feature-flags/feature-flags.service.js';
 import * as repo from './live-session.repository.js';
 
 /**
@@ -14,6 +15,11 @@ export function registerLiveSessionListeners(): void {
   on('live-session.started', async ({ sessionId, mentorId }) => {
     logger.info({ sessionId, mentorId }, 'live session started');
     if (!egressEnabled()) return;
+    // Admin kill switch (Admin → Settings): when off, live sessions are not recorded.
+    if (!(await isEnabled(RECORD_LIVE_SESSIONS_FLAG))) {
+      logger.info({ sessionId }, 'recording disabled by admin setting — skipping egress');
+      return;
+    }
     try {
       const session = await repo.findById(sessionId);
       if (!session) return;

@@ -1,7 +1,16 @@
 import type { LiveSessionView } from '@mentra/shared';
 import { createId } from '../../core/id.js';
 import { logger } from '../../logger.js';
-import { presignPut, publicUrl, r2Delete, r2Enabled, r2Head, r2List } from '../../core/r2.js';
+import {
+  DEV_PLACEHOLDER_IMAGE,
+  devUploadsMocked,
+  presignPut,
+  publicUrl,
+  r2Delete,
+  r2Enabled,
+  r2Head,
+  r2List,
+} from '../../core/r2.js';
 import { LiveSessionError } from '../live-session/live-session.errors.js';
 import { enqueueThumbnail } from '../live-session/thumbnail.queue.js';
 import * as repo from '../live-session/live-session.repository.js';
@@ -101,18 +110,26 @@ export async function createThumbnailUpload(
   id: string,
   contentType: string,
 ): Promise<{ uploadUrl: string; key: string }> {
-  if (!r2Enabled()) throw new LiveSessionError('R2_DISABLED', 'Storage is not configured', 400);
+  if (!r2Enabled() && !devUploadsMocked()) {
+    throw new LiveSessionError('R2_DISABLED', 'Storage is not configured', 400);
+  }
   await loadVideo(id);
   const ext = THUMB_EXT[contentType];
   if (!ext) throw new LiveSessionError('BAD_IMAGE_TYPE', 'Only PNG, JPEG or WebP images are allowed', 400);
   const key = `thumbnails/${id}/custom-${createId()}.${ext}`;
-  const uploadUrl = await presignPut(key, contentType);
+  // Dev mock: empty upload URL → browser skips the PUT; finalize stamps a placeholder.
+  const uploadUrl = devUploadsMocked() ? '' : await presignPut(key, contentType);
   return { uploadUrl, key };
 }
 
 /** Finalize a custom cover after the browser PUT: verify + point thumbnailUrl at it. */
 export async function finalizeThumbnail(id: string, key: string): Promise<LiveSessionView> {
   await loadVideo(id);
+  // Dev mock: no file was uploaded — point the cover at a placeholder image.
+  if (devUploadsMocked()) {
+    await repo.setThumbnail(id, DEV_PLACEHOLDER_IMAGE);
+    return oneView(id);
+  }
   if (!key.startsWith(`thumbnails/${id}/`)) {
     throw new LiveSessionError('BAD_KEY', 'Thumbnail key does not belong to this video', 400);
   }

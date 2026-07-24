@@ -18,6 +18,7 @@ const view = (over: Partial<LiveSessionView> = {}): LiveSessionView =>
     endedAt: null,
     currentViewers: 0,
     peakViewers: 0,
+    views: 0,
     chatCount: 0,
     isOwner: false,
     recordingStatus: 'ready',

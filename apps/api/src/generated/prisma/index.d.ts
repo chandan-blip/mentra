@@ -79,6 +79,11 @@ export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
  */
 export type LiveSession = $Result.DefaultSelection<Prisma.$LiveSessionPayload>
 /**
+ * Model StudentReview
+ * 
+ */
+export type StudentReview = $Result.DefaultSelection<Prisma.$StudentReviewPayload>
+/**
  * Model SessionParticipant
  * 
  */
@@ -498,6 +503,16 @@ export class PrismaClient<
     * ```
     */
   get liveSession(): Prisma.LiveSessionDelegate<ExtArgs>;
+
+  /**
+   * `prisma.studentReview`: Exposes CRUD operations for the **StudentReview** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more StudentReviews
+    * const studentReviews = await prisma.studentReview.findMany()
+    * ```
+    */
+  get studentReview(): Prisma.StudentReviewDelegate<ExtArgs>;
 
   /**
    * `prisma.sessionParticipant`: Exposes CRUD operations for the **SessionParticipant** model.
@@ -1102,6 +1117,7 @@ export namespace Prisma {
     AuthIdentity: 'AuthIdentity',
     Session: 'Session',
     LiveSession: 'LiveSession',
+    StudentReview: 'StudentReview',
     SessionParticipant: 'SessionParticipant',
     ChatMessage: 'ChatMessage',
     WatchProgress: 'WatchProgress',
@@ -1132,7 +1148,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "module" | "accessRole" | "rolePermission" | "plan" | "planModule" | "recommendationLog" | "studentProfile" | "notificationPreferences" | "featureFlag" | "authIdentity" | "session" | "liveSession" | "sessionParticipant" | "chatMessage" | "watchProgress" | "job" | "lead" | "leadList" | "leadListMember" | "leadCall" | "learningCategory" | "learningTest" | "learningTestQuestion" | "learningTestResult" | "codingTask" | "codingQuestion" | "codingSubmission"
+      modelProps: "user" | "module" | "accessRole" | "rolePermission" | "plan" | "planModule" | "recommendationLog" | "studentProfile" | "notificationPreferences" | "featureFlag" | "authIdentity" | "session" | "liveSession" | "studentReview" | "sessionParticipant" | "chatMessage" | "watchProgress" | "job" | "lead" | "leadList" | "leadListMember" | "leadCall" | "learningCategory" | "learningTest" | "learningTestQuestion" | "learningTestResult" | "codingTask" | "codingQuestion" | "codingSubmission"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1991,6 +2007,72 @@ export namespace Prisma {
           count: {
             args: Prisma.LiveSessionCountArgs<ExtArgs>
             result: $Utils.Optional<LiveSessionCountAggregateOutputType> | number
+          }
+        }
+      }
+      StudentReview: {
+        payload: Prisma.$StudentReviewPayload<ExtArgs>
+        fields: Prisma.StudentReviewFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.StudentReviewFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StudentReviewPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.StudentReviewFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StudentReviewPayload>
+          }
+          findFirst: {
+            args: Prisma.StudentReviewFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StudentReviewPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.StudentReviewFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StudentReviewPayload>
+          }
+          findMany: {
+            args: Prisma.StudentReviewFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StudentReviewPayload>[]
+          }
+          create: {
+            args: Prisma.StudentReviewCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StudentReviewPayload>
+          }
+          createMany: {
+            args: Prisma.StudentReviewCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.StudentReviewDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StudentReviewPayload>
+          }
+          update: {
+            args: Prisma.StudentReviewUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StudentReviewPayload>
+          }
+          deleteMany: {
+            args: Prisma.StudentReviewDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.StudentReviewUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.StudentReviewUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StudentReviewPayload>
+          }
+          aggregate: {
+            args: Prisma.StudentReviewAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStudentReview>
+          }
+          groupBy: {
+            args: Prisma.StudentReviewGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StudentReviewGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.StudentReviewCountArgs<ExtArgs>
+            result: $Utils.Optional<StudentReviewCountAggregateOutputType> | number
           }
         }
       }
@@ -15237,6 +15319,938 @@ export namespace Prisma {
      * Select specific fields to fetch from the LiveSession
      */
     select?: LiveSessionSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model StudentReview
+   */
+
+  export type AggregateStudentReview = {
+    _count: StudentReviewCountAggregateOutputType | null
+    _avg: StudentReviewAvgAggregateOutputType | null
+    _sum: StudentReviewSumAggregateOutputType | null
+    _min: StudentReviewMinAggregateOutputType | null
+    _max: StudentReviewMaxAggregateOutputType | null
+  }
+
+  export type StudentReviewAvgAggregateOutputType = {
+    sortOrder: number | null
+  }
+
+  export type StudentReviewSumAggregateOutputType = {
+    sortOrder: number | null
+  }
+
+  export type StudentReviewMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    studentName: string | null
+    body: string | null
+    mediaType: string | null
+    mediaUrl: string | null
+    thumbnailUrl: string | null
+    visible: boolean | null
+    sortOrder: number | null
+    createdBy: string | null
+    createdAt: Date | null
+  }
+
+  export type StudentReviewMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    studentName: string | null
+    body: string | null
+    mediaType: string | null
+    mediaUrl: string | null
+    thumbnailUrl: string | null
+    visible: boolean | null
+    sortOrder: number | null
+    createdBy: string | null
+    createdAt: Date | null
+  }
+
+  export type StudentReviewCountAggregateOutputType = {
+    id: number
+    title: number
+    studentName: number
+    body: number
+    mediaType: number
+    mediaUrl: number
+    thumbnailUrl: number
+    visible: number
+    sortOrder: number
+    createdBy: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type StudentReviewAvgAggregateInputType = {
+    sortOrder?: true
+  }
+
+  export type StudentReviewSumAggregateInputType = {
+    sortOrder?: true
+  }
+
+  export type StudentReviewMinAggregateInputType = {
+    id?: true
+    title?: true
+    studentName?: true
+    body?: true
+    mediaType?: true
+    mediaUrl?: true
+    thumbnailUrl?: true
+    visible?: true
+    sortOrder?: true
+    createdBy?: true
+    createdAt?: true
+  }
+
+  export type StudentReviewMaxAggregateInputType = {
+    id?: true
+    title?: true
+    studentName?: true
+    body?: true
+    mediaType?: true
+    mediaUrl?: true
+    thumbnailUrl?: true
+    visible?: true
+    sortOrder?: true
+    createdBy?: true
+    createdAt?: true
+  }
+
+  export type StudentReviewCountAggregateInputType = {
+    id?: true
+    title?: true
+    studentName?: true
+    body?: true
+    mediaType?: true
+    mediaUrl?: true
+    thumbnailUrl?: true
+    visible?: true
+    sortOrder?: true
+    createdBy?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type StudentReviewAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StudentReview to aggregate.
+     */
+    where?: StudentReviewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StudentReviews to fetch.
+     */
+    orderBy?: StudentReviewOrderByWithRelationInput | StudentReviewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: StudentReviewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StudentReviews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StudentReviews.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned StudentReviews
+    **/
+    _count?: true | StudentReviewCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: StudentReviewAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: StudentReviewSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: StudentReviewMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: StudentReviewMaxAggregateInputType
+  }
+
+  export type GetStudentReviewAggregateType<T extends StudentReviewAggregateArgs> = {
+        [P in keyof T & keyof AggregateStudentReview]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStudentReview[P]>
+      : GetScalarType<T[P], AggregateStudentReview[P]>
+  }
+
+
+
+
+  export type StudentReviewGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StudentReviewWhereInput
+    orderBy?: StudentReviewOrderByWithAggregationInput | StudentReviewOrderByWithAggregationInput[]
+    by: StudentReviewScalarFieldEnum[] | StudentReviewScalarFieldEnum
+    having?: StudentReviewScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: StudentReviewCountAggregateInputType | true
+    _avg?: StudentReviewAvgAggregateInputType
+    _sum?: StudentReviewSumAggregateInputType
+    _min?: StudentReviewMinAggregateInputType
+    _max?: StudentReviewMaxAggregateInputType
+  }
+
+  export type StudentReviewGroupByOutputType = {
+    id: string
+    title: string
+    studentName: string | null
+    body: string | null
+    mediaType: string
+    mediaUrl: string | null
+    thumbnailUrl: string | null
+    visible: boolean
+    sortOrder: number
+    createdBy: string | null
+    createdAt: Date
+    _count: StudentReviewCountAggregateOutputType | null
+    _avg: StudentReviewAvgAggregateOutputType | null
+    _sum: StudentReviewSumAggregateOutputType | null
+    _min: StudentReviewMinAggregateOutputType | null
+    _max: StudentReviewMaxAggregateOutputType | null
+  }
+
+  type GetStudentReviewGroupByPayload<T extends StudentReviewGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<StudentReviewGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof StudentReviewGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], StudentReviewGroupByOutputType[P]>
+            : GetScalarType<T[P], StudentReviewGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type StudentReviewSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    studentName?: boolean
+    body?: boolean
+    mediaType?: boolean
+    mediaUrl?: boolean
+    thumbnailUrl?: boolean
+    visible?: boolean
+    sortOrder?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["studentReview"]>
+
+
+  export type StudentReviewSelectScalar = {
+    id?: boolean
+    title?: boolean
+    studentName?: boolean
+    body?: boolean
+    mediaType?: boolean
+    mediaUrl?: boolean
+    thumbnailUrl?: boolean
+    visible?: boolean
+    sortOrder?: boolean
+    createdBy?: boolean
+    createdAt?: boolean
+  }
+
+
+  export type $StudentReviewPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "StudentReview"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      studentName: string | null
+      body: string | null
+      mediaType: string
+      mediaUrl: string | null
+      thumbnailUrl: string | null
+      visible: boolean
+      sortOrder: number
+      createdBy: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["studentReview"]>
+    composites: {}
+  }
+
+  type StudentReviewGetPayload<S extends boolean | null | undefined | StudentReviewDefaultArgs> = $Result.GetResult<Prisma.$StudentReviewPayload, S>
+
+  type StudentReviewCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<StudentReviewFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: StudentReviewCountAggregateInputType | true
+    }
+
+  export interface StudentReviewDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['StudentReview'], meta: { name: 'StudentReview' } }
+    /**
+     * Find zero or one StudentReview that matches the filter.
+     * @param {StudentReviewFindUniqueArgs} args - Arguments to find a StudentReview
+     * @example
+     * // Get one StudentReview
+     * const studentReview = await prisma.studentReview.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends StudentReviewFindUniqueArgs>(args: SelectSubset<T, StudentReviewFindUniqueArgs<ExtArgs>>): Prisma__StudentReviewClient<$Result.GetResult<Prisma.$StudentReviewPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one StudentReview that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {StudentReviewFindUniqueOrThrowArgs} args - Arguments to find a StudentReview
+     * @example
+     * // Get one StudentReview
+     * const studentReview = await prisma.studentReview.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends StudentReviewFindUniqueOrThrowArgs>(args: SelectSubset<T, StudentReviewFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StudentReviewClient<$Result.GetResult<Prisma.$StudentReviewPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first StudentReview that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StudentReviewFindFirstArgs} args - Arguments to find a StudentReview
+     * @example
+     * // Get one StudentReview
+     * const studentReview = await prisma.studentReview.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends StudentReviewFindFirstArgs>(args?: SelectSubset<T, StudentReviewFindFirstArgs<ExtArgs>>): Prisma__StudentReviewClient<$Result.GetResult<Prisma.$StudentReviewPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first StudentReview that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StudentReviewFindFirstOrThrowArgs} args - Arguments to find a StudentReview
+     * @example
+     * // Get one StudentReview
+     * const studentReview = await prisma.studentReview.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends StudentReviewFindFirstOrThrowArgs>(args?: SelectSubset<T, StudentReviewFindFirstOrThrowArgs<ExtArgs>>): Prisma__StudentReviewClient<$Result.GetResult<Prisma.$StudentReviewPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more StudentReviews that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StudentReviewFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all StudentReviews
+     * const studentReviews = await prisma.studentReview.findMany()
+     * 
+     * // Get first 10 StudentReviews
+     * const studentReviews = await prisma.studentReview.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const studentReviewWithIdOnly = await prisma.studentReview.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends StudentReviewFindManyArgs>(args?: SelectSubset<T, StudentReviewFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StudentReviewPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a StudentReview.
+     * @param {StudentReviewCreateArgs} args - Arguments to create a StudentReview.
+     * @example
+     * // Create one StudentReview
+     * const StudentReview = await prisma.studentReview.create({
+     *   data: {
+     *     // ... data to create a StudentReview
+     *   }
+     * })
+     * 
+     */
+    create<T extends StudentReviewCreateArgs>(args: SelectSubset<T, StudentReviewCreateArgs<ExtArgs>>): Prisma__StudentReviewClient<$Result.GetResult<Prisma.$StudentReviewPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many StudentReviews.
+     * @param {StudentReviewCreateManyArgs} args - Arguments to create many StudentReviews.
+     * @example
+     * // Create many StudentReviews
+     * const studentReview = await prisma.studentReview.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends StudentReviewCreateManyArgs>(args?: SelectSubset<T, StudentReviewCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a StudentReview.
+     * @param {StudentReviewDeleteArgs} args - Arguments to delete one StudentReview.
+     * @example
+     * // Delete one StudentReview
+     * const StudentReview = await prisma.studentReview.delete({
+     *   where: {
+     *     // ... filter to delete one StudentReview
+     *   }
+     * })
+     * 
+     */
+    delete<T extends StudentReviewDeleteArgs>(args: SelectSubset<T, StudentReviewDeleteArgs<ExtArgs>>): Prisma__StudentReviewClient<$Result.GetResult<Prisma.$StudentReviewPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one StudentReview.
+     * @param {StudentReviewUpdateArgs} args - Arguments to update one StudentReview.
+     * @example
+     * // Update one StudentReview
+     * const studentReview = await prisma.studentReview.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends StudentReviewUpdateArgs>(args: SelectSubset<T, StudentReviewUpdateArgs<ExtArgs>>): Prisma__StudentReviewClient<$Result.GetResult<Prisma.$StudentReviewPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more StudentReviews.
+     * @param {StudentReviewDeleteManyArgs} args - Arguments to filter StudentReviews to delete.
+     * @example
+     * // Delete a few StudentReviews
+     * const { count } = await prisma.studentReview.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends StudentReviewDeleteManyArgs>(args?: SelectSubset<T, StudentReviewDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StudentReviews.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StudentReviewUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many StudentReviews
+     * const studentReview = await prisma.studentReview.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends StudentReviewUpdateManyArgs>(args: SelectSubset<T, StudentReviewUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one StudentReview.
+     * @param {StudentReviewUpsertArgs} args - Arguments to update or create a StudentReview.
+     * @example
+     * // Update or create a StudentReview
+     * const studentReview = await prisma.studentReview.upsert({
+     *   create: {
+     *     // ... data to create a StudentReview
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the StudentReview we want to update
+     *   }
+     * })
+     */
+    upsert<T extends StudentReviewUpsertArgs>(args: SelectSubset<T, StudentReviewUpsertArgs<ExtArgs>>): Prisma__StudentReviewClient<$Result.GetResult<Prisma.$StudentReviewPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of StudentReviews.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StudentReviewCountArgs} args - Arguments to filter StudentReviews to count.
+     * @example
+     * // Count the number of StudentReviews
+     * const count = await prisma.studentReview.count({
+     *   where: {
+     *     // ... the filter for the StudentReviews we want to count
+     *   }
+     * })
+    **/
+    count<T extends StudentReviewCountArgs>(
+      args?: Subset<T, StudentReviewCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], StudentReviewCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a StudentReview.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StudentReviewAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends StudentReviewAggregateArgs>(args: Subset<T, StudentReviewAggregateArgs>): Prisma.PrismaPromise<GetStudentReviewAggregateType<T>>
+
+    /**
+     * Group by StudentReview.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StudentReviewGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends StudentReviewGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: StudentReviewGroupByArgs['orderBy'] }
+        : { orderBy?: StudentReviewGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, StudentReviewGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStudentReviewGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the StudentReview model
+   */
+  readonly fields: StudentReviewFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for StudentReview.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__StudentReviewClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the StudentReview model
+   */ 
+  interface StudentReviewFieldRefs {
+    readonly id: FieldRef<"StudentReview", 'String'>
+    readonly title: FieldRef<"StudentReview", 'String'>
+    readonly studentName: FieldRef<"StudentReview", 'String'>
+    readonly body: FieldRef<"StudentReview", 'String'>
+    readonly mediaType: FieldRef<"StudentReview", 'String'>
+    readonly mediaUrl: FieldRef<"StudentReview", 'String'>
+    readonly thumbnailUrl: FieldRef<"StudentReview", 'String'>
+    readonly visible: FieldRef<"StudentReview", 'Boolean'>
+    readonly sortOrder: FieldRef<"StudentReview", 'Int'>
+    readonly createdBy: FieldRef<"StudentReview", 'String'>
+    readonly createdAt: FieldRef<"StudentReview", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * StudentReview findUnique
+   */
+  export type StudentReviewFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StudentReview
+     */
+    select?: StudentReviewSelect<ExtArgs> | null
+    /**
+     * Filter, which StudentReview to fetch.
+     */
+    where: StudentReviewWhereUniqueInput
+  }
+
+  /**
+   * StudentReview findUniqueOrThrow
+   */
+  export type StudentReviewFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StudentReview
+     */
+    select?: StudentReviewSelect<ExtArgs> | null
+    /**
+     * Filter, which StudentReview to fetch.
+     */
+    where: StudentReviewWhereUniqueInput
+  }
+
+  /**
+   * StudentReview findFirst
+   */
+  export type StudentReviewFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StudentReview
+     */
+    select?: StudentReviewSelect<ExtArgs> | null
+    /**
+     * Filter, which StudentReview to fetch.
+     */
+    where?: StudentReviewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StudentReviews to fetch.
+     */
+    orderBy?: StudentReviewOrderByWithRelationInput | StudentReviewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StudentReviews.
+     */
+    cursor?: StudentReviewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StudentReviews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StudentReviews.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StudentReviews.
+     */
+    distinct?: StudentReviewScalarFieldEnum | StudentReviewScalarFieldEnum[]
+  }
+
+  /**
+   * StudentReview findFirstOrThrow
+   */
+  export type StudentReviewFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StudentReview
+     */
+    select?: StudentReviewSelect<ExtArgs> | null
+    /**
+     * Filter, which StudentReview to fetch.
+     */
+    where?: StudentReviewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StudentReviews to fetch.
+     */
+    orderBy?: StudentReviewOrderByWithRelationInput | StudentReviewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StudentReviews.
+     */
+    cursor?: StudentReviewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StudentReviews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StudentReviews.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StudentReviews.
+     */
+    distinct?: StudentReviewScalarFieldEnum | StudentReviewScalarFieldEnum[]
+  }
+
+  /**
+   * StudentReview findMany
+   */
+  export type StudentReviewFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StudentReview
+     */
+    select?: StudentReviewSelect<ExtArgs> | null
+    /**
+     * Filter, which StudentReviews to fetch.
+     */
+    where?: StudentReviewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StudentReviews to fetch.
+     */
+    orderBy?: StudentReviewOrderByWithRelationInput | StudentReviewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing StudentReviews.
+     */
+    cursor?: StudentReviewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StudentReviews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StudentReviews.
+     */
+    skip?: number
+    distinct?: StudentReviewScalarFieldEnum | StudentReviewScalarFieldEnum[]
+  }
+
+  /**
+   * StudentReview create
+   */
+  export type StudentReviewCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StudentReview
+     */
+    select?: StudentReviewSelect<ExtArgs> | null
+    /**
+     * The data needed to create a StudentReview.
+     */
+    data: XOR<StudentReviewCreateInput, StudentReviewUncheckedCreateInput>
+  }
+
+  /**
+   * StudentReview createMany
+   */
+  export type StudentReviewCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many StudentReviews.
+     */
+    data: StudentReviewCreateManyInput | StudentReviewCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * StudentReview update
+   */
+  export type StudentReviewUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StudentReview
+     */
+    select?: StudentReviewSelect<ExtArgs> | null
+    /**
+     * The data needed to update a StudentReview.
+     */
+    data: XOR<StudentReviewUpdateInput, StudentReviewUncheckedUpdateInput>
+    /**
+     * Choose, which StudentReview to update.
+     */
+    where: StudentReviewWhereUniqueInput
+  }
+
+  /**
+   * StudentReview updateMany
+   */
+  export type StudentReviewUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update StudentReviews.
+     */
+    data: XOR<StudentReviewUpdateManyMutationInput, StudentReviewUncheckedUpdateManyInput>
+    /**
+     * Filter which StudentReviews to update
+     */
+    where?: StudentReviewWhereInput
+  }
+
+  /**
+   * StudentReview upsert
+   */
+  export type StudentReviewUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StudentReview
+     */
+    select?: StudentReviewSelect<ExtArgs> | null
+    /**
+     * The filter to search for the StudentReview to update in case it exists.
+     */
+    where: StudentReviewWhereUniqueInput
+    /**
+     * In case the StudentReview found by the `where` argument doesn't exist, create a new StudentReview with this data.
+     */
+    create: XOR<StudentReviewCreateInput, StudentReviewUncheckedCreateInput>
+    /**
+     * In case the StudentReview was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<StudentReviewUpdateInput, StudentReviewUncheckedUpdateInput>
+  }
+
+  /**
+   * StudentReview delete
+   */
+  export type StudentReviewDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StudentReview
+     */
+    select?: StudentReviewSelect<ExtArgs> | null
+    /**
+     * Filter which StudentReview to delete.
+     */
+    where: StudentReviewWhereUniqueInput
+  }
+
+  /**
+   * StudentReview deleteMany
+   */
+  export type StudentReviewDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StudentReviews to delete
+     */
+    where?: StudentReviewWhereInput
+  }
+
+  /**
+   * StudentReview without action
+   */
+  export type StudentReviewDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StudentReview
+     */
+    select?: StudentReviewSelect<ExtArgs> | null
   }
 
 
@@ -29246,6 +30260,23 @@ export namespace Prisma {
   export type LiveSessionScalarFieldEnum = (typeof LiveSessionScalarFieldEnum)[keyof typeof LiveSessionScalarFieldEnum]
 
 
+  export const StudentReviewScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    studentName: 'studentName',
+    body: 'body',
+    mediaType: 'mediaType',
+    mediaUrl: 'mediaUrl',
+    thumbnailUrl: 'thumbnailUrl',
+    visible: 'visible',
+    sortOrder: 'sortOrder',
+    createdBy: 'createdBy',
+    createdAt: 'createdAt'
+  };
+
+  export type StudentReviewScalarFieldEnum = (typeof StudentReviewScalarFieldEnum)[keyof typeof StudentReviewScalarFieldEnum]
+
+
   export const SessionParticipantScalarFieldEnum: {
     id: 'id',
     sessionId: 'sessionId',
@@ -30693,6 +31724,90 @@ export namespace Prisma {
     durationSeconds?: IntNullableWithAggregatesFilter<"LiveSession"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"LiveSession"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"LiveSession"> | Date | string
+  }
+
+  export type StudentReviewWhereInput = {
+    AND?: StudentReviewWhereInput | StudentReviewWhereInput[]
+    OR?: StudentReviewWhereInput[]
+    NOT?: StudentReviewWhereInput | StudentReviewWhereInput[]
+    id?: StringFilter<"StudentReview"> | string
+    title?: StringFilter<"StudentReview"> | string
+    studentName?: StringNullableFilter<"StudentReview"> | string | null
+    body?: StringNullableFilter<"StudentReview"> | string | null
+    mediaType?: StringFilter<"StudentReview"> | string
+    mediaUrl?: StringNullableFilter<"StudentReview"> | string | null
+    thumbnailUrl?: StringNullableFilter<"StudentReview"> | string | null
+    visible?: BoolFilter<"StudentReview"> | boolean
+    sortOrder?: IntFilter<"StudentReview"> | number
+    createdBy?: StringNullableFilter<"StudentReview"> | string | null
+    createdAt?: DateTimeFilter<"StudentReview"> | Date | string
+  }
+
+  export type StudentReviewOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    studentName?: SortOrderInput | SortOrder
+    body?: SortOrderInput | SortOrder
+    mediaType?: SortOrder
+    mediaUrl?: SortOrderInput | SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    visible?: SortOrder
+    sortOrder?: SortOrder
+    createdBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StudentReviewWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: StudentReviewWhereInput | StudentReviewWhereInput[]
+    OR?: StudentReviewWhereInput[]
+    NOT?: StudentReviewWhereInput | StudentReviewWhereInput[]
+    title?: StringFilter<"StudentReview"> | string
+    studentName?: StringNullableFilter<"StudentReview"> | string | null
+    body?: StringNullableFilter<"StudentReview"> | string | null
+    mediaType?: StringFilter<"StudentReview"> | string
+    mediaUrl?: StringNullableFilter<"StudentReview"> | string | null
+    thumbnailUrl?: StringNullableFilter<"StudentReview"> | string | null
+    visible?: BoolFilter<"StudentReview"> | boolean
+    sortOrder?: IntFilter<"StudentReview"> | number
+    createdBy?: StringNullableFilter<"StudentReview"> | string | null
+    createdAt?: DateTimeFilter<"StudentReview"> | Date | string
+  }, "id">
+
+  export type StudentReviewOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    studentName?: SortOrderInput | SortOrder
+    body?: SortOrderInput | SortOrder
+    mediaType?: SortOrder
+    mediaUrl?: SortOrderInput | SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    visible?: SortOrder
+    sortOrder?: SortOrder
+    createdBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: StudentReviewCountOrderByAggregateInput
+    _avg?: StudentReviewAvgOrderByAggregateInput
+    _max?: StudentReviewMaxOrderByAggregateInput
+    _min?: StudentReviewMinOrderByAggregateInput
+    _sum?: StudentReviewSumOrderByAggregateInput
+  }
+
+  export type StudentReviewScalarWhereWithAggregatesInput = {
+    AND?: StudentReviewScalarWhereWithAggregatesInput | StudentReviewScalarWhereWithAggregatesInput[]
+    OR?: StudentReviewScalarWhereWithAggregatesInput[]
+    NOT?: StudentReviewScalarWhereWithAggregatesInput | StudentReviewScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"StudentReview"> | string
+    title?: StringWithAggregatesFilter<"StudentReview"> | string
+    studentName?: StringNullableWithAggregatesFilter<"StudentReview"> | string | null
+    body?: StringNullableWithAggregatesFilter<"StudentReview"> | string | null
+    mediaType?: StringWithAggregatesFilter<"StudentReview"> | string
+    mediaUrl?: StringNullableWithAggregatesFilter<"StudentReview"> | string | null
+    thumbnailUrl?: StringNullableWithAggregatesFilter<"StudentReview"> | string | null
+    visible?: BoolWithAggregatesFilter<"StudentReview"> | boolean
+    sortOrder?: IntWithAggregatesFilter<"StudentReview"> | number
+    createdBy?: StringNullableWithAggregatesFilter<"StudentReview"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"StudentReview"> | Date | string
   }
 
   export type SessionParticipantWhereInput = {
@@ -33165,6 +34280,104 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type StudentReviewCreateInput = {
+    id?: string
+    title: string
+    studentName?: string | null
+    body?: string | null
+    mediaType: string
+    mediaUrl?: string | null
+    thumbnailUrl?: string | null
+    visible?: boolean
+    sortOrder?: number
+    createdBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type StudentReviewUncheckedCreateInput = {
+    id?: string
+    title: string
+    studentName?: string | null
+    body?: string | null
+    mediaType: string
+    mediaUrl?: string | null
+    thumbnailUrl?: string | null
+    visible?: boolean
+    sortOrder?: number
+    createdBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type StudentReviewUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    studentName?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: NullableStringFieldUpdateOperationsInput | string | null
+    mediaType?: StringFieldUpdateOperationsInput | string
+    mediaUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    visible?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StudentReviewUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    studentName?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: NullableStringFieldUpdateOperationsInput | string | null
+    mediaType?: StringFieldUpdateOperationsInput | string
+    mediaUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    visible?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StudentReviewCreateManyInput = {
+    id?: string
+    title: string
+    studentName?: string | null
+    body?: string | null
+    mediaType: string
+    mediaUrl?: string | null
+    thumbnailUrl?: string | null
+    visible?: boolean
+    sortOrder?: number
+    createdBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type StudentReviewUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    studentName?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: NullableStringFieldUpdateOperationsInput | string | null
+    mediaType?: StringFieldUpdateOperationsInput | string
+    mediaUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    visible?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StudentReviewUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    studentName?: NullableStringFieldUpdateOperationsInput | string | null
+    body?: NullableStringFieldUpdateOperationsInput | string | null
+    mediaType?: StringFieldUpdateOperationsInput | string
+    mediaUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    visible?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SessionParticipantCreateInput = {
     id?: string
     sessionId: string
@@ -35596,6 +36809,56 @@ export namespace Prisma {
     durationSeconds?: SortOrder
   }
 
+  export type StudentReviewCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    studentName?: SortOrder
+    body?: SortOrder
+    mediaType?: SortOrder
+    mediaUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    visible?: SortOrder
+    sortOrder?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StudentReviewAvgOrderByAggregateInput = {
+    sortOrder?: SortOrder
+  }
+
+  export type StudentReviewMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    studentName?: SortOrder
+    body?: SortOrder
+    mediaType?: SortOrder
+    mediaUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    visible?: SortOrder
+    sortOrder?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StudentReviewMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    studentName?: SortOrder
+    body?: SortOrder
+    mediaType?: SortOrder
+    mediaUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    visible?: SortOrder
+    sortOrder?: SortOrder
+    createdBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StudentReviewSumOrderByAggregateInput = {
+    sortOrder?: SortOrder
+  }
+
   export type SessionParticipantCountOrderByAggregateInput = {
     id?: SortOrder
     sessionId?: SortOrder
@@ -37724,6 +38987,10 @@ export namespace Prisma {
      * @deprecated Use LiveSessionDefaultArgs instead
      */
     export type LiveSessionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LiveSessionDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use StudentReviewDefaultArgs instead
+     */
+    export type StudentReviewArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = StudentReviewDefaultArgs<ExtArgs>
     /**
      * @deprecated Use SessionParticipantDefaultArgs instead
      */

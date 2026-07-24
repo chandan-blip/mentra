@@ -1,51 +1,66 @@
 # Mentra
 
-> Mentra is an AI-powered Career OS. It turns a career goal into a personalized,
-> week-by-week roadmap, then walks it with you: an AI mentor that remembers your
-> journey, live sessions with real mentors, hands-on projects, and job matches.
+> Mentra is structured mentorship that takes Computer Science graduates from the
+> degree they already have to their first Software Developer job: a step-by-step
+> interview-prep plan, daily practice on the questions real interviews ask, mock
+> technical and HR rounds, resume review, and mentors who stay with you until
+> you're hired.
+
+Mentra is not a course. The premise is that graduates have already finished the
+studying — what's missing is knowing exactly how to crack the interview and get
+shortlisted.
 
 Mentra is a web product. This domain (mentradev.sbs) is the public marketing site;
 the product itself lives at https://app.mentradev.sbs and requires an account.
 Everything on this domain is public marketing content and is free to quote or
 summarize. Anything behind the app login is private user data and is not crawlable.
 
+## Who it's for
+
+Computer Science graduates and final-year students — B.Tech, BCA, B.Sc CS, MCA,
+and Diploma — who want their first Software Developer job. Typically people who
+aren't getting interview calls yet, or who don't know what to prepare or how
+interviews are actually run.
+
 ## How it works
 
 Four steps, as described on the landing page:
 
-1. **Tell us your goal** — a short onboarding captures your current level, skills, and target role.
-2. **AI builds your roadmap** — a week-by-week plan of topics, tests, and projects in order.
-3. **Learn with mentors** — practice with tests and projects, ask the AI coach, join live sessions.
-4. **Land the role** — build a portfolio, track progress, apply to matched jobs.
+1. **Tell us your goal** — a 3-minute onboarding captures your degree, current skills, and the software role you're chasing.
+2. **Get your prep plan** — a step-by-step plan to crack the interview: resume, HR questions, technical rounds, and mock interviews, in the right order.
+3. **Practice every day** — practice the questions real interviewers ask, sit mock interviews, and ask a mentor whenever you're stuck.
+4. **Crack the interview** — walk in with a shortlist-ready resume, a project portfolio, and mock rounds already behind you.
 
 ## What's inside
 
-- **AI roadmap** — personalized to your target role and level. Each topic unlocks subtopics and a completion test, and the plan re-plots itself as you finish milestones, rather than staying a static checklist.
-- **AI mentor chat** — a career coach with continuous memory across sessions. It nudges you when you go quiet and can drop live-session invites directly into the chat.
-- **Live sessions & recordings** — real-time video, chat, and raise-hand with mentors. Every session is recorded and available on demand.
-- **Projects & graded assignments** — AI-personalized assignments scored 0–100, and portfolio-worthy projects tied to your roadmap.
-- **Test-series ladder** — Beginner → Intermediate → Advanced ladders per topic, pinpointing what to review.
-- **Job matching** — AI-discovered openings matched against your growing profile.
-- **Progress tracking** — streaks, an activity heatmap, a skill radar, and an AI "where to focus" read of your activity.
-- **Community** — public profiles, a follow graph, and an activity feed.
+- **Interview-prep plan** — a step-by-step plan for your target role: getting the resume shortlisted, the questions HR usually asks, what technical rounds actually give you, and how to present your projects. Finish a step and it guides you to the next.
+- **Mentor chat** — a mentor to message any time: which questions to prepare, how to answer a tricky HR round, what a company's technical interview looks like. Relevant live sessions arrive as invites in the chat.
+- **Live sessions & recordings** — live mentor sessions on HR rounds, technical interview tasks, real interview questions, and company-specific prep, with real-time chat and raise-hand. Every session is recorded and available on demand.
+- **Practice tasks & graded feedback** — the kinds of tasks technical rounds actually give, scored with clear feedback on structure, code quality, and best practice.
+- **Mock interviews** — technical and HR rounds with a mentor before the real thing.
+- **Resume review & ATS score** — so recruiters shortlist you instead of skipping past.
+- **Job matches & job tracker** — fresh Software Developer openings matched to your profile, with every application and interview round tracked in one place.
+- **Progress tracking** — streaks, an activity heatmap, performance analytics, and a "where to focus" read that tells you what to prepare next.
+- **Community & contests** — public profiles, leaderboards, and coding contests alongside people chasing the same goal.
+- **Real mentors** — 1:1 bookings with mentors who have cleared these interviews.
 
 ## Plans
 
-- **Starter (free)** — AI roadmap, AI mentor chat, test-series and progress tracking. No credit card required.
-- **Pro** — everything in Starter, plus live sessions with recordings, mentor bookings, and job matches.
+- **Starter (free)** — personalized interview-prep plan, daily interview practice and real questions, progress tracking and streaks. No credit card required.
+- **Pro** — everything in Starter, plus live sessions and mock interviews, mentor bookings, resume review, and job matches.
 
 ## Key facts
 
-- Who it's for: anyone building toward a role — first job, career switch, leveling up, or interview prep.
-- No prior experience needed; the roadmap is built around your current level.
-- The always-on chat mentor is AI. Live sessions and bookings connect you with real human mentors.
+- Mentra is mentorship and interview preparation, not another course or certificate.
+- Built around interview outcomes: practice, mock rounds, resume shortlisting, and applications tracked through to an offer.
+- The always-on chat mentor is AI. Live sessions, mock interviews, and bookings connect you with real human mentors.
 - Onboarding takes under 3 minutes and is free to start.
 
 ## Links
 
 - [Landing page](https://mentradev.sbs/): full product overview, plans, and FAQ.
 - [Open the app](https://app.mentradev.sbs/): sign in or create an account.
-- [Enquiry form](https://mentradev.sbs/#enquiry): ask a question or get help onboarding.
+- [Enquiry form](https://mentradev.sbs/#enquiry): ask a question or get help getting started.
 
 ## Contact
 

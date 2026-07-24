@@ -132,7 +132,7 @@ function WatchScaffold({
 }) {
   // Live sessions surface the chat immediately; recordings keep comments collapsed.
   const [openComments, setOpenComments] = useState(live);
-  const views = live ? (liveViewers ?? s.currentViewers) : s.peakViewers;
+  const views = live ? (liveViewers ?? s.currentViewers) : s.views;
 
   // Newest comment for the collapsed-pill preview. Live pulls from the socket (via prop);
   // recordings/upcoming reuse the same cached history query the comments panel uses.

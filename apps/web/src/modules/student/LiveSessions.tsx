@@ -183,7 +183,7 @@ export function VideoCard({ session: s, onOpen }: { session: LiveSessionView; on
   const poster = s.thumbnailUrl ?? (ready ? posterFor(s.recordingUrl) : undefined);
   // Prefer the exact transcoded duration; fall back to wall-clock for older rows.
   const duration = s.durationSeconds ? formatDuration(s.durationSeconds) : durationOf(s.startedAt, s.endedAt);
-  const views = isLive ? s.currentViewers : s.peakViewers;
+  const views = isLive ? s.currentViewers : s.views;
 
   return (
     <div className="flex flex-col gap-2.5 rounded-[22px] w-full">

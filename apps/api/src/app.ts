@@ -25,6 +25,7 @@ import { activityRouter, registerActivityRecorder } from './modules/activity/ind
 import { aiPromptRouter } from './modules/ai-prompt/index.js';
 import { careerChatRouter } from './modules/career-chat/index.js';
 import { codingRouter, codingTasksRouter } from './modules/coding/index.js';
+import { reviewsRouter, reviewsAdminRouter } from './modules/reviews/index.js';
 
 export function createApp(): Express {
   const app = express();
@@ -86,6 +87,8 @@ export function createApp(): Express {
   app.use('/api/v1/learning', learningRouter);
   app.use('/api/v1/live-session', liveSessionRouter);
   app.use('/api/v1/videos', videoAdminRouter);
+  app.use('/api/v1/reviews', reviewsRouter);
+  app.use('/api/v1/manage-reviews', reviewsAdminRouter);
   app.use('/api/v1/ai-prompts', aiPromptRouter);
   app.use('/api/v1/career-chat', careerChatRouter);
   app.use('/api/v1/coding', codingRouter);

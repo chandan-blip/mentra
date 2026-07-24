@@ -25,6 +25,7 @@ export const SEED_FEATURE_MODULES: FeatureModule[] = [
   { key: 'projects', label: 'Projects', icon: 'Code2', route: '/projects', sortOrder: 13 },
   { key: 'mentors', label: 'Find a Mentor', icon: 'UserRound', route: '/mentors', sortOrder: 14 },
   { key: 'live-sessions', label: 'Live Sessions', icon: 'Radio', route: '/live-sessions', sortOrder: 15 },
+  { key: 'reviews', label: 'Feedbacks & Reviews', icon: 'Star', route: '/reviews', sortOrder: 26 },
   { key: 'jobs', label: 'Jobs', icon: 'Briefcase', route: '/jobs', sortOrder: 16 },
   { key: 'career-chat', label: 'Chat with Mentor', icon: 'MessagesSquare', route: '/chat-with-mentor', sortOrder: 17 },
   { key: 'coding', label: 'Coding', icon: 'Code2', route: '/coding', sortOrder: 18 },
@@ -42,6 +43,9 @@ export const SEED_FEATURE_MODULES: FeatureModule[] = [
 
   // Content management — role-gated coding-task authoring + submission review.
   { key: 'coding-tasks', label: 'Coding Tasks', icon: 'SquareCode', route: '/manage-coding-tasks', sortOrder: 24 },
+
+  // Content management — role-gated upload of student review videos/screenshots (students view at /reviews).
+  { key: 'manage-reviews', label: 'Manage Reviews', icon: 'MessagesSquare', route: '/manage-reviews', sortOrder: 27 },
 
   // HR
   { key: 'hr-jobs', label: 'Job Postings', icon: 'Building2', route: '/hr-jobs', sortOrder: 25 },
@@ -79,6 +83,8 @@ export const SEED_FEATURE_PERMISSIONS: Perm[] = [
   // Coding: read the task list & solve; write to submit solutions.
   ['student', 'coding', true, true],
   ['student', 'support', true, true],
+  // Feedbacks & Reviews: students browse the gallery (read-only).
+  ['student', 'reviews', true, false],
   ['student', 'analytics', true, false],
   ['student', 'community', true, true],
 
@@ -98,6 +104,8 @@ export const SEED_FEATURE_PERMISSIONS: Perm[] = [
   ['marketing', 'email', true, true],
   ['marketing', 'leads', true, true],
   ['marketing', 'ai-assistant', true, true],
+  // Manages the student review/testimonial gallery (upload videos & screenshots).
+  ['marketing', 'manage-reviews', true, true],
   ['marketing', 'analytics', true, false],
   ['marketing', 'community', true, true],
 

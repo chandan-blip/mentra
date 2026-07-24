@@ -31,6 +31,30 @@ export function r2Enabled(): boolean {
   );
 }
 
+/**
+ * Dev convenience: in development, browser uploads are mocked — no file is sent to storage
+ * and the finalize step stamps a self-contained placeholder image instead. This applies
+ * even when R2 IS configured, so you never hit R2 (or its CORS preflight) from a dev
+ * origin. Never active in production, where real uploads are always required.
+ */
+export function devUploadsMocked(): boolean {
+  return env.NODE_ENV === 'development';
+}
+
+/**
+ * A self-contained SVG placeholder (data URI) used for mocked dev uploads. No network
+ * dependency, so it renders offline in an <img> (and as a <video> poster).
+ */
+export const DEV_PLACEHOLDER_IMAGE =
+  'data:image/svg+xml;charset=utf-8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">' +
+      '<rect width="800" height="450" fill="#1f2937"/>' +
+      '<text x="400" y="215" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="34" font-weight="600" text-anchor="middle">Dev upload</text>' +
+      '<text x="400" y="255" fill="#64748b" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle">placeholder — R2 not configured</text>' +
+      '</svg>',
+  );
+
 let client: S3Client | null = null;
 
 /** Lazily-built singleton S3 client. Throws if R2 isn't configured — callers gate on r2Enabled(). */

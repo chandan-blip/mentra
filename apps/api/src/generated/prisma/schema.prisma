@@ -299,6 +299,25 @@ model LiveSession {
   @@index([scheduledFor])
 }
 
+// Feedbacks & Reviews — managers upload student review videos/screenshots; students browse
+// them. Each row is one media item (video OR image) with an optional caption. No relations
+// (no FK constraints per project policy); createdBy stores the uploading manager's User.id.
+model StudentReview {
+  id           String   @id @default(cuid())
+  title        String
+  studentName  String?  @db.VarChar(120)
+  body         String?  @db.Text
+  mediaType    String   @db.VarChar(16) // 'video' | 'image'
+  mediaUrl     String?  @db.Text // public CDN URL; null until the upload is finalized
+  thumbnailUrl String?  @db.Text // optional poster for videos
+  visible      Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  createdBy    String? // User.id of the uploading manager
+  createdAt    DateTime @default(now())
+
+  @@index([visible, sortOrder])
+}
+
 // One row per join/leave interval (robust to reconnects / multi-tab). A user's
 // attended duration for a session is SUM(attendedSeconds). Driven authoritatively
 // by LiveKit webhooks (participant_joined / participant_left / room_finished).

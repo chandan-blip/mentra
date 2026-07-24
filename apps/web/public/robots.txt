@@ -1,27 +1,18 @@
+# Mentra app (app.mentradev.sbs) — the product itself, behind a login.
+# Marketing content lives on the landing host (https://mentradev.sbs) and serves
+# its own robots.txt + sitemap; rules here do NOT apply to it.
+#
+# Deny by default: only the sign-in root and static brand assets are worth
+# indexing. Every other path is a login-gated SPA route, so new routes are
+# covered automatically instead of needing a line added here.
+
 User-agent: *
 Allow: /$
-Allow: /og-image.png
 Allow: /favicon.png
+Allow: /og-image.png
+Allow: /manifest.webmanifest
 Allow: /brand/
 Allow: /assets/
-
-# Private, login-gated app — no value to index, keep out of search
-Disallow: /admin
-Disallow: /dashboard
-Disallow: /settings
-Disallow: /assignment
-Disallow: /roadmap
-Disallow: /learning
-Disallow: /projects
-Disallow: /live-sessions
-Disallow: /jobs
-Disallow: /mentors
-Disallow: /community
-Disallow: /analytics
-Disallow: /support
-Disallow: /subscriptions
-Disallow: /leads
-Disallow: /transactions
-Disallow: /onboarding
+Disallow: /
 
 Sitemap: https://app.mentradev.sbs/sitemap.xml

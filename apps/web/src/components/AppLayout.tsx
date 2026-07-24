@@ -11,7 +11,7 @@ import { LogoutConfirmModal } from './LogoutConfirmModal.js';
 import { useMyAccess } from '../lib/access.js';
 import { useProfile } from '../lib/profile.js';
 import { usePageViewTracking } from '../lib/activity.js';
-import { ChromeContext, ChromeScrollWatcher } from '../lib/chrome.js';
+import { ChromeContext } from '../lib/chrome.js';
 import { useSmoothScroll } from '../lib/smoothScroll.js';
 import {
   clearAuthSession,
@@ -281,12 +281,6 @@ export function AppLayout() {
         />
       }
     >
-      {/* Global hide-on-scroll for pages that scroll in the main root; re-keyed per
-          route so it re-anchors and reveals the chrome on every navigation. The watch
-          page owns its chrome (force-hidden for an immersive player), so skip it there. */}
-      {!location.pathname.startsWith('/live-sessions/') ? (
-        <ChromeScrollWatcher key={location.pathname} />
-      ) : null}
       {accessLoading ? (
         <div className="grid min-h-[60vh] place-items-center text-ink-muted">Loading…</div>
       ) : denied?.kind === 'locked' ? (

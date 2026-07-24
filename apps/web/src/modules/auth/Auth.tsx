@@ -122,7 +122,7 @@ export function AuthPage() {
               </div>
               <div>
                 <div className="text-lg font-semibold">Mentra</div>
-                <div className="text-sm text-ink-muted">Career OS for software engineers</div>
+                <div className="text-sm text-ink-muted">Your path to a Software Developer job</div>
               </div>
             </div>
 

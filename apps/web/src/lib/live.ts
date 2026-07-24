@@ -257,6 +257,12 @@ export function uploadFileToR2(
   contentType: string,
   onProgress?: (fraction: number) => void,
 ): Promise<void> {
+  // Dev mock: the backend returns an empty upload URL when R2 isn't configured — skip the
+  // PUT entirely and let finalize stamp a placeholder. Report 100% so progress UIs complete.
+  if (!url) {
+    onProgress?.(1);
+    return Promise.resolve();
+  }
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('PUT', url);

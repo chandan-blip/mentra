@@ -18,7 +18,7 @@ import { env } from '../../env.js';
 import { logger } from '../../logger.js';
 import { emit } from '../../core/events.js';
 import { ensureRoom, endRoom, mintToken, rawRecordingKey } from '../../core/livekit.js';
-import { presignPut, r2Delete, r2Enabled, r2Head } from '../../core/r2.js';
+import { DEV_PLACEHOLDER_IMAGE, devUploadsMocked, presignPut, r2Delete, r2Enabled, r2Head } from '../../core/r2.js';
 import { tryGetIo } from '../../core/realtime.js';
 import { getEffectivePermission, isUserAdmin } from '../access/access.service.js';
 import { LiveSessionError } from './live-session.errors.js';
@@ -51,6 +51,7 @@ function toView(
   requesterId: string,
   likeCount = 0,
   likedByViewer = false,
+  views = 0,
 ): LiveSessionView {
   return {
     id: row.id,
@@ -65,6 +66,7 @@ function toView(
     endedAt: iso(row.endedAt),
     currentViewers: row.currentViewers,
     peakViewers: row.peakViewers,
+    views,
     chatCount,
     isOwner: row.mentorId === requesterId,
     recordingStatus: row.recordingStatus,
@@ -82,11 +84,12 @@ function toView(
 
 export async function toViews(rows: repo.LiveSessionRow[], requesterId: string): Promise<LiveSessionView[]> {
   const ids = rows.map((r) => r.id);
-  const [cards, counts, likeCounts, liked] = await Promise.all([
+  const [cards, counts, likeCounts, liked, viewCounts] = await Promise.all([
     repo.findUserCards([...new Set(rows.map((r) => r.mentorId))]),
     repo.countMessagesForSessions(ids),
     repo.countLikesForSessions(ids),
     repo.likedSessionIds(requesterId, ids),
+    repo.countWatchersForSessions(ids),
   ]);
   return rows.map((r) =>
     toView(
@@ -96,6 +99,7 @@ export async function toViews(rows: repo.LiveSessionRow[], requesterId: string):
       requesterId,
       likeCounts.get(r.id) ?? 0,
       liked.has(r.id),
+      viewCounts.get(r.id) ?? 0,
     ),
   );
 }
@@ -205,12 +209,13 @@ const uploadKey = (id: string) => `uploads/${id}/source`;
  * the file straight to R2, then calls finalizeUpload to kick off transcoding.
  */
 export async function createUpload(userId: string, input: CreateUploadInput): Promise<UploadInitResponse> {
-  if (!r2Enabled()) {
+  if (!r2Enabled() && !devUploadsMocked()) {
     throw new LiveSessionError('UPLOAD_DISABLED', 'Uploads are not available right now', 400);
   }
   const row = await repo.createUpload({ mentorId: userId, title: input.title, topic: input.topic });
   requestThumbnail(row.id, 'create');
-  const uploadUrl = await presignPut(uploadKey(row.id), input.contentType);
+  // Dev mock: empty upload URL → browser skips the PUT; finalize marks it ready with a placeholder.
+  const uploadUrl = devUploadsMocked() ? '' : await presignPut(uploadKey(row.id), input.contentType);
   const me = await repo.findUserById(userId);
   return {
     session: toView(row, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId),
@@ -226,6 +231,15 @@ export async function finalizeUpload(userId: string, id: string): Promise<LiveSe
   const session = await loadOwned(userId, id);
   if (session.source !== 'upload') {
     throw new LiveSessionError('NOT_UPLOAD', 'This session is not an upload', 400);
+  }
+  // Dev mock: no file/transcode — mark the recording ready with a placeholder so the flow
+  // completes end-to-end (playback of a placeholder image isn't expected in dev).
+  if (devUploadsMocked()) {
+    await repo.setRecordingStatus(id, 'ready', DEV_PLACEHOLDER_IMAGE);
+    await repo.setThumbnail(id, DEV_PLACEHOLDER_IMAGE);
+    const me = await repo.findUserById(userId);
+    const updated = await repo.findById(id);
+    return toView(updated ?? session, { name: me?.name ?? 'Mentor', avatarUrl: null }, 0, userId);
   }
   const key = uploadKey(id);
   const head = await r2Head(key);
@@ -275,11 +289,12 @@ export async function getOne(userId: string, id: string): Promise<LiveSessionVie
   if (!row.visible && row.mentorId !== userId && !(await isUserAdmin(userId))) {
     throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
   }
-  const [cards, counts, likeCount, liked] = await Promise.all([
+  const [cards, counts, likeCount, liked, views] = await Promise.all([
     repo.findUserCards([row.mentorId]),
     repo.countMessagesForSessions([row.id]),
     repo.countLikes(row.id),
     repo.hasLiked(userId, row.id),
+    repo.countWatchers(row.id),
   ]);
   const card = cards.get(row.mentorId);
   return toView(
@@ -289,6 +304,7 @@ export async function getOne(userId: string, id: string): Promise<LiveSessionVie
     userId,
     likeCount,
     liked,
+    views,
   );
 }
 
@@ -302,10 +318,11 @@ export async function getPublicVideo(id: string): Promise<LiveSessionView> {
   if (!row || !row.isPublic || !row.visible || row.recordingStatus !== 'ready' || !row.recordingUrl) {
     throw new LiveSessionError('VIDEO_NOT_FOUND', 'Video not found', 404);
   }
-  const [cards, counts, likeCount] = await Promise.all([
+  const [cards, counts, likeCount, views] = await Promise.all([
     repo.findUserCards([row.mentorId]),
     repo.countMessagesForSessions([row.id]),
     repo.countLikes(row.id),
+    repo.countWatchers(row.id),
   ]);
   const card = cards.get(row.mentorId);
   return toView(
@@ -315,6 +332,7 @@ export async function getPublicVideo(id: string): Promise<LiveSessionView> {
     '',
     likeCount,
     false,
+    views,
   );
 }
 

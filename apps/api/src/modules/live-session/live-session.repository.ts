@@ -542,6 +542,29 @@ export async function countLikesForSessions(sessionIds: string[]): Promise<Map<s
   return new Map(rows.map((r) => [r.sessionId, Number(r.n)]));
 }
 
+/**
+ * VOD view count for one session = the number of distinct users who have watched the
+ * recording/upload (one WatchProgress row per user, enforced by a unique index). Live
+ * attendance is tracked separately via LiveKit; this is the "views" shown on VOD cards.
+ */
+export async function countWatchers(sessionId: string): Promise<number> {
+  const [rows] = await db.execute<({ n: number } & RowDataPacket)[]>(
+    'SELECT COUNT(*) AS `n` FROM `WatchProgress` WHERE `sessionId` = :sessionId',
+    { sessionId },
+  );
+  return Number(rows[0]?.n ?? 0);
+}
+
+/** Batch VOD view counts (distinct watchers) for a set of sessions. */
+export async function countWatchersForSessions(sessionIds: string[]): Promise<Map<string, number>> {
+  if (sessionIds.length === 0) return new Map();
+  const [rows] = await db.query<({ sessionId: string; n: number } & RowDataPacket)[]>(
+    'SELECT `sessionId`, COUNT(*) AS `n` FROM `WatchProgress` WHERE `sessionId` IN (?) GROUP BY `sessionId`',
+    [sessionIds],
+  );
+  return new Map(rows.map((r) => [r.sessionId, Number(r.n)]));
+}
+
 /** Which of the given sessions the user has already liked (batch, for list views). */
 export async function likedSessionIds(userId: string, sessionIds: string[]): Promise<Set<string>> {
   if (sessionIds.length === 0) return new Set();

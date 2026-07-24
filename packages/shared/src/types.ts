@@ -251,6 +251,12 @@ export type AdminUser = {
   createdAt: string;
 };
 
+/** Global, admin-managed platform settings (backed by feature flags). */
+export type AdminSettings = {
+  /** When true, going live starts a recording (egress); when false, sessions are not recorded. */
+  recordLiveSessions: boolean;
+};
+
 // --- Learning (test series) ---
 // `LearningDifficulty` / `LearningTestQuestionType` are exported from schemas/learning
 // (derived from their Zod enums); the view types below reference the unions inline to

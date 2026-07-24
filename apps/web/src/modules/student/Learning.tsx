@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
@@ -11,6 +11,7 @@ import {
   Sparkles,
   Trophy,
   Wand2,
+  X,
 } from 'lucide-react';
 import type { LearningCategoryView, LearningTestSummary } from '@mentra/shared';
 import { SkillTagInput } from '../../components/SkillTagInput.js';
@@ -57,23 +58,107 @@ export function LearningPage() {
   const { data: categories, isLoading } = useLearningCategories();
   // Shared search: the builder's topic field IS the search that filters the left list.
   const [query, setQuery] = useState('');
+  // Mobile: the search lives in a bottom sheet opened from the placeholder bar at the top.
+  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <motion.div
       initial="hidden"
       animate="visible"
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
-      className="mx-auto w-full max-w-8xl space-y-6"
+      className="mx-auto w-full max-w-8xl space-y-4 pt-4 md:space-y-6 md:pt-0"
     >
+      {/* Mobile-only search placeholder — tap to open the "Build your own quiz" bottom sheet. */}
+      <button
+        type="button"
+        onClick={() => setSearchOpen(true)}
+        className="flex w-full items-center gap-2 rounded-lg bg-surface-sunken px-3.5 py-2.5 text-sm ring-1 ring-border-subtle transition hover:ring-border-strong lg:hidden"
+      >
+        <Search className="size-4 shrink-0 text-ink-faint" />
+        <span className={`truncate ${query.trim() ? 'text-ink' : 'text-ink-faint'}`}>
+          {query.trim() || 'Search or name a topic…'}
+        </span>
+      </button>
+
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(360px,400px)]">
         <motion.div variants={fadeUp} className="min-w-0">
           <TopicList categories={categories} isLoading={isLoading} query={query} />
         </motion.div>
-        <motion.div variants={fadeUp} className="min-w-0 self-start lg:sticky lg:top-4 lg:h-fit">
+        {/* Builder lives in the sticky right column on desktop; on mobile it moves into the sheet. */}
+        <motion.div variants={fadeUp} className="hidden min-w-0 self-start lg:sticky lg:top-4 lg:block lg:h-fit">
           <CustomQuizBuilder categories={categories ?? []} query={query} setQuery={setQuery} />
         </motion.div>
       </div>
+
+      <BuildQuizSheet
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        categories={categories ?? []}
+        query={query}
+        setQuery={setQuery}
+      />
     </motion.div>
+  );
+}
+
+/** Mobile-only bottom sheet hosting the "Build your own quiz" builder (with 3 popular topics). */
+function BuildQuizSheet({
+  open,
+  onClose,
+  categories,
+  query,
+  setQuery,
+}: {
+  open: boolean;
+  onClose: () => void;
+  categories: LearningCategoryView[];
+  query: string;
+  setQuery: (v: string) => void;
+}) {
+  return (
+    <AnimatePresence>
+      {open ? (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <motion.button
+            type="button"
+            aria-label="Close"
+            onClick={onClose}
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+          <motion.div
+            className="absolute inset-x-0 bottom-0 flex max-h-[88vh] flex-col overflow-hidden rounded-t-2xl bg-surface shadow-card ring-1 ring-border-subtle"
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', stiffness: 380, damping: 38 }}
+          >
+            <div className="relative shrink-0 pt-2.5">
+              <div className="mx-auto h-1 w-10 rounded-full bg-border-strong" />
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="absolute right-3 top-1.5 grid size-8 place-items-center rounded-md text-ink-muted transition hover:bg-surface-sunken hover:text-ink"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)]">
+              <CustomQuizBuilder
+                categories={categories}
+                query={query}
+                setQuery={setQuery}
+                framed={false}
+                popularLimit={3}
+              />
+            </div>
+          </motion.div>
+        </div>
+      ) : null}
+    </AnimatePresence>
   );
 }
 
@@ -289,10 +374,16 @@ function CustomQuizBuilder({
   categories,
   query,
   setQuery,
+  framed = true,
+  popularLimit,
 }: {
   categories: LearningCategoryView[];
   query: string;
   setQuery: (v: string) => void;
+  /** Wrap in its own card (desktop). Pass false to blend into a bottom sheet. */
+  framed?: boolean;
+  /** Cap the number of popular-topic chips shown (e.g. 3 in the compact sheet). */
+  popularLimit?: number;
 }) {
   const create = useCreateCustomQuiz();
 
@@ -341,7 +432,13 @@ function CustomQuizBuilder({
   }
 
   return (
-    <section className="flex h-full flex-col overflow-hidden rounded-xl bg-surface ring-1 ring-border-subtle">
+    <section
+      className={
+        framed
+          ? 'flex h-full flex-col overflow-hidden rounded-xl bg-surface ring-1 ring-border-subtle'
+          : 'flex flex-col'
+      }
+    >
       <div className="border-b border-border-subtle px-5 py-4">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-ink">
           <span className="grid size-7 place-items-center rounded-md bg-accent-blue/10 text-accent-blue">
@@ -379,7 +476,7 @@ function CustomQuizBuilder({
         <div>
           <label className="mb-2 block text-xs font-medium text-ink-muted">Popular topics</label>
           <div className="flex flex-wrap gap-2">
-            {POPULAR_TOPICS.map((t) => (
+            {POPULAR_TOPICS.slice(0, popularLimit ?? POPULAR_TOPICS.length).map((t) => (
               <button
                 key={t}
                 type="button"

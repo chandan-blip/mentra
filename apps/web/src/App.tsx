@@ -21,6 +21,8 @@ import { CodingPage } from './modules/student/Coding.js';
 import { CodingTaskPage } from './modules/student/CodingTask.js';
 import { MentorLiveSessionsPage } from './modules/mentor/MentorLiveSessions.js';
 import { ManageVideosPage } from './modules/manager/ManageVideos.js';
+import { ReviewsPage } from './modules/student/Reviews.js';
+import { ManageReviewsPage } from './modules/manager/ManageReviews.js';
 import { ManageAiPromptsPage } from './modules/manager/ManageAiPrompts.js';
 import { ManageCodingTasksPage } from './modules/manager/ManageCodingTasks.js';
 import { PublicWatchPage } from './modules/public/PublicWatch.js';
@@ -38,6 +40,7 @@ import { AdminUsersPage } from './modules/admin/AdminUsers.js';
 import { AdminRolesPage } from './modules/admin/AdminRoles.js';
 import { AdminSubscriptionsPage } from './modules/admin/AdminSubscriptions.js';
 import { AdminModulesPage } from './modules/admin/AdminModules.js';
+import { AdminSettingsPage } from './modules/admin/AdminSettings.js';
 import { AppLayout } from './components/AppLayout.js';
 import { getAccessToken } from './lib/auth.js';
 import { useMyAccess } from './lib/access.js';
@@ -75,6 +78,8 @@ export function App() {
         <Route path="/subscriptions" element={<SubscriptionsPage />} />
         <Route path="/mentor-live-sessions" element={<MentorLiveSessionsPage />} />
         <Route path="/mentor-mentors" element={<MentorMentorshipPage />} />
+        <Route path="/reviews" element={<ReviewsPage />} />
+        <Route path="/manage-reviews" element={<ManageReviewsPage />} />
         <Route path="/manage-videos" element={<ManageVideosPage />} />
         <Route path="/manage-ai-prompts" element={<ManageAiPromptsPage />} />
         <Route path="/manage-coding-tasks" element={<ManageCodingTasksPage />} />
@@ -100,6 +105,7 @@ export function App() {
         <Route path="/admin/roles" element={<AdminRolesPage />} />
         <Route path="/admin/subscriptions" element={<AdminSubscriptionsPage />} />
         <Route path="/admin/modules" element={<AdminModulesPage />} />
+        <Route path="/admin/settings" element={<AdminSettingsPage />} />
       </Route>
     </Routes>
   );

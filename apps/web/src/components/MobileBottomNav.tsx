@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Code2, Home, MessageSquare, Menu, Users, Video } from 'lucide-react';
+import { BookOpen, Code2, Home, Menu, Star, Users, Video } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMyAccess } from '../lib/access.js';
 import { moduleIcon } from '../lib/moduleIcons.js';
@@ -7,16 +7,16 @@ import { isRouteActive } from './AppSidebar.js';
 
 /**
  * Mobile-only bottom navigation. Fixed slots: Dashboard, Find Mentor, Live Sessions,
- * Community, and Menu (opens the full off-canvas drawer). Hidden at `md` and up, where
- * the persistent left rail takes over. The middle items render the same icon the admin
- * configured for that module in the DB (matched by key), so they stay in sync with the
- * rail; `fallbackIcon` covers a role whose module list omits the key.
+ * Learning, Coding, Reviews, and Menu (opens the full off-canvas drawer). Hidden at `md` and up,
+ * where the persistent left rail takes over. The middle items render the same icon the
+ * admin configured for that module in the DB (matched by key), so they stay in sync with
+ * the rail; `fallbackIcon` covers a role whose module list omits the key.
  *
  * Access control mirrors the rail (see AppSidebar): a middle item backed by a module is
  * only shown when that module is in the user's server-filtered access list (role can
  * read it), and it's dimmed/inert when the module is plan-locked or not-yet-built —
  * exactly like `SidebarModuleButton`. Items flagged `alwaysAvailable` (auth-gated only,
- * no plan module — e.g. Community) render regardless of the module list.
+ * no plan module) would render regardless of the module list.
  */
 const MIDDLE_ITEMS: {
   key: string;
@@ -27,9 +27,10 @@ const MIDDLE_ITEMS: {
 }[] = [
   { key: 'mentors', label: 'Find Mentor', route: '/mentors', fallbackIcon: <Users /> },
   { key: 'live-sessions', label: 'Live Sessions', route: '/live-sessions', fallbackIcon: <Video /> },
+  { key: 'learning', label: 'Learning', route: '/learning', fallbackIcon: <BookOpen /> },
   { key: 'coding', label: 'Coding', route: '/coding', fallbackIcon: <Code2 /> },
-  // Community is auth-gated only (not a plan module), so it has no DB icon/entitlement.
-  { key: 'community', label: 'Community', route: '/community', fallbackIcon: <MessageSquare />, alwaysAvailable: true },
+  // Feedbacks & Reviews — module-gated, so it only shows when the role can read it.
+  { key: 'reviews', label: 'Reviews', route: '/reviews', fallbackIcon: <Star /> },
 ];
 
 export function MobileBottomNav({ onMenuClick, hidden }: { onMenuClick: () => void; hidden?: boolean }) {

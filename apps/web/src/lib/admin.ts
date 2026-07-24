@@ -4,6 +4,7 @@ import type {
   AdminPlan,
   AdminRole,
   AdminRolePermission,
+  AdminSettings,
   AdminUser,
 } from '@mentra/shared';
 import { apiFetch } from './api.js';
@@ -104,5 +105,18 @@ export function useAssignUser() {
     mutationFn: (a: { userId: string; roleId: string | null; planId: string | null }) =>
       apiFetch(`${base}/users/assign`, { method: 'POST', body: JSON.stringify(a) }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'users'] }),
+  });
+}
+
+export function useAdminSettings() {
+  return useQuery({ queryKey: ['admin', 'settings'], queryFn: () => apiFetch<AdminSettings>(`${base}/settings`) });
+}
+
+export function useUpdateAdminSettings() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (patch: Partial<AdminSettings>) =>
+      apiFetch<AdminSettings>(`${base}/settings`, { method: 'PUT', body: JSON.stringify(patch) }),
+    onSuccess: (data) => qc.setQueryData(['admin', 'settings'], data),
   });
 }

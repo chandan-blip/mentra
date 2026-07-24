@@ -9,12 +9,16 @@ const CACHE_TTL_SECONDS = 30;
 
 type FlagRow = { key: string; enabled: 0 | 1 } & RowDataPacket;
 
+/** Admin-toggled: when on, going live records the session to R2 (egress). Default on. */
+export const RECORD_LIVE_SESSIONS_FLAG = 'live-sessions.recording';
+
 /** Flags this build knows about, with their default state when no row exists yet. */
 export const FLAG_DEFAULTS: Record<string, { enabled: boolean; description: string }> = {
   'profile.resume.upload': { enabled: true, description: 'Kill switch for the resume upload feature' },
   'dashboard.enabled': { enabled: true, description: 'Master kill switch for the dashboard' },
   'dashboard.widget.dailyTasks': { enabled: false, description: 'Daily tasks widget (later phase)' },
   'dashboard.widget.liveSessions': { enabled: false, description: 'Live sessions widget (later phase)' },
+  [RECORD_LIVE_SESSIONS_FLAG]: { enabled: true, description: 'Record live sessions to R2 when a mentor goes live' },
 };
 
 export async function isEnabled(key: string): Promise<boolean> {
