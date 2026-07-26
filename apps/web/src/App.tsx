@@ -26,6 +26,7 @@ import { ManageReviewsPage } from './modules/manager/ManageReviews.js';
 import { ManageAiPromptsPage } from './modules/manager/ManageAiPrompts.js';
 import { ManageCodingTasksPage } from './modules/manager/ManageCodingTasks.js';
 import { PublicWatchPage } from './modules/public/PublicWatch.js';
+import { PublicReviewsPage } from './modules/public/PublicReviews.js';
 import { MentorMentorshipPage } from './modules/mentor/MentorMentorship.js';
 import { HrJobsPage } from './modules/hr/HrJobs.js';
 import { TransactionsPage } from './modules/accountant/Transactions.js';
@@ -54,6 +55,9 @@ export function App() {
       <Route path="/auth" element={<PublicOnlyRoute element={<AuthPage />} />} />
       {/* Public shareable video — no auth, no shell; anyone with the link can watch. */}
       <Route path="/watch/:id" element={<PublicWatchPage />} />
+      {/* Feedbacks & Reviews is public: logged-out visitors get the standalone gallery at
+          /reviews. Signed-in users skip this route and land on the in-shell page below. */}
+      {!getAccessToken() && <Route path="/reviews" element={<PublicReviewsPage />} />}
 
       {/* App shell — login required. Logged-out visitors bounce to /auth. */}
       <Route element={<ProtectedRoute element={<AppLayout />} />}>

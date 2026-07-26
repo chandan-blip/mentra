@@ -31,8 +31,13 @@ export function LiveSessionsPage() {
   const upcoming = useUpcoming();
   const past = usePastSessions();
 
-  // One unified feed, ordered live → upcoming → past/recorded.
-  const sessions = [...(live.data ?? []), ...(upcoming.data ?? []), ...(past.data ?? [])];
+  // One unified feed, ordered live → upcoming → past. Past sessions are only shown once
+  // they have a ready recording — non-recorded ended sessions (recording off/failed/still
+  // processing) are hidden so the list never shows a card with nothing to play.
+  const recordedPast = (past.data ?? []).filter(
+    (s) => s.recordingStatus === 'ready' && Boolean(s.recordingUrl),
+  );
+  const sessions = [...(live.data ?? []), ...(upcoming.data ?? []), ...recordedPast];
   const loading = live.isLoading || upcoming.isLoading || past.isLoading;
 
   // Every card opens the dedicated watch page, which renders the right experience for the

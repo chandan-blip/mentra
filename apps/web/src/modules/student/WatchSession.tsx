@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, CalendarClock, Check, Hand, Heart, MessageSquare, Send, Share2, UserPlus, Users, Video } from 'lucide-react';
+import { ArrowLeft, CalendarClock, Check, Heart, MessageSquare, Mic, Send, Share2, UserPlus, Users, Video } from 'lucide-react';
 import { Avatar } from '@mentra/ui';
 import type { ChatMessageView, JoinTokenResponse, LiveSessionView } from '@mentra/shared';
 import { VideoPlayer } from '../../components/VideoPlayer.js';
@@ -324,6 +324,11 @@ function LiveWatch({ session, onBack }: { session: LiveSessionView; onBack: () =
   const [conn, setConn] = useState<JoinTokenResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [handRaised, setHandRaised] = useState(false);
+  // Whether the mentor has granted this student the mic. Driven by socket signals; the actual
+  // publish permission is applied server-side on the SAME connection (no reconnect), so the
+  // video never stops. Used for the raise-hand button's state; the mic control itself is
+  // permission-driven inside the LiveKit room.
+  const [canSpeak, setCanSpeak] = useState(false);
   const socket = useLiveSocket(session.id);
   const elapsed = useElapsed(session.startedAt);
   const viewers = socket.viewerCount || session.currentViewers;
@@ -341,9 +346,15 @@ function LiveWatch({ session, onBack }: { session: LiveSessionView; onBack: () =
   }, [session.id]);
 
   // A mentor approving your raised hand re-mints a publish token; reconnect with it.
+  // Being muted demotes you back to a watch-only viewer (mic revoked) — reconnect with the
+  // viewer token so the "raise hand" control returns; to speak again, raise your hand anew.
   useEffect(() => {
-    socket.onPromoted((grant) => {
-      setConn(grant);
+    socket.onPromoted(() => {
+      setCanSpeak(true);
+      setHandRaised(false);
+    });
+    socket.onDemoted(() => {
+      setCanSpeak(false);
       setHandRaised(false);
     });
   }, [socket]);
@@ -361,7 +372,6 @@ function LiveWatch({ session, onBack }: { session: LiveSessionView; onBack: () =
 
   const media = conn ? (
     <LiveStage
-      key={conn.canPublish ? 'speak' : 'watch'}
       token={conn.token}
       wsUrl={conn.wsUrl}
       publish={conn.canPublish}
@@ -372,7 +382,9 @@ function LiveWatch({ session, onBack }: { session: LiveSessionView; onBack: () =
       overlay={
         <>
           {badges}
-          {conn.canPublish ? <MediaControls camera={false} /> : null}
+          {/* Self-hides until the mentor grants the mic (LiveKit permission), then lets the
+              student tap to talk — all on the same connection, so the video never reconnects. */}
+          <MediaControls camera={false} />
         </>
       }
       onLeft={() => navigate('/live-sessions')}
@@ -393,15 +405,15 @@ function LiveWatch({ session, onBack }: { session: LiveSessionView; onBack: () =
         socket.raiseHand();
         setHandRaised(true);
       }}
-      disabled={handRaised || conn?.canPublish}
+      disabled={handRaised || canSpeak}
       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1 transition disabled:opacity-60 ${
         handRaised
           ? 'bg-accent-amber/15 text-accent-amber ring-accent-amber/30'
           : 'bg-surface-sunken text-ink ring-border-subtle hover:ring-border-strong'
       }`}
-      title={conn?.canPublish ? 'You can speak' : handRaised ? 'Hand raised' : 'Raise your hand to ask'}
+      title={canSpeak ? 'You can speak — tap the mic' : handRaised ? 'Hand raised' : 'Raise your hand to ask'}
     >
-      <Hand className="size-4" /> <span className="hidden sm:inline">Raise hand</span>
+      <Mic className="size-4" /> <span className="hidden sm:inline">Raise hand</span>
     </button>
   );
 
@@ -553,7 +565,7 @@ function CommentsSurface({
       ) : messages.length === 0 ? (
         <div className="text-sm text-ink-faint">No comments yet.</div>
       ) : (
-        <div className="max-h-[60vh] space-y-4 overflow-y-auto">
+        <div className="max-h-[40vh] space-y-4 overflow-y-auto">
           {messages.map((m) => (
             <CommentRow key={m.id} message={m} />
           ))}
@@ -648,7 +660,12 @@ function RelatedSessions({ currentId }: { currentId: string }) {
   const live = useLiveSessions();
   const upcoming = useUpcoming();
   const past = usePastSessions();
-  const all = [...(live.data ?? []), ...(upcoming.data ?? []), ...(past.data ?? [])].filter(
+  // Only surface past sessions that have a ready recording — hide non-recorded ended ones
+  // (recording off/failed/still processing), matching the student Live Sessions list.
+  const recordedPast = (past.data ?? []).filter(
+    (s) => s.recordingStatus === 'ready' && Boolean(s.recordingUrl),
+  );
+  const all = [...(live.data ?? []), ...(upcoming.data ?? []), ...recordedPast].filter(
     (s) => s.id !== currentId,
   );
   if (all.length === 0) return null;

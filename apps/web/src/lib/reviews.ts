@@ -14,6 +14,7 @@ import { uploadFileToR2 } from './live.js';
  * the manager list and the student gallery so changes appear in both places.
  */
 const studentBase = '/api/v1/reviews';
+const publicBase = '/api/v1/public/reviews';
 const adminBase = '/api/v1/manage-reviews';
 
 /** Student gallery — visible, finalized reviews. */
@@ -21,6 +22,15 @@ export function useReviews() {
   return useQuery({
     queryKey: ['reviews', 'published'],
     queryFn: () => apiFetch<StudentReviewView[]>(studentBase),
+  });
+}
+
+/** Same gallery, no login required — powers the public /reviews page. */
+export function usePublicReviews() {
+  return useQuery({
+    queryKey: ['reviews', 'public'],
+    queryFn: () => apiFetch<StudentReviewView[]>(publicBase),
+    retry: false,
   });
 }
 

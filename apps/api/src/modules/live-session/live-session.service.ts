@@ -405,22 +405,9 @@ export async function getJoinToken(userId: string, id: string): Promise<JoinToke
   return { token, wsUrl: env.LIVEKIT_WS_URL, room: session.livekitRoom, canPublish };
 }
 
-/** Re-mint a publish-capable token for a promoted student (called from Socket.IO). */
-export async function mintPublishToken(sessionId: string, targetUserId: string): Promise<JoinTokenResponse> {
-  const session = await repo.findById(sessionId);
-  if (!session) throw new LiveSessionError('SESSION_NOT_FOUND', 'Session not found', 404);
-  if (session.status !== 'live') {
-    throw new LiveSessionError('SESSION_NOT_LIVE', 'This session is not live', 409);
-  }
-  const target = await repo.findUserById(targetUserId);
-  const token = await mintToken({
-    room: session.livekitRoom,
-    identity: targetUserId,
-    name: target?.name ?? 'Participant',
-    canPublish: true,
-  });
-  return { token, wsUrl: env.LIVEKIT_WS_URL, room: session.livekitRoom, canPublish: true };
-}
+// Promotion/demotion no longer re-mint tokens: a mentor approving a hand (or muting) updates
+// the student's publish permission on their EXISTING LiveKit connection (see core/livekit.ts
+// grantParticipantPublish / revokeParticipantPublish), so the video is never interrupted.
 
 /** Access check used by the Socket.IO layer before joining a session room. */
 export async function assertCanAttend(userId: string, sessionId: string): Promise<repo.LiveSessionRow> {

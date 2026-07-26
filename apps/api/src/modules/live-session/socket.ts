@@ -1,10 +1,10 @@
 import { chatSendSchema } from '@mentra/shared';
 import { logger } from '../../logger.js';
 import type { AppIo, AppSocket } from '../../core/realtime.js';
-import { assertCanAttend, isSessionOwner, mintPublishToken } from './live-session.service.js';
+import { assertCanAttend, isSessionOwner } from './live-session.service.js';
 import { bufferChatMessage } from './chat-buffer.js';
 import { findById, findUserById } from './live-session.repository.js';
-import { muteParticipantMic } from '../../core/livekit.js';
+import { grantParticipantPublish, revokeParticipantPublish } from '../../core/livekit.js';
 
 const room = (sessionId: string) => `session:${sessionId}`;
 const mentorRoom = (sessionId: string) => `session:${sessionId}:mentor`;
@@ -84,15 +84,21 @@ export function registerLiveSessionSocket(io: AppIo): void {
         return;
       }
       try {
-        const grant = await mintPublishToken(sessionId, targetUserId);
-        io.in(userRoom(targetUserId)).emit('live:promoted', grant);
+        const session = await findById(sessionId);
+        if (!session) return;
+        // Grant publish on the student's EXISTING connection (no token swap → no reconnect,
+        // so their video keeps playing). Signal the client so it shows the mic control.
+        await grantParticipantPublish(session.livekitRoom, targetUserId);
+        io.in(userRoom(targetUserId)).emit('live:promoted', {});
       } catch (err) {
         logger.error({ err, sessionId, targetUserId }, 'hand:approve failed');
       }
     });
 
-    // Mentor force-mutes an approved/speaking student's mic (owner-only, same guard as
-    // hand:approve). Mutes at the SFU via LiveKit; the student's client reflects it.
+    // Mentor mutes an approved/speaking student (owner-only, same guard as hand:approve).
+    // REVOKES their publish permission at the SFU on their existing connection (so they can't
+    // un-mute themselves, and their video is NOT interrupted). They must raise their hand and
+    // be re-approved to speak again. Signal the client so it restores the raise-hand control.
     socket.on('participant:mute', async (payload: { sessionId?: string; targetUserId?: string }) => {
       const sessionId = String(payload?.sessionId ?? '');
       const targetUserId = String(payload?.targetUserId ?? '');
@@ -104,7 +110,8 @@ export function registerLiveSessionSocket(io: AppIo): void {
       try {
         const session = await findById(sessionId);
         if (!session) return;
-        await muteParticipantMic(session.livekitRoom, targetUserId);
+        await revokeParticipantPublish(session.livekitRoom, targetUserId);
+        io.in(userRoom(targetUserId)).emit('live:demoted', {});
       } catch (err) {
         logger.error({ err, sessionId, targetUserId }, 'participant:mute failed');
       }

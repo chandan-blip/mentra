@@ -32,7 +32,7 @@ export function LiveChat({
   }, [messages]);
 
   return (
-    <Card className="flex h-[60vh] flex-col p-0 lg:h-auto">
+    <Card className="flex h-[30vh] flex-col p-0 lg:h-auto">
       <div className="flex items-center justify-between border-b border-border-subtle px-4 py-3">
         <span className="text-sm font-medium text-ink">Live chat</span>
         <span className="inline-flex items-center gap-1.5 text-xs text-ink-faint">

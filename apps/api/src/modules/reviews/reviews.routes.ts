@@ -12,6 +12,13 @@ import {
   postFinalizeReview,
 } from './reviews.controller.js';
 
+/**
+ * Public, UN-authenticated gallery (mounted at /api/v1/public). Reviews are social proof,
+ * so logged-out visitors see the same list students do — only visible, finalized rows.
+ */
+export const reviewsPublicRouter: Router = Router();
+reviewsPublicRouter.get('/reviews', asyncHandler(getPublishedReviews));
+
 /** Student-facing gallery — read-only, gated by the 'reviews' module. Mounted at /api/v1/reviews. */
 export const reviewsRouter: Router = Router();
 reviewsRouter.use(requireAuth);

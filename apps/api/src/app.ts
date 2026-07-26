@@ -25,7 +25,7 @@ import { activityRouter, registerActivityRecorder } from './modules/activity/ind
 import { aiPromptRouter } from './modules/ai-prompt/index.js';
 import { careerChatRouter } from './modules/career-chat/index.js';
 import { codingRouter, codingTasksRouter } from './modules/coding/index.js';
-import { reviewsRouter, reviewsAdminRouter } from './modules/reviews/index.js';
+import { reviewsRouter, reviewsAdminRouter, reviewsPublicRouter } from './modules/reviews/index.js';
 
 export function createApp(): Express {
   const app = express();
@@ -75,8 +75,10 @@ export function createApp(): Express {
   app.use('/api/v1/health', healthRouter);
   app.use('/api/v1/auth', authRouter);
   // Public (no-auth) surfaces → /api/v1/public/*. Registered before their authed siblings.
-  // Only public video share links + their OG previews are exposed without login.
+  // Only public video share links (+ their OG previews) and the reviews gallery are
+  // exposed without login.
   app.use('/api/v1/public', liveSessionPublicRouter);
+  app.use('/api/v1/public', reviewsPublicRouter);
   // Public avatar serving (no auth) must be registered before the authed profile
   // router, which gates everything with requireAuth.
   app.use('/api/v1/profile', userProfilePublicRouter);

@@ -1,5 +1,5 @@
 import { type FormEvent, useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Check, Github, GraduationCap, Linkedin, Lock, Mail, UserRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getApiBaseUrl, storeAuthSession } from '../../lib/auth.js';
@@ -399,38 +399,48 @@ const FLOW_NODES = [
   { cx: 700, cy: 760, color: '#7c3aed', dur: '4.2s' },
 ];
 
-/** A large, slowly drifting blurred colour blob — the "aurora" that makes the page breathe. */
+/**
+ * A large, slowly drifting blurred colour blob — the "aurora" that makes the page breathe.
+ * Animates translation ONLY: scaling a `blur-3xl` layer re-rasterizes the blur every frame,
+ * which on a software-rendered (no-GPU) client is enough to lock up the tab.
+ */
 function AuroraBlob({
   className,
   color,
   x,
   y,
   duration,
+  still,
 }: {
   className: string;
   color: string;
   x: number[];
   y: number[];
   duration: number;
+  still: boolean;
 }) {
   return (
     <motion.div
       aria-hidden
       className={`pointer-events-none absolute rounded-full blur-3xl ${className}`}
       style={{ background: `radial-gradient(circle, ${color}, transparent 62%)` }}
-      animate={{ x, y, scale: [1, 1.12, 0.95, 1] }}
+      animate={still ? undefined : { x, y }}
       transition={{ duration, repeat: Infinity, ease: 'easeInOut' }}
     />
   );
 }
 
 function AuthMotionBackdrop() {
+  // Honour the OS "reduce motion" setting — and give us one switch that renders the whole
+  // backdrop as a static image if a client ever can't afford the animation.
+  const still = useReducedMotion() ?? false;
+
   return (
     <div className="absolute inset-0 overflow-hidden bg-gradient-to-b from-white to-[#f2f6fc]">
       {/* Drifting aurora */}
-      <AuroraBlob className="-left-40 -top-40 h-[46rem] w-[46rem]" color="rgba(37,99,235,0.18)" x={[0, 70, -30, 0]} y={[0, 50, 90, 0]} duration={26} />
-      <AuroraBlob className="-right-40 top-1/4 h-[42rem] w-[42rem]" color="rgba(22,163,74,0.16)" x={[0, -60, 20, 0]} y={[0, 40, -30, 0]} duration={30} />
-      <AuroraBlob className="bottom-[-14rem] left-1/4 h-[40rem] w-[40rem]" color="rgba(124,58,237,0.16)" x={[0, 45, -45, 0]} y={[0, -30, 25, 0]} duration={34} />
+      <AuroraBlob className="-left-40 -top-40 h-[46rem] w-[46rem]" color="rgba(37,99,235,0.18)" x={[0, 70, -30, 0]} y={[0, 50, 90, 0]} duration={26} still={still} />
+      <AuroraBlob className="-right-40 top-1/4 h-[42rem] w-[42rem]" color="rgba(22,163,74,0.16)" x={[0, -60, 20, 0]} y={[0, 40, -30, 0]} duration={30} still={still} />
+      <AuroraBlob className="bottom-[-14rem] left-1/4 h-[40rem] w-[40rem]" color="rgba(124,58,237,0.16)" x={[0, 45, -45, 0]} y={[0, -30, 25, 0]} duration={34} still={still} />
 
       <svg
         viewBox="0 0 1000 1000"
@@ -439,13 +449,6 @@ function AuthMotionBackdrop() {
         preserveAspectRatio="xMidYMid slice"
       >
         <defs>
-          <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="2.6" result="b" />
-            <feMerge>
-              <feMergeNode in="b" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
           <pattern id="microGrid" width="44" height="44" patternUnits="userSpaceOnUse">
             <path d="M44 0 H0 V44" fill="none" stroke="#e6eaf0" strokeWidth="0.6" />
           </pattern>
@@ -453,8 +456,11 @@ function AuthMotionBackdrop() {
 
         <rect x="0" y="0" width="1000" height="1000" fill="url(#microGrid)" opacity="0.6" />
 
+        {/* The glow is faked with a wide, faint stroke under the bright one. An SVG blur
+            filter here would be re-computed on every animation frame — far too expensive. */}
         {FLOW_LINES.map((r) => (
-          <g key={r.d} filter="url(#softGlow)">
+          <g key={r.d}>
+            <path d={r.d} stroke={r.color} strokeWidth="6" fill="none" opacity="0.07" />
             <path d={r.d} stroke={r.color} strokeWidth="1" fill="none" opacity="0.18" />
             <path
               d={r.d}
@@ -465,16 +471,25 @@ function AuthMotionBackdrop() {
               opacity="0.7"
               strokeDasharray="70 1400"
             >
-              <animate attributeName="stroke-dashoffset" from="0" to="-1470" dur={r.dur} repeatCount="indefinite" />
+              {still ? null : (
+                <animate attributeName="stroke-dashoffset" from="0" to="-1470" dur={r.dur} repeatCount="indefinite" />
+              )}
             </path>
           </g>
         ))}
 
         {FLOW_NODES.map((n) => (
-          <circle key={`${n.cx}-${n.cy}`} cx={n.cx} cy={n.cy} r="3" fill={n.color} filter="url(#softGlow)">
-            <animate attributeName="r" values="2.5;5.5;2.5" dur={n.dur} repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.35;1;0.35" dur={n.dur} repeatCount="indefinite" />
-          </circle>
+          <g key={`${n.cx}-${n.cy}`}>
+            <circle cx={n.cx} cy={n.cy} r="7" fill={n.color} opacity="0.12" />
+            <circle cx={n.cx} cy={n.cy} r="3" fill={n.color}>
+              {still ? null : (
+                <>
+                  <animate attributeName="r" values="2.5;5.5;2.5" dur={n.dur} repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.35;1;0.35" dur={n.dur} repeatCount="indefinite" />
+                </>
+              )}
+            </circle>
+          </g>
         ))}
       </svg>
 

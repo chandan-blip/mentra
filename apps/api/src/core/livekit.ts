@@ -103,6 +103,31 @@ export async function muteParticipantMic(room: string, identity: string): Promis
 }
 
 /**
+ * Revoke a participant's publish permission (used when a mentor mutes a promoted student).
+ * Unlike a plain track-mute — which the student can immediately undo — this unpublishes
+ * their mic AND blocks re-publishing, so they cannot un-mute themselves. To speak again
+ * they must raise their hand and be re-approved (which mints a fresh publish token). They
+ * keep subscribe + data, so they still watch and chat.
+ */
+export async function revokeParticipantPublish(room: string, identity: string): Promise<void> {
+  await roomService.updateParticipant(room, identity, {
+    permission: { canPublish: false, canSubscribe: true, canPublishData: true },
+  });
+}
+
+/**
+ * Grant a participant publish permission (used when a mentor approves a raised hand).
+ * Done via `updateParticipant` on their EXISTING connection — no token swap, no reconnect —
+ * so the student's video subscription is never interrupted. Their client sees the permission
+ * change and can then turn on their mic.
+ */
+export async function grantParticipantPublish(room: string, identity: string): Promise<void> {
+  await roomService.updateParticipant(room, identity, {
+    permission: { canPublish: true, canSubscribe: true, canPublishData: true },
+  });
+}
+
+/**
  * Verify + decode an inbound LiveKit webhook. Throws if the HMAC signature in the
  * Authorization header doesn't match our API secret.
  */

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, type Socket } from 'socket.io-client';
-import type { ChatMessageView, JoinTokenResponse } from '@mentra/shared';
+import type { ChatMessageView } from '@mentra/shared';
 import { apiFetch } from './api.js';
 import { getAccessToken, getApiBaseUrl, refreshAccessToken } from './auth.js';
 
@@ -17,8 +17,10 @@ export type LiveSocket = {
   approveHand: (targetUserId: string) => void;
   /** Mentor force-mutes an approved/speaking student's mic (owner-only, server-enforced). */
   muteParticipant: (targetUserId: string) => void;
-  /** Register a callback for when a mentor promotes you to publish. */
-  onPromoted: (cb: (grant: JoinTokenResponse) => void) => void;
+  /** Fired when a mentor approves your raised hand (you may now turn on your mic). */
+  onPromoted: (cb: () => void) => void;
+  /** Fired when a mentor mutes you (speaking revoked; raise your hand to ask again). */
+  onDemoted: (cb: () => void) => void;
 };
 
 /**
@@ -32,7 +34,8 @@ export function useLiveSocket(sessionId: string | null): LiveSocket {
   const [hands, setHands] = useState<RaisedHand[]>([]);
   const [connected, setConnected] = useState(false);
   const socketRef = useRef<Socket | null>(null);
-  const promotedCb = useRef<((grant: JoinTokenResponse) => void) | null>(null);
+  const promotedCb = useRef<(() => void) | null>(null);
+  const demotedCb = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (!sessionId) return undefined;
@@ -61,7 +64,8 @@ export function useLiveSocket(sessionId: string | null): LiveSocket {
     socket.on('hand:raised', (h: RaisedHand) =>
       setHands((prev) => (prev.some((x) => x.userId === h.userId) ? prev : [...prev, h])),
     );
-    socket.on('live:promoted', (grant: JoinTokenResponse) => promotedCb.current?.(grant));
+    socket.on('live:promoted', () => promotedCb.current?.());
+    socket.on('live:demoted', () => demotedCb.current?.());
 
     // If the access token expired, refresh once and reconnect with the new one.
     socket.on('connect_error', async (err: Error) => {
@@ -108,8 +112,12 @@ export function useLiveSocket(sessionId: string | null): LiveSocket {
     [sessionId],
   );
 
-  const onPromoted = useCallback((cb: (grant: JoinTokenResponse) => void) => {
+  const onPromoted = useCallback((cb: () => void) => {
     promotedCb.current = cb;
+  }, []);
+
+  const onDemoted = useCallback((cb: () => void) => {
+    demotedCb.current = cb;
   }, []);
 
   return {
@@ -122,5 +130,6 @@ export function useLiveSocket(sessionId: string | null): LiveSocket {
     approveHand,
     muteParticipant,
     onPromoted,
+    onDemoted,
   };
 }

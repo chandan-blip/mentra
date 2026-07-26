@@ -84,7 +84,7 @@ export function MentorLiveSessionsPage() {
       initial="hidden"
       animate="visible"
       variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
-      className="mx-auto w-full max-w-3xl space-y-5"
+      className="mx-auto w-full max-w-3xl space-y-5 pt-4 md:pt-0"
     >
       {!canBroadcast ? (
         <motion.div variants={fadeUp}>
@@ -160,7 +160,7 @@ export function MentorLiveSessionsPage() {
                 <span className="size-2 animate-pulse rounded-full bg-accent-red" />
                 <h2 className="text-sm font-medium text-ink">Currently live</h2>
               </div>
-              <Card className="divide-y divide-border-subtle p-0">
+              <Card padding={false} className="divide-y divide-border-subtle">
                 {liveOnes.map((s) => (
                   <Row key={s.id} session={s}>
                     <button
@@ -185,7 +185,7 @@ export function MentorLiveSessionsPage() {
             {scheduled.length === 0 ? (
               <Card className="text-sm text-ink-muted">No sessions scheduled yet — pick a date above.</Card>
             ) : (
-              <Card className="divide-y divide-border-subtle p-0">
+              <Card padding={false} className="divide-y divide-border-subtle">
                 {scheduled.map((s) => (
                   <Row key={s.id} session={s}>
                     <StartButton session={s} onLive={setLive} />
@@ -201,7 +201,7 @@ export function MentorLiveSessionsPage() {
                 <BarChart3 className="size-4 text-ink-muted" />
                 <h2 className="text-sm font-medium text-ink">Past sessions</h2>
               </div>
-              <Card className="divide-y divide-border-subtle p-0">
+              <Card padding={false} className="divide-y divide-border-subtle">
                 {ended.map((s) => (
                   <Row key={s.id} session={s}>
                     <button
@@ -419,12 +419,12 @@ function Broadcaster({ session, onEnd }: { session: LiveSessionView; onEnd: () =
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl">
+    <div className="mx-auto w-full max-w-6xl pt-4 md:pt-0">
       <button onClick={onEnd} type="button" className="mb-4 inline-flex items-center gap-1.5 text-sm text-ink-muted transition hover:text-ink">
         <ArrowLeft className="size-4" /> Back
       </button>
       <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <Card className="overflow-hidden p-0">
+        <Card padding={false} className="overflow-hidden">
           {conn ? (
             <LiveStage
               token={conn.token}
@@ -434,6 +434,9 @@ function Broadcaster({ session, onEnd }: { session: LiveSessionView; onEnd: () =
               mentorName={session.mentorName}
               onMuteStudent={socket.muteParticipant}
               placeholderBg={stageBg(hueOf(session.id))}
+              // Drop LiveKit's default dark `.lk-room-container` background so the Card/stage
+              // background shows through instead of a black block (mentor broadcast view).
+              className="!bg-transparent"
               overlay={
                 <>
                   <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-accent-red px-2.5 py-1 text-xs font-semibold text-white">
@@ -489,7 +492,7 @@ function Report({ session, onBack }: { session: LiveSessionView; onBack: () => v
   const summary = useSessionSummary(session.id);
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <div className="mx-auto w-full max-w-3xl pt-4 md:pt-0">
       <button onClick={onBack} type="button" className="mb-4 inline-flex items-center gap-1.5 text-sm text-ink-muted transition hover:text-ink">
         <ArrowLeft className="size-4" /> Back
       </button>
@@ -517,7 +520,7 @@ function Report({ session, onBack }: { session: LiveSessionView; onBack: () => v
             {summary.data.attendees.length === 0 ? (
               <Card className="text-sm text-ink-muted">No students attended this session.</Card>
             ) : (
-              <Card className="divide-y divide-border-subtle p-0">
+              <Card padding={false} className="divide-y divide-border-subtle">
                 {summary.data.attendees.map((a) => (
                   <div key={a.userId} className="flex items-center justify-between gap-3 px-4 py-3">
                     <div className="min-w-0">

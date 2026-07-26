@@ -6,31 +6,40 @@ import { moduleIcon } from '../lib/moduleIcons.js';
 import { isRouteActive } from './AppSidebar.js';
 
 /**
- * Mobile-only bottom navigation. Fixed slots: Dashboard, Find Mentor, Live Sessions,
- * Learning, Coding, Reviews, and Menu (opens the full off-canvas drawer). Hidden at `md` and up,
- * where the persistent left rail takes over. The middle items render the same icon the
- * admin configured for that module in the DB (matched by key), so they stay in sync with
- * the rail; `fallbackIcon` covers a role whose module list omits the key.
+ * Mobile-only bottom navigation. Slots: Dashboard, a role-specific middle set, and Menu
+ * (opens the full off-canvas drawer). Hidden at `md` and up, where the persistent left rail
+ * takes over. The middle items render the same icon the admin configured for that module in
+ * the DB (matched by key), so they stay in sync with the rail; `fallbackIcon` covers a role
+ * whose module list omits the key.
  *
- * Access control mirrors the rail (see AppSidebar): a middle item backed by a module is
- * only shown when that module is in the user's server-filtered access list (role can
- * read it), and it's dimmed/inert when the module is plan-locked or not-yet-built —
- * exactly like `SidebarModuleButton`. Items flagged `alwaysAvailable` (auth-gated only,
- * no plan module) would render regardless of the module list.
+ * The middle set is chosen by role: mentors get their broadcast/mentorship surfaces, everyone
+ * else gets the student set. Either way access control mirrors the rail (see AppSidebar): a
+ * middle item backed by a module is only shown when that module is in the user's server-filtered
+ * access list (role can read it), and it's dimmed/inert when plan-locked or not-yet-built.
+ * Items flagged `alwaysAvailable` (auth-gated only, no plan module) render regardless.
  */
-const MIDDLE_ITEMS: {
+type NavItem = {
   key: string;
   label: string;
   route: string;
   fallbackIcon: ReactNode;
   alwaysAvailable?: boolean;
-}[] = [
+};
+
+/** Student (default) middle set. */
+const STUDENT_ITEMS: NavItem[] = [
   { key: 'mentors', label: 'Find Mentor', route: '/mentors', fallbackIcon: <Users /> },
   { key: 'live-sessions', label: 'Live Sessions', route: '/live-sessions', fallbackIcon: <Video /> },
   { key: 'learning', label: 'Learning', route: '/learning', fallbackIcon: <BookOpen /> },
   { key: 'coding', label: 'Coding', route: '/coding', fallbackIcon: <Code2 /> },
   // Feedbacks & Reviews — module-gated, so it only shows when the role can read it.
   { key: 'reviews', label: 'Reviews', route: '/reviews', fallbackIcon: <Star /> },
+];
+
+/** Mentor middle set — their own broadcast + mentorship surfaces. */
+const MENTOR_ITEMS: NavItem[] = [
+  { key: 'mentor-live-sessions', label: 'Live Sessions', route: '/mentor-live-sessions', fallbackIcon: <Video /> },
+  { key: 'mentor-mentors', label: 'Mentorships', route: '/mentor-mentors', fallbackIcon: <Users /> },
 ];
 
 export function MobileBottomNav({ onMenuClick, hidden }: { onMenuClick: () => void; hidden?: boolean }) {
@@ -40,6 +49,9 @@ export function MobileBottomNav({ onMenuClick, hidden }: { onMenuClick: () => vo
 
   // Server-filtered entitlements keyed by module key (role can read → present here).
   const moduleByKey = new Map((data?.modules ?? []).map((m) => [m.key, m]));
+
+  // Mentors get their broadcast/mentorship surfaces; everyone else gets the student set.
+  const middleItems = data?.roleId === 'mentor' ? MENTOR_ITEMS : STUDENT_ITEMS;
 
   return (
     <nav
@@ -54,7 +66,7 @@ export function MobileBottomNav({ onMenuClick, hidden }: { onMenuClick: () => vo
         active={isRouteActive('/dashboard', pathname)}
         onClick={() => navigate('/dashboard')}
       />
-      {MIDDLE_ITEMS.map((item) => {
+      {middleItems.map((item) => {
         const mod = moduleByKey.get(item.key);
         // Hide items the role can't read (absent from entitlements), unless always-available.
         if (!mod && !item.alwaysAvailable) return null;

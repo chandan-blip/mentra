@@ -6,6 +6,7 @@ import {
   RoomAudioRenderer,
   StartAudio,
   useLocalParticipant,
+  useLocalParticipantPermissions,
   useParticipants,
   useTracks,
   VideoTrack,
@@ -372,13 +373,17 @@ function MentorStage({ mentorId, mentorName }: { mentorId: string; mentorName?: 
   // clean, full-bleed <video> — like the recording player — instead of a LiveKit
   // ParticipantTile, which adds a name tag, rounded tile card, and background chrome.
   const track = tracks.find((t) => t.source === Track.Source.ScreenShare) ?? tracks[0]!;
+  // The camera fills the frame (`cover`) so there are no black letterbox/pillarbox bars —
+  // this matters on mobile, where the phone camera track is often portrait and would
+  // otherwise show wide black bars in the 16:9 stage. Screen shares stay `contain` so the
+  // whole shared screen is visible (cropping a screen share would hide content).
+  const isScreenShare = track.source === Track.Source.ScreenShare;
   return (
     <VideoTrack
       trackRef={track as TrackReference}
-      className="h-full w-full bg-black object-contain"
-      // Inline fit beats LiveKit's stylesheet (load-order independent) so the video fills
-      // the frame like the recording player instead of the tile's default cover/letterbox.
-      style={{ objectFit: 'contain' }}
+      className="h-full w-full bg-black"
+      // Inline fit beats LiveKit's stylesheet (load-order independent).
+      style={{ objectFit: isScreenShare ? 'contain' : 'cover' }}
     />
   );
 }
@@ -429,6 +434,11 @@ function ParticipantRoster({ mentorId, onMute }: { mentorId: string; onMute?: (i
  */
 export function MediaControls({ camera = true }: { camera?: boolean }) {
   const { localParticipant, isMicrophoneEnabled, isCameraEnabled } = useLocalParticipant();
+  // Permission-driven: the controls appear only while this participant may publish. A student
+  // gains this the instant a mentor approves their hand (LiveKit permission update — no
+  // reconnect) and loses it on mute, all without touching the video subscription.
+  const permissions = useLocalParticipantPermissions();
+  if (!permissions?.canPublish) return null;
   return (
     <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
       <Toggle
