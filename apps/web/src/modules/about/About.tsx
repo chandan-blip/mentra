@@ -249,7 +249,7 @@ function Refund() {
         <H3>After 7 days</H3>
         <p>Refunds for the remaining period are considered case-by-case; cancellations stop future renewals immediately.</p>
         <H3>How to request</H3>
-        <p>Email refunds@mentra.app from your account email with your plan and reason — most requests are handled within 3 business days.</p>
+        <p>Email chandan.jstech@gmail.com from your account email with your plan and reason — most requests are handled within 3 business days.</p>
       </Prose>
     </div>
   );
@@ -260,9 +260,9 @@ function Contact() {
     <div>
       <Hero hue={280} icon={<Mail />} kicker="Say hello" title="Contact us" image="/assets/about/contact-us.png" />
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <ContactItem icon={<Mail className="size-5" />} label="Email" value="hello@mentra.app" />
-        <ContactItem icon={<Phone className="size-5" />} label="Phone" value="+91 90000 00000" />
-        <ContactItem icon={<MapPin className="size-5" />} label="Office" value="Bengaluru, India" />
+        <ContactItem icon={<Mail className="size-5" />} label="Email" value="chandan.jstech@gmail.com" />
+        <ContactItem icon={<Phone className="size-5" />} label="Phone" value="+91 87775 96614" />
+        <ContactItem icon={<MapPin className="size-5" />} label="Office" value="Kolkata, India" />
       </div>
       <Prose>
         <p>We usually reply within one business day. For account help, the Support page is the fastest route.</p>

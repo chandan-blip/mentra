@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { LiveSessionView } from '@mentra/shared';
 import { renderWatchOg, renderWatchUnavailable } from '../og.js';
 
-const ORIGIN = 'https://app.mentradev.sbs';
+const ORIGIN = 'https://app.mentradev.com';
 
 const view = (over: Partial<LiveSessionView> = {}): LiveSessionView =>
   ({
@@ -72,7 +72,7 @@ describe('renderWatchOg', () => {
   });
 
   it('does not double up the slash when the origin has a trailing one', () => {
-    expect(meta(renderWatchOg(view(), 'https://app.mentradev.sbs/'), 'og:url')).toBe(`${ORIGIN}/watch/ckv1sess42`);
+    expect(meta(renderWatchOg(view(), 'https://app.mentradev.com/'), 'og:url')).toBe(`${ORIGIN}/watch/ckv1sess42`);
   });
 
   // A crawler that followed a refresh would bounce to /watch/:id, be rewritten back

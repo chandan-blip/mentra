@@ -1,5 +1,5 @@
-# Mentra app (app.mentradev.sbs) — the product itself, behind a login.
-# Marketing content lives on the landing host (https://mentradev.sbs) and serves
+# Mentra app (app.mentradev.com) — the product itself, behind a login.
+# Marketing content lives on the landing host (https://mentradev.com) and serves
 # its own robots.txt + sitemap; rules here do NOT apply to it.
 #
 # Deny by default: only the sign-in root and static brand assets are worth
@@ -15,4 +15,4 @@ Allow: /brand/
 Allow: /assets/
 Disallow: /
 
-Sitemap: https://app.mentradev.sbs/sitemap.xml
+Sitemap: https://app.mentradev.com/sitemap.xml

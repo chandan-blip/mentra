@@ -1,5 +1,5 @@
-# Mentra — marketing landing page (https://mentradev.sbs)
-# The login-gated app is a separate host (app.mentradev.sbs) and serves its own
+# Mentra — marketing landing page (https://mentradev.com)
+# The login-gated app is a separate host (app.mentradev.com) and serves its own
 # robots.txt from apps/web/public/ — rules here do NOT apply to it.
 
 User-agent: *
@@ -13,4 +13,4 @@ Disallow: /api/
 # by the wildcard above — this is a marketing page, so being quotable by
 # assistants is the point. See /llms.txt for a condensed summary of the product.
 
-Sitemap: https://mentradev.sbs/sitemap.xml
+Sitemap: https://mentradev.com/sitemap.xml

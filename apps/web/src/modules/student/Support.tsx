@@ -42,9 +42,9 @@ export function SupportPage() {
           <ContactCard
             icon={<Mail className="size-5" />}
             title="Email us"
-            body="support@mentra.app"
+            body="chandan.jstech@gmail.com"
             cta="Send email"
-            onClick={() => { window.location.href = 'mailto:support@mentra.app'; }}
+            onClick={() => { window.location.href = 'mailto:chandan.jstech@gmail.com'; }}
           />
           <ContactCard
             icon={<MessageCircle className="size-5" />}

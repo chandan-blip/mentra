@@ -10,8 +10,8 @@ Mentra is not a course. The premise is that graduates have already finished the
 studying — what's missing is knowing exactly how to crack the interview and get
 shortlisted.
 
-Mentra is a web product. This domain (mentradev.sbs) is the public marketing site;
-the product itself lives at https://app.mentradev.sbs and requires an account.
+Mentra is a web product. This domain (mentradev.com) is the public marketing site;
+the product itself lives at https://app.mentradev.com and requires an account.
 Everything on this domain is public marketing content and is free to quote or
 summarize. Anything behind the app login is private user data and is not crawlable.
 
@@ -55,17 +55,20 @@ Four steps, as described on the landing page:
 - Built around interview outcomes: practice, mock rounds, resume shortlisting, and applications tracked through to an offer.
 - The always-on chat mentor is AI. Live sessions, mock interviews, and bookings connect you with real human mentors.
 - Onboarding takes under 3 minutes and is free to start.
+- Refund policy: paid plans can be refunded in full if requested within 7 calendar days of payment; refunds go back to the original payment method and are usually credited in 5–7 working days. Renewals carry the same 7-day window. Details: https://mentradev.com/#refund
 
 ## Links
 
-- [Landing page](https://mentradev.sbs/): full product overview, plans, and FAQ.
-- [Open the app](https://app.mentradev.sbs/): sign in or create an account.
-- [Enquiry form](https://mentradev.sbs/#enquiry): ask a question or get help getting started.
+- [Landing page](https://mentradev.com/): full product overview, plans, and FAQ.
+- [Open the app](https://app.mentradev.com/): sign in or create an account.
+- [Enquiry form](https://mentradev.com/#enquiry): ask a question or get help getting started.
 
 ## Contact
 
+- Email: chandan.jstech@gmail.com
+- Phone / WhatsApp: +91 87775 96614
+- Based in Kolkata, India
 - [Instagram](https://www.instagram.com/mentra.software)
 - [Facebook](https://www.facebook.com/share/1BVXCGGVoq/)
-- [Telegram channel](https://t.me/+jh-9J7aDORE4ZmE9): updates and announcements.
+- [Telegram channel](https://t.me/mentradev): updates and announcements.
 - [Telegram](https://t.me/mentralive): direct message.
-- WhatsApp: +91 87775 96614

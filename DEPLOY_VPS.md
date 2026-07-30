@@ -5,7 +5,7 @@ Mentra is added **alongside** them as its own subdomain — it must NOT take the
 nginx `default_server`. Stack is native (no Docker): MySQL + Redis + Node API
 (systemd) + LiveKit + nginx, built into `/srv/mentra`.
 
-Assumed subdomain: **app.mentradev.sbs** (change everywhere if different).
+Assumed subdomain: **app.mentradev.com** (change everywhere if different).
 
 ---
 
@@ -31,7 +31,7 @@ can touch prod secrets.
 # from your laptop:
 VPS_HOST=youruser@89.117.58.200 bash sync-to-vps.sh
 # then on the VPS (see "Future redeploys" below):
-cd /opt/mentra && sudo MENTRA_PUBLIC_URL=https://app.mentradev.sbs bash deploy.sh
+cd /opt/mentra && sudo MENTRA_PUBLIC_URL=https://app.mentradev.com bash deploy.sh
 ```
 
 If you rsync by hand instead of the helper, **always** pass `--exclude '.env*'`.
@@ -57,11 +57,16 @@ systemctl is-active mysql redis-server
 
 Two hostnames — the **app** lives on `app.*`, the **landing page** on the root domain.
 Add **A records** (both → the VPS):
-- `app.mentradev.sbs → 89.117.58.200`  (the React app + API)
-- `mentradev.sbs → 89.117.58.200`      (the marketing landing page)
-- `www.mentradev.sbs → 89.117.58.200`  (optional; landing cert covers it)
+- `app.mentradev.com → 89.117.58.200`  (the React app + API)
+- `mentradev.com → 89.117.58.200`      (the marketing landing page)
+- `www.mentradev.com → 89.117.58.200`  (optional; landing cert covers it)
 
-Wait for them to resolve (`dig +short app.mentradev.sbs`, `dig +short mentradev.sbs`).
+Wait for them to resolve (`dig +short app.mentradev.com`, `dig +short mentradev.com`).
+
+A third hostname, `cdn.mentradev.com`, serves the stored files (HLS recordings, thumbnails,
+review videos/images). It is **not** an A record to the VPS — add it in Cloudflare R2 →
+`mentra-recordings` → Settings → Custom Domains, which creates the DNS record for you. It
+must match `R2_PUBLIC_BASE_URL` in `.env`; see `DEPLOY_RECORDINGS.md`.
 
 ## 2. Get the code onto the VPS
 
@@ -83,7 +88,7 @@ Fill every `<PLACEHOLDER>`:
 - `AI_API_KEY` — copy your Groq key from the old `.env`.
 - `LIVEKIT_API_KEY` (any string) + `LIVEKIT_API_SECRET` (`openssl rand -base64 32`) —
   must match `livekit.yaml` in step 5.
-- Confirm `app.mentradev.sbs` is your real subdomain throughout.
+- Confirm `app.mentradev.com` is your real subdomain throughout.
 
 ## 4. Provision everything EXCEPT nginx (safe on a shared host)
 
@@ -92,7 +97,7 @@ The MySQL step is additive (`CREATE … IF NOT EXISTS mentra`) — it won't touc
 
 ```bash
 cd /opt/mentra
-sudo MENTRA_PUBLIC_URL=https://app.mentradev.sbs \
+sudo MENTRA_PUBLIC_URL=https://app.mentradev.com \
      MYSQL_PASSWORD='<same strong password as in .env>' \
      SKIP_NGINX=1 \
      bash provision.sh
@@ -130,11 +135,11 @@ sudo ufw allow 7882/udp     # LiveKit RTC/UDP (media)
 
 ```bash
 cd /opt/mentra
-sed 's/MENTRA_DOMAIN/app.mentradev.sbs/' nginx/mentra.vps.conf \
+sed 's/MENTRA_DOMAIN/app.mentradev.com/' nginx/mentra.vps.conf \
   | sudo tee /etc/nginx/sites-available/mentra.conf >/dev/null
 sudo ln -s /etc/nginx/sites-available/mentra.conf /etc/nginx/sites-enabled/mentra.conf
 sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d app.mentradev.sbs   # issues cert, adds 80→443 redirect
+sudo certbot --nginx -d app.mentradev.com   # issues cert, adds 80→443 redirect
 ```
 (If `certbot certificates` already showed a `*.lootmarket.store` wildcard, you can instead
 add the `listen 443 ssl` + existing cert paths to the vhost by hand and skip certbot.)
@@ -144,19 +149,53 @@ add the `listen 443 ssl` + existing cert paths to the vhost by hand and skip cer
 The landing page is a static file (`landing/index.html`) rsynced to `/srv/mentra/landing`
 by provision/deploy. Its vhost serves that page and proxies `/api/` to the API so the
 onboarding enquiry form posts same-origin. The "Get started" buttons link to
-`https://app.mentradev.sbs`.
+`https://app.mentradev.com`.
 
 ```bash
 cd /opt/mentra
-sed 's/LANDING_DOMAIN/mentradev.sbs/' nginx/landing.vps.conf \
+# NOTE the /g — server_name carries LANDING_DOMAIN twice (apex + www) on one line, and
+# without it the www half stays a literal placeholder and certbot reports
+# "Could not automatically find a matching server block for www.<domain>".
+sed 's/LANDING_DOMAIN/mentradev.com/g' nginx/landing.vps.conf \
   | sudo tee /etc/nginx/sites-available/mentra-landing.conf >/dev/null
 sudo ln -s /etc/nginx/sites-available/mentra-landing.conf /etc/nginx/sites-enabled/mentra-landing.conf
 sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d mentradev.sbs -d www.mentradev.sbs   # cert + 80→443 redirect
+sudo certbot --nginx -d mentradev.com -d www.mentradev.com   # cert + 80→443 redirect
 ```
 
 Enquiries submitted here appear in the **Leads** admin UI (`source: landing`), owned by a
-marketing/admin user. Verify: `curl -i -X POST https://mentradev.sbs/api/v1/enquiries -H 'content-type: application/json' -d '{"name":"Test","email":"t@e.com"}'` → `201`.
+marketing/admin user. Verify: `curl -i -X POST https://mentradev.com/api/v1/enquiries -H 'content-type: application/json' -d '{"name":"Test","email":"t@e.com"}'` → `201`.
+
+## 7b. Legacy domain redirect (mentradev.sbs → mentradev.com)
+
+Mentra previously lived on `mentradev.sbs`. Links shared before the move — `/watch/<id>`
+session links, unfurled social cards, bookmarks — still point there, so a redirect vhost
+keeps them working instead of 404ing.
+
+```bash
+cd /opt/mentra
+sudo certbot certificates    # confirm the .sbs cert names/paths match the file
+sudo cp nginx/sbs-redirect.vps.conf /etc/nginx/sites-available/mentra-sbs-redirect.conf
+sudo ln -s /etc/nginx/sites-available/mentra-sbs-redirect.conf \
+           /etc/nginx/sites-enabled/mentra-sbs-redirect.conf
+sudo nginx -t && sudo systemctl reload nginx
+curl -sI http://app.mentradev.sbs/watch/abc  | grep -i location   # → https://app.mentradev.com/watch/abc
+curl -sI https://app.mentradev.sbs/watch/abc | grep -i location   # same, over TLS
+```
+
+Three things this depends on, all easy to get wrong:
+- **Keep the `.sbs` certs.** TLS completes *before* the 301 is sent, so a deleted or
+  expired cert turns every `https://…sbs/…` link into a browser security warning rather
+  than a redirect. Do not run `certbot delete` on the `.sbs` names until you retire the
+  vhost.
+- **Keep `.sbs` DNS + registration** pointed at this VPS. The redirect is served by this
+  box; if the name stops resolving there is nothing to redirect.
+- **Never build this file by copying `mentra.vps.conf`** — that file declares the
+  `$mentra_is_social_crawler` map at http context, and a duplicate map name makes nginx
+  refuse to start.
+
+Retire it once the access logs go quiet: remove the symlink, reload, then
+`sudo certbot delete --cert-name app.mentradev.sbs` and `--cert-name mentradev.sbs`.
 
 ## 8. Seed baseline data (fresh DB)
 
@@ -172,9 +211,9 @@ pnpm --filter @mentra/api db:seed
 
 ```bash
 systemctl status mentra-api livekit --no-pager
-curl -i https://app.mentradev.sbs/api/v1/health   # adjust to a real health route
+curl -i https://app.mentradev.com/api/v1/health   # adjust to a real health route
 ```
-Open `https://app.mentradev.sbs` in a browser; check login, then a live session
+Open `https://app.mentradev.com` in a browser; check login, then a live session
 (LiveKit media needs UDP 7882 reachable).
 
 ---
@@ -185,7 +224,7 @@ Open `https://app.mentradev.sbs` in a browser; check login, then a live session
 nginx or `livekit.yaml`, so it's safe on the shared host:
 ```bash
 cd /opt/mentra && git pull
-sudo MENTRA_PUBLIC_URL=https://app.mentradev.sbs bash deploy.sh
+sudo MENTRA_PUBLIC_URL=https://app.mentradev.com bash deploy.sh
 ```
 
 

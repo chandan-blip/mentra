@@ -91,8 +91,12 @@ is truly off the table.
 
 - No new inbound ports for egress (it dials out to LiveKit + Redis on loopback, and to R2
   over HTTPS).
-- `R2_PUBLIC_BASE_URL` currently uses the r2.dev dev URL (rate-limited). Swap to a
-  Cloudflare CDN custom domain before production.
+- `R2_PUBLIC_BASE_URL` is the Cloudflare CDN custom domain on the bucket:
+  **`https://cdn.mentradev.com`**. Attach it in R2 → bucket → Settings → Custom Domains
+  (Cloudflare adds the DNS record; it does **not** point at the VPS). Never ship the
+  rate-limited `*.r2.dev` dev URL. Every stored file — HLS recordings, AI thumbnails and
+  review videos/images — is saved to the DB as an absolute URL under this base, so
+  changing it means rewriting existing rows (`rewrite-cdn-urls.sql`).
 
 ## 6. End-to-end test
 
