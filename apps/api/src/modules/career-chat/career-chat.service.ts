@@ -5,6 +5,7 @@ import type {
   SendCareerChatInput,
 } from '@mentra/shared';
 import { AiError } from '../../core/ai.js';
+import { emit } from '../../core/events.js';
 import { logger } from '../../logger.js';
 import { getProfile } from '../user-profile/index.js';
 import * as liveRepo from '../live-session/live-session.repository.js';
@@ -67,6 +68,16 @@ export async function sendMessage(
 ): Promise<CareerChatMessageView[]> {
   await ensureSeeded(userId);
   const studentRow = await repo.insertMessage({ userId, role: 'student', kind: 'text', body: input.body });
+  // Ops visibility (Telegram): the coach is AI, so nobody sees these threads unless a
+  // notification surfaces them. Emitted for the student's turn only — mirroring the
+  // mentor replies back would just be the bot talking to itself.
+  emit('support.message.created', {
+    userId,
+    name: null,
+    email: null,
+    message: input.body,
+    source: 'career-chat',
+  });
   // Only the rows created by THIS turn — the client appends these to its cache rather
   // than reloading the whole thread on every message.
   const created: repo.CareerChatRow[] = [studentRow];

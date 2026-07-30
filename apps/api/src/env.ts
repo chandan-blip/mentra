@@ -99,6 +99,25 @@ const EnvSchema = z.object({
   R2_BUCKET: z.string().default(''),
   R2_PUBLIC_BASE_URL: z.string().default(''),
 
+  // Telegram — one bot serves every configured channel (channels themselves are rows in
+  // `TelegramChannel`, managed in the admin UI). Empty token = notifications and the
+  // webhook are disabled and the app still boots.
+  //
+  // TELEGRAM_WEBHOOK_SECRET is invented by us (openssl rand -hex 32), passed to
+  // setWebhook as `secret_token`, and echoed back by Telegram in the
+  // X-Telegram-Bot-Api-Secret-Token header on every callback. It is the ONLY thing
+  // authenticating that endpoint, so an empty value makes the webhook reject everything
+  // rather than trusting unsigned calls.
+  TELEGRAM_BOT_TOKEN: z.string().default(''),
+  TELEGRAM_WEBHOOK_SECRET: z.string().default(''),
+
+  // SMM panel credentials. These are the FALLBACK: the admin UI (/admin/smm) writes the
+  // panel config to `AppSetting`, and a value stored there wins. Setting them here just
+  // means the panel works before anyone opens the UI. Service ids, quantities and the
+  // enable switches are UI-only — they change too often to live in env.
+  SMM_API_URL: z.string().default(''),
+  SMM_API_KEY: z.string().default(''),
+
   // Marketing — LinkedIn OAuth (optional; empty = feature disabled, app still boots).
   LINKEDIN_CLIENT_ID: z.string().default(''),
   LINKEDIN_CLIENT_SECRET: z.string().default(''),

@@ -590,3 +590,50 @@ model CodingSubmission {
   @@index([userId])
   @@index([questionId, userId])
 }
+
+// Generic key/value settings store for admin-editable operational config that is
+// too small to deserve its own table (Telegram routing switches, SMM panel config).
+// Values are JSON or scalar strings — the owning module decides the shape.
+model AppSetting {
+  key         String   @id
+  value       String?  @db.Text
+  description String?  @db.VarChar(500)
+  updatedAt   DateTime @default(now()) @updatedAt
+}
+
+// A Telegram chat the bot posts to. One bot (TELEGRAM_BOT_TOKEN) can serve many
+// channels: `purpose` separates the private ops channel that receives event
+// notifications from the public channel whose posts get SMM orders.
+model TelegramChannel {
+  id        String   @id @default(cuid())
+  label     String   @db.VarChar(120)
+  chatId    String   @unique @db.VarChar(120) // -100… numeric id, or @publicname
+  purpose   String   @default("notify") @db.VarChar(16) // notify | smm
+  events    String?  @db.Text // JSON array of event keys routed here (notify only)
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([active, sortOrder])
+}
+
+// One row per Telegram post that should receive an SMM order. postUrl is UNIQUE so
+// re-delivery of the same webhook update (or a producer racing the webhook) is a
+// silent no-op instead of a double order. Worked off by a single paced worker.
+model SmmQueue {
+  id               String    @id @default(cuid())
+  postUrl          String    @unique @db.VarChar(500)
+  contextLabel     String    @default("generic") @db.VarChar(64)
+  status           String    @default("pending") @db.VarChar(16) // pending|processing|done|failed
+  attempts         Int       @default(0)
+  placed           Int       @default(0)
+  viewsOrderId     String?   @db.VarChar(64)
+  reactionsOrderId String?   @db.VarChar(64)
+  lastError        String?   @db.Text
+  startedAt        DateTime?
+  processedAt      DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@index([status, createdAt])
+}

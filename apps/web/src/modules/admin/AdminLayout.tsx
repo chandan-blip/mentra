@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Bell, Boxes, CreditCard, Home, LogOut, Settings, ShieldCheck, Users } from 'lucide-react';
+import { Bell, Boxes, CreditCard, Home, LogOut, Send, Settings, ShieldCheck, TrendingUp, Users } from 'lucide-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AppShell, Avatar, IconButton, Sidebar, SidebarItem, TopBar } from '@mentra/ui';
 import { LogoutConfirmModal } from '../../components/LogoutConfirmModal.js';
@@ -19,6 +19,8 @@ const NAV = [
   { key: 'roles', label: 'Roles & permissions', icon: <ShieldCheck />, path: '/admin/roles' },
   { key: 'subscriptions', label: 'Subscriptions', icon: <CreditCard />, path: '/admin/subscriptions' },
   { key: 'modules', label: 'Modules', icon: <Boxes />, path: '/admin/modules' },
+  { key: 'telegram', label: 'Telegram', icon: <Send />, path: '/admin/telegram' },
+  { key: 'smm', label: 'SMM Orders', icon: <TrendingUp />, path: '/admin/smm' },
   { key: 'settings', label: 'Settings', icon: <Settings />, path: '/admin/settings' },
 ];
 
@@ -27,6 +29,8 @@ function activeAdminKey(pathname: string): string {
   if (pathname.startsWith('/admin/roles')) return 'roles';
   if (pathname.startsWith('/admin/subscriptions')) return 'subscriptions';
   if (pathname.startsWith('/admin/modules')) return 'modules';
+  if (pathname.startsWith('/admin/telegram')) return 'telegram';
+  if (pathname.startsWith('/admin/smm')) return 'smm';
   if (pathname.startsWith('/admin/settings')) return 'settings';
   return 'dashboard';
 }

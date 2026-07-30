@@ -517,6 +517,40 @@ exports.Prisma.CodingSubmissionScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AppSettingScalarFieldEnum = {
+  key: 'key',
+  value: 'value',
+  description: 'description',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TelegramChannelScalarFieldEnum = {
+  id: 'id',
+  label: 'label',
+  chatId: 'chatId',
+  purpose: 'purpose',
+  events: 'events',
+  active: 'active',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SmmQueueScalarFieldEnum = {
+  id: 'id',
+  postUrl: 'postUrl',
+  contextLabel: 'contextLabel',
+  status: 'status',
+  attempts: 'attempts',
+  placed: 'placed',
+  viewsOrderId: 'viewsOrderId',
+  reactionsOrderId: 'reactionsOrderId',
+  lastError: 'lastError',
+  startedAt: 'startedAt',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -615,7 +649,10 @@ exports.Prisma.ModelName = {
   LearningTestResult: 'LearningTestResult',
   CodingTask: 'CodingTask',
   CodingQuestion: 'CodingQuestion',
-  CodingSubmission: 'CodingSubmission'
+  CodingSubmission: 'CodingSubmission',
+  AppSetting: 'AppSetting',
+  TelegramChannel: 'TelegramChannel',
+  SmmQueue: 'SmmQueue'
 };
 
 /**

@@ -158,6 +158,21 @@ export type CodingQuestion = $Result.DefaultSelection<Prisma.$CodingQuestionPayl
  * 
  */
 export type CodingSubmission = $Result.DefaultSelection<Prisma.$CodingSubmissionPayload>
+/**
+ * Model AppSetting
+ * 
+ */
+export type AppSetting = $Result.DefaultSelection<Prisma.$AppSettingPayload>
+/**
+ * Model TelegramChannel
+ * 
+ */
+export type TelegramChannel = $Result.DefaultSelection<Prisma.$TelegramChannelPayload>
+/**
+ * Model SmmQueue
+ * 
+ */
+export type SmmQueue = $Result.DefaultSelection<Prisma.$SmmQueuePayload>
 
 /**
  * Enums
@@ -663,6 +678,36 @@ export class PrismaClient<
     * ```
     */
   get codingSubmission(): Prisma.CodingSubmissionDelegate<ExtArgs>;
+
+  /**
+   * `prisma.appSetting`: Exposes CRUD operations for the **AppSetting** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AppSettings
+    * const appSettings = await prisma.appSetting.findMany()
+    * ```
+    */
+  get appSetting(): Prisma.AppSettingDelegate<ExtArgs>;
+
+  /**
+   * `prisma.telegramChannel`: Exposes CRUD operations for the **TelegramChannel** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TelegramChannels
+    * const telegramChannels = await prisma.telegramChannel.findMany()
+    * ```
+    */
+  get telegramChannel(): Prisma.TelegramChannelDelegate<ExtArgs>;
+
+  /**
+   * `prisma.smmQueue`: Exposes CRUD operations for the **SmmQueue** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SmmQueues
+    * const smmQueues = await prisma.smmQueue.findMany()
+    * ```
+    */
+  get smmQueue(): Prisma.SmmQueueDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -1132,7 +1177,10 @@ export namespace Prisma {
     LearningTestResult: 'LearningTestResult',
     CodingTask: 'CodingTask',
     CodingQuestion: 'CodingQuestion',
-    CodingSubmission: 'CodingSubmission'
+    CodingSubmission: 'CodingSubmission',
+    AppSetting: 'AppSetting',
+    TelegramChannel: 'TelegramChannel',
+    SmmQueue: 'SmmQueue'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1148,7 +1196,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "module" | "accessRole" | "rolePermission" | "plan" | "planModule" | "recommendationLog" | "studentProfile" | "notificationPreferences" | "featureFlag" | "authIdentity" | "session" | "liveSession" | "studentReview" | "sessionParticipant" | "chatMessage" | "watchProgress" | "job" | "lead" | "leadList" | "leadListMember" | "leadCall" | "learningCategory" | "learningTest" | "learningTestQuestion" | "learningTestResult" | "codingTask" | "codingQuestion" | "codingSubmission"
+      modelProps: "user" | "module" | "accessRole" | "rolePermission" | "plan" | "planModule" | "recommendationLog" | "studentProfile" | "notificationPreferences" | "featureFlag" | "authIdentity" | "session" | "liveSession" | "studentReview" | "sessionParticipant" | "chatMessage" | "watchProgress" | "job" | "lead" | "leadList" | "leadListMember" | "leadCall" | "learningCategory" | "learningTest" | "learningTestQuestion" | "learningTestResult" | "codingTask" | "codingQuestion" | "codingSubmission" | "appSetting" | "telegramChannel" | "smmQueue"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3063,6 +3111,204 @@ export namespace Prisma {
           count: {
             args: Prisma.CodingSubmissionCountArgs<ExtArgs>
             result: $Utils.Optional<CodingSubmissionCountAggregateOutputType> | number
+          }
+        }
+      }
+      AppSetting: {
+        payload: Prisma.$AppSettingPayload<ExtArgs>
+        fields: Prisma.AppSettingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AppSettingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AppSettingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingPayload>
+          }
+          findFirst: {
+            args: Prisma.AppSettingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AppSettingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingPayload>
+          }
+          findMany: {
+            args: Prisma.AppSettingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingPayload>[]
+          }
+          create: {
+            args: Prisma.AppSettingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingPayload>
+          }
+          createMany: {
+            args: Prisma.AppSettingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.AppSettingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingPayload>
+          }
+          update: {
+            args: Prisma.AppSettingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingPayload>
+          }
+          deleteMany: {
+            args: Prisma.AppSettingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AppSettingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.AppSettingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingPayload>
+          }
+          aggregate: {
+            args: Prisma.AppSettingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAppSetting>
+          }
+          groupBy: {
+            args: Prisma.AppSettingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AppSettingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AppSettingCountArgs<ExtArgs>
+            result: $Utils.Optional<AppSettingCountAggregateOutputType> | number
+          }
+        }
+      }
+      TelegramChannel: {
+        payload: Prisma.$TelegramChannelPayload<ExtArgs>
+        fields: Prisma.TelegramChannelFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TelegramChannelFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramChannelPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TelegramChannelFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramChannelPayload>
+          }
+          findFirst: {
+            args: Prisma.TelegramChannelFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramChannelPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TelegramChannelFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramChannelPayload>
+          }
+          findMany: {
+            args: Prisma.TelegramChannelFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramChannelPayload>[]
+          }
+          create: {
+            args: Prisma.TelegramChannelCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramChannelPayload>
+          }
+          createMany: {
+            args: Prisma.TelegramChannelCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.TelegramChannelDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramChannelPayload>
+          }
+          update: {
+            args: Prisma.TelegramChannelUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramChannelPayload>
+          }
+          deleteMany: {
+            args: Prisma.TelegramChannelDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TelegramChannelUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.TelegramChannelUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TelegramChannelPayload>
+          }
+          aggregate: {
+            args: Prisma.TelegramChannelAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTelegramChannel>
+          }
+          groupBy: {
+            args: Prisma.TelegramChannelGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TelegramChannelGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TelegramChannelCountArgs<ExtArgs>
+            result: $Utils.Optional<TelegramChannelCountAggregateOutputType> | number
+          }
+        }
+      }
+      SmmQueue: {
+        payload: Prisma.$SmmQueuePayload<ExtArgs>
+        fields: Prisma.SmmQueueFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SmmQueueFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SmmQueuePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SmmQueueFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SmmQueuePayload>
+          }
+          findFirst: {
+            args: Prisma.SmmQueueFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SmmQueuePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SmmQueueFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SmmQueuePayload>
+          }
+          findMany: {
+            args: Prisma.SmmQueueFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SmmQueuePayload>[]
+          }
+          create: {
+            args: Prisma.SmmQueueCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SmmQueuePayload>
+          }
+          createMany: {
+            args: Prisma.SmmQueueCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.SmmQueueDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SmmQueuePayload>
+          }
+          update: {
+            args: Prisma.SmmQueueUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SmmQueuePayload>
+          }
+          deleteMany: {
+            args: Prisma.SmmQueueDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SmmQueueUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.SmmQueueUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SmmQueuePayload>
+          }
+          aggregate: {
+            args: Prisma.SmmQueueAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSmmQueue>
+          }
+          groupBy: {
+            args: Prisma.SmmQueueGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SmmQueueGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SmmQueueCountArgs<ExtArgs>
+            result: $Utils.Optional<SmmQueueCountAggregateOutputType> | number
           }
         }
       }
@@ -30033,6 +30279,2684 @@ export namespace Prisma {
 
 
   /**
+   * Model AppSetting
+   */
+
+  export type AggregateAppSetting = {
+    _count: AppSettingCountAggregateOutputType | null
+    _min: AppSettingMinAggregateOutputType | null
+    _max: AppSettingMaxAggregateOutputType | null
+  }
+
+  export type AppSettingMinAggregateOutputType = {
+    key: string | null
+    value: string | null
+    description: string | null
+    updatedAt: Date | null
+  }
+
+  export type AppSettingMaxAggregateOutputType = {
+    key: string | null
+    value: string | null
+    description: string | null
+    updatedAt: Date | null
+  }
+
+  export type AppSettingCountAggregateOutputType = {
+    key: number
+    value: number
+    description: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AppSettingMinAggregateInputType = {
+    key?: true
+    value?: true
+    description?: true
+    updatedAt?: true
+  }
+
+  export type AppSettingMaxAggregateInputType = {
+    key?: true
+    value?: true
+    description?: true
+    updatedAt?: true
+  }
+
+  export type AppSettingCountAggregateInputType = {
+    key?: true
+    value?: true
+    description?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AppSettingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AppSetting to aggregate.
+     */
+    where?: AppSettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingOrderByWithRelationInput | AppSettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AppSettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AppSettings
+    **/
+    _count?: true | AppSettingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AppSettingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AppSettingMaxAggregateInputType
+  }
+
+  export type GetAppSettingAggregateType<T extends AppSettingAggregateArgs> = {
+        [P in keyof T & keyof AggregateAppSetting]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAppSetting[P]>
+      : GetScalarType<T[P], AggregateAppSetting[P]>
+  }
+
+
+
+
+  export type AppSettingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AppSettingWhereInput
+    orderBy?: AppSettingOrderByWithAggregationInput | AppSettingOrderByWithAggregationInput[]
+    by: AppSettingScalarFieldEnum[] | AppSettingScalarFieldEnum
+    having?: AppSettingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AppSettingCountAggregateInputType | true
+    _min?: AppSettingMinAggregateInputType
+    _max?: AppSettingMaxAggregateInputType
+  }
+
+  export type AppSettingGroupByOutputType = {
+    key: string
+    value: string | null
+    description: string | null
+    updatedAt: Date
+    _count: AppSettingCountAggregateOutputType | null
+    _min: AppSettingMinAggregateOutputType | null
+    _max: AppSettingMaxAggregateOutputType | null
+  }
+
+  type GetAppSettingGroupByPayload<T extends AppSettingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AppSettingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AppSettingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AppSettingGroupByOutputType[P]>
+            : GetScalarType<T[P], AppSettingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AppSettingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    key?: boolean
+    value?: boolean
+    description?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["appSetting"]>
+
+
+  export type AppSettingSelectScalar = {
+    key?: boolean
+    value?: boolean
+    description?: boolean
+    updatedAt?: boolean
+  }
+
+
+  export type $AppSettingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AppSetting"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      key: string
+      value: string | null
+      description: string | null
+      updatedAt: Date
+    }, ExtArgs["result"]["appSetting"]>
+    composites: {}
+  }
+
+  type AppSettingGetPayload<S extends boolean | null | undefined | AppSettingDefaultArgs> = $Result.GetResult<Prisma.$AppSettingPayload, S>
+
+  type AppSettingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<AppSettingFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: AppSettingCountAggregateInputType | true
+    }
+
+  export interface AppSettingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AppSetting'], meta: { name: 'AppSetting' } }
+    /**
+     * Find zero or one AppSetting that matches the filter.
+     * @param {AppSettingFindUniqueArgs} args - Arguments to find a AppSetting
+     * @example
+     * // Get one AppSetting
+     * const appSetting = await prisma.appSetting.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AppSettingFindUniqueArgs>(args: SelectSubset<T, AppSettingFindUniqueArgs<ExtArgs>>): Prisma__AppSettingClient<$Result.GetResult<Prisma.$AppSettingPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one AppSetting that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {AppSettingFindUniqueOrThrowArgs} args - Arguments to find a AppSetting
+     * @example
+     * // Get one AppSetting
+     * const appSetting = await prisma.appSetting.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AppSettingFindUniqueOrThrowArgs>(args: SelectSubset<T, AppSettingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AppSettingClient<$Result.GetResult<Prisma.$AppSettingPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first AppSetting that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingFindFirstArgs} args - Arguments to find a AppSetting
+     * @example
+     * // Get one AppSetting
+     * const appSetting = await prisma.appSetting.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AppSettingFindFirstArgs>(args?: SelectSubset<T, AppSettingFindFirstArgs<ExtArgs>>): Prisma__AppSettingClient<$Result.GetResult<Prisma.$AppSettingPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first AppSetting that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingFindFirstOrThrowArgs} args - Arguments to find a AppSetting
+     * @example
+     * // Get one AppSetting
+     * const appSetting = await prisma.appSetting.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AppSettingFindFirstOrThrowArgs>(args?: SelectSubset<T, AppSettingFindFirstOrThrowArgs<ExtArgs>>): Prisma__AppSettingClient<$Result.GetResult<Prisma.$AppSettingPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more AppSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AppSettings
+     * const appSettings = await prisma.appSetting.findMany()
+     * 
+     * // Get first 10 AppSettings
+     * const appSettings = await prisma.appSetting.findMany({ take: 10 })
+     * 
+     * // Only select the `key`
+     * const appSettingWithKeyOnly = await prisma.appSetting.findMany({ select: { key: true } })
+     * 
+     */
+    findMany<T extends AppSettingFindManyArgs>(args?: SelectSubset<T, AppSettingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppSettingPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a AppSetting.
+     * @param {AppSettingCreateArgs} args - Arguments to create a AppSetting.
+     * @example
+     * // Create one AppSetting
+     * const AppSetting = await prisma.appSetting.create({
+     *   data: {
+     *     // ... data to create a AppSetting
+     *   }
+     * })
+     * 
+     */
+    create<T extends AppSettingCreateArgs>(args: SelectSubset<T, AppSettingCreateArgs<ExtArgs>>): Prisma__AppSettingClient<$Result.GetResult<Prisma.$AppSettingPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many AppSettings.
+     * @param {AppSettingCreateManyArgs} args - Arguments to create many AppSettings.
+     * @example
+     * // Create many AppSettings
+     * const appSetting = await prisma.appSetting.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AppSettingCreateManyArgs>(args?: SelectSubset<T, AppSettingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a AppSetting.
+     * @param {AppSettingDeleteArgs} args - Arguments to delete one AppSetting.
+     * @example
+     * // Delete one AppSetting
+     * const AppSetting = await prisma.appSetting.delete({
+     *   where: {
+     *     // ... filter to delete one AppSetting
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AppSettingDeleteArgs>(args: SelectSubset<T, AppSettingDeleteArgs<ExtArgs>>): Prisma__AppSettingClient<$Result.GetResult<Prisma.$AppSettingPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one AppSetting.
+     * @param {AppSettingUpdateArgs} args - Arguments to update one AppSetting.
+     * @example
+     * // Update one AppSetting
+     * const appSetting = await prisma.appSetting.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AppSettingUpdateArgs>(args: SelectSubset<T, AppSettingUpdateArgs<ExtArgs>>): Prisma__AppSettingClient<$Result.GetResult<Prisma.$AppSettingPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more AppSettings.
+     * @param {AppSettingDeleteManyArgs} args - Arguments to filter AppSettings to delete.
+     * @example
+     * // Delete a few AppSettings
+     * const { count } = await prisma.appSetting.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AppSettingDeleteManyArgs>(args?: SelectSubset<T, AppSettingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AppSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AppSettings
+     * const appSetting = await prisma.appSetting.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AppSettingUpdateManyArgs>(args: SelectSubset<T, AppSettingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one AppSetting.
+     * @param {AppSettingUpsertArgs} args - Arguments to update or create a AppSetting.
+     * @example
+     * // Update or create a AppSetting
+     * const appSetting = await prisma.appSetting.upsert({
+     *   create: {
+     *     // ... data to create a AppSetting
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AppSetting we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AppSettingUpsertArgs>(args: SelectSubset<T, AppSettingUpsertArgs<ExtArgs>>): Prisma__AppSettingClient<$Result.GetResult<Prisma.$AppSettingPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of AppSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingCountArgs} args - Arguments to filter AppSettings to count.
+     * @example
+     * // Count the number of AppSettings
+     * const count = await prisma.appSetting.count({
+     *   where: {
+     *     // ... the filter for the AppSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends AppSettingCountArgs>(
+      args?: Subset<T, AppSettingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AppSettingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AppSetting.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AppSettingAggregateArgs>(args: Subset<T, AppSettingAggregateArgs>): Prisma.PrismaPromise<GetAppSettingAggregateType<T>>
+
+    /**
+     * Group by AppSetting.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AppSettingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AppSettingGroupByArgs['orderBy'] }
+        : { orderBy?: AppSettingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AppSettingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAppSettingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AppSetting model
+   */
+  readonly fields: AppSettingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AppSetting.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AppSettingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AppSetting model
+   */ 
+  interface AppSettingFieldRefs {
+    readonly key: FieldRef<"AppSetting", 'String'>
+    readonly value: FieldRef<"AppSetting", 'String'>
+    readonly description: FieldRef<"AppSetting", 'String'>
+    readonly updatedAt: FieldRef<"AppSetting", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AppSetting findUnique
+   */
+  export type AppSettingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSetting
+     */
+    select?: AppSettingSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSetting to fetch.
+     */
+    where: AppSettingWhereUniqueInput
+  }
+
+  /**
+   * AppSetting findUniqueOrThrow
+   */
+  export type AppSettingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSetting
+     */
+    select?: AppSettingSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSetting to fetch.
+     */
+    where: AppSettingWhereUniqueInput
+  }
+
+  /**
+   * AppSetting findFirst
+   */
+  export type AppSettingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSetting
+     */
+    select?: AppSettingSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSetting to fetch.
+     */
+    where?: AppSettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingOrderByWithRelationInput | AppSettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AppSettings.
+     */
+    cursor?: AppSettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppSettings.
+     */
+    distinct?: AppSettingScalarFieldEnum | AppSettingScalarFieldEnum[]
+  }
+
+  /**
+   * AppSetting findFirstOrThrow
+   */
+  export type AppSettingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSetting
+     */
+    select?: AppSettingSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSetting to fetch.
+     */
+    where?: AppSettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingOrderByWithRelationInput | AppSettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AppSettings.
+     */
+    cursor?: AppSettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppSettings.
+     */
+    distinct?: AppSettingScalarFieldEnum | AppSettingScalarFieldEnum[]
+  }
+
+  /**
+   * AppSetting findMany
+   */
+  export type AppSettingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSetting
+     */
+    select?: AppSettingSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where?: AppSettingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingOrderByWithRelationInput | AppSettingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AppSettings.
+     */
+    cursor?: AppSettingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    distinct?: AppSettingScalarFieldEnum | AppSettingScalarFieldEnum[]
+  }
+
+  /**
+   * AppSetting create
+   */
+  export type AppSettingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSetting
+     */
+    select?: AppSettingSelect<ExtArgs> | null
+    /**
+     * The data needed to create a AppSetting.
+     */
+    data: XOR<AppSettingCreateInput, AppSettingUncheckedCreateInput>
+  }
+
+  /**
+   * AppSetting createMany
+   */
+  export type AppSettingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AppSettings.
+     */
+    data: AppSettingCreateManyInput | AppSettingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AppSetting update
+   */
+  export type AppSettingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSetting
+     */
+    select?: AppSettingSelect<ExtArgs> | null
+    /**
+     * The data needed to update a AppSetting.
+     */
+    data: XOR<AppSettingUpdateInput, AppSettingUncheckedUpdateInput>
+    /**
+     * Choose, which AppSetting to update.
+     */
+    where: AppSettingWhereUniqueInput
+  }
+
+  /**
+   * AppSetting updateMany
+   */
+  export type AppSettingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AppSettings.
+     */
+    data: XOR<AppSettingUpdateManyMutationInput, AppSettingUncheckedUpdateManyInput>
+    /**
+     * Filter which AppSettings to update
+     */
+    where?: AppSettingWhereInput
+  }
+
+  /**
+   * AppSetting upsert
+   */
+  export type AppSettingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSetting
+     */
+    select?: AppSettingSelect<ExtArgs> | null
+    /**
+     * The filter to search for the AppSetting to update in case it exists.
+     */
+    where: AppSettingWhereUniqueInput
+    /**
+     * In case the AppSetting found by the `where` argument doesn't exist, create a new AppSetting with this data.
+     */
+    create: XOR<AppSettingCreateInput, AppSettingUncheckedCreateInput>
+    /**
+     * In case the AppSetting was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AppSettingUpdateInput, AppSettingUncheckedUpdateInput>
+  }
+
+  /**
+   * AppSetting delete
+   */
+  export type AppSettingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSetting
+     */
+    select?: AppSettingSelect<ExtArgs> | null
+    /**
+     * Filter which AppSetting to delete.
+     */
+    where: AppSettingWhereUniqueInput
+  }
+
+  /**
+   * AppSetting deleteMany
+   */
+  export type AppSettingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AppSettings to delete
+     */
+    where?: AppSettingWhereInput
+  }
+
+  /**
+   * AppSetting without action
+   */
+  export type AppSettingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSetting
+     */
+    select?: AppSettingSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TelegramChannel
+   */
+
+  export type AggregateTelegramChannel = {
+    _count: TelegramChannelCountAggregateOutputType | null
+    _avg: TelegramChannelAvgAggregateOutputType | null
+    _sum: TelegramChannelSumAggregateOutputType | null
+    _min: TelegramChannelMinAggregateOutputType | null
+    _max: TelegramChannelMaxAggregateOutputType | null
+  }
+
+  export type TelegramChannelAvgAggregateOutputType = {
+    sortOrder: number | null
+  }
+
+  export type TelegramChannelSumAggregateOutputType = {
+    sortOrder: number | null
+  }
+
+  export type TelegramChannelMinAggregateOutputType = {
+    id: string | null
+    label: string | null
+    chatId: string | null
+    purpose: string | null
+    events: string | null
+    active: boolean | null
+    sortOrder: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TelegramChannelMaxAggregateOutputType = {
+    id: string | null
+    label: string | null
+    chatId: string | null
+    purpose: string | null
+    events: string | null
+    active: boolean | null
+    sortOrder: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TelegramChannelCountAggregateOutputType = {
+    id: number
+    label: number
+    chatId: number
+    purpose: number
+    events: number
+    active: number
+    sortOrder: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TelegramChannelAvgAggregateInputType = {
+    sortOrder?: true
+  }
+
+  export type TelegramChannelSumAggregateInputType = {
+    sortOrder?: true
+  }
+
+  export type TelegramChannelMinAggregateInputType = {
+    id?: true
+    label?: true
+    chatId?: true
+    purpose?: true
+    events?: true
+    active?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TelegramChannelMaxAggregateInputType = {
+    id?: true
+    label?: true
+    chatId?: true
+    purpose?: true
+    events?: true
+    active?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TelegramChannelCountAggregateInputType = {
+    id?: true
+    label?: true
+    chatId?: true
+    purpose?: true
+    events?: true
+    active?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TelegramChannelAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TelegramChannel to aggregate.
+     */
+    where?: TelegramChannelWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TelegramChannels to fetch.
+     */
+    orderBy?: TelegramChannelOrderByWithRelationInput | TelegramChannelOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TelegramChannelWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TelegramChannels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TelegramChannels.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TelegramChannels
+    **/
+    _count?: true | TelegramChannelCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TelegramChannelAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TelegramChannelSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TelegramChannelMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TelegramChannelMaxAggregateInputType
+  }
+
+  export type GetTelegramChannelAggregateType<T extends TelegramChannelAggregateArgs> = {
+        [P in keyof T & keyof AggregateTelegramChannel]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTelegramChannel[P]>
+      : GetScalarType<T[P], AggregateTelegramChannel[P]>
+  }
+
+
+
+
+  export type TelegramChannelGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TelegramChannelWhereInput
+    orderBy?: TelegramChannelOrderByWithAggregationInput | TelegramChannelOrderByWithAggregationInput[]
+    by: TelegramChannelScalarFieldEnum[] | TelegramChannelScalarFieldEnum
+    having?: TelegramChannelScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TelegramChannelCountAggregateInputType | true
+    _avg?: TelegramChannelAvgAggregateInputType
+    _sum?: TelegramChannelSumAggregateInputType
+    _min?: TelegramChannelMinAggregateInputType
+    _max?: TelegramChannelMaxAggregateInputType
+  }
+
+  export type TelegramChannelGroupByOutputType = {
+    id: string
+    label: string
+    chatId: string
+    purpose: string
+    events: string | null
+    active: boolean
+    sortOrder: number
+    createdAt: Date
+    updatedAt: Date
+    _count: TelegramChannelCountAggregateOutputType | null
+    _avg: TelegramChannelAvgAggregateOutputType | null
+    _sum: TelegramChannelSumAggregateOutputType | null
+    _min: TelegramChannelMinAggregateOutputType | null
+    _max: TelegramChannelMaxAggregateOutputType | null
+  }
+
+  type GetTelegramChannelGroupByPayload<T extends TelegramChannelGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TelegramChannelGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TelegramChannelGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TelegramChannelGroupByOutputType[P]>
+            : GetScalarType<T[P], TelegramChannelGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TelegramChannelSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    label?: boolean
+    chatId?: boolean
+    purpose?: boolean
+    events?: boolean
+    active?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["telegramChannel"]>
+
+
+  export type TelegramChannelSelectScalar = {
+    id?: boolean
+    label?: boolean
+    chatId?: boolean
+    purpose?: boolean
+    events?: boolean
+    active?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+
+  export type $TelegramChannelPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TelegramChannel"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      label: string
+      chatId: string
+      purpose: string
+      events: string | null
+      active: boolean
+      sortOrder: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["telegramChannel"]>
+    composites: {}
+  }
+
+  type TelegramChannelGetPayload<S extends boolean | null | undefined | TelegramChannelDefaultArgs> = $Result.GetResult<Prisma.$TelegramChannelPayload, S>
+
+  type TelegramChannelCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<TelegramChannelFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: TelegramChannelCountAggregateInputType | true
+    }
+
+  export interface TelegramChannelDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TelegramChannel'], meta: { name: 'TelegramChannel' } }
+    /**
+     * Find zero or one TelegramChannel that matches the filter.
+     * @param {TelegramChannelFindUniqueArgs} args - Arguments to find a TelegramChannel
+     * @example
+     * // Get one TelegramChannel
+     * const telegramChannel = await prisma.telegramChannel.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TelegramChannelFindUniqueArgs>(args: SelectSubset<T, TelegramChannelFindUniqueArgs<ExtArgs>>): Prisma__TelegramChannelClient<$Result.GetResult<Prisma.$TelegramChannelPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one TelegramChannel that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {TelegramChannelFindUniqueOrThrowArgs} args - Arguments to find a TelegramChannel
+     * @example
+     * // Get one TelegramChannel
+     * const telegramChannel = await prisma.telegramChannel.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TelegramChannelFindUniqueOrThrowArgs>(args: SelectSubset<T, TelegramChannelFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TelegramChannelClient<$Result.GetResult<Prisma.$TelegramChannelPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first TelegramChannel that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramChannelFindFirstArgs} args - Arguments to find a TelegramChannel
+     * @example
+     * // Get one TelegramChannel
+     * const telegramChannel = await prisma.telegramChannel.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TelegramChannelFindFirstArgs>(args?: SelectSubset<T, TelegramChannelFindFirstArgs<ExtArgs>>): Prisma__TelegramChannelClient<$Result.GetResult<Prisma.$TelegramChannelPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first TelegramChannel that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramChannelFindFirstOrThrowArgs} args - Arguments to find a TelegramChannel
+     * @example
+     * // Get one TelegramChannel
+     * const telegramChannel = await prisma.telegramChannel.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TelegramChannelFindFirstOrThrowArgs>(args?: SelectSubset<T, TelegramChannelFindFirstOrThrowArgs<ExtArgs>>): Prisma__TelegramChannelClient<$Result.GetResult<Prisma.$TelegramChannelPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more TelegramChannels that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramChannelFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TelegramChannels
+     * const telegramChannels = await prisma.telegramChannel.findMany()
+     * 
+     * // Get first 10 TelegramChannels
+     * const telegramChannels = await prisma.telegramChannel.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const telegramChannelWithIdOnly = await prisma.telegramChannel.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TelegramChannelFindManyArgs>(args?: SelectSubset<T, TelegramChannelFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TelegramChannelPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a TelegramChannel.
+     * @param {TelegramChannelCreateArgs} args - Arguments to create a TelegramChannel.
+     * @example
+     * // Create one TelegramChannel
+     * const TelegramChannel = await prisma.telegramChannel.create({
+     *   data: {
+     *     // ... data to create a TelegramChannel
+     *   }
+     * })
+     * 
+     */
+    create<T extends TelegramChannelCreateArgs>(args: SelectSubset<T, TelegramChannelCreateArgs<ExtArgs>>): Prisma__TelegramChannelClient<$Result.GetResult<Prisma.$TelegramChannelPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many TelegramChannels.
+     * @param {TelegramChannelCreateManyArgs} args - Arguments to create many TelegramChannels.
+     * @example
+     * // Create many TelegramChannels
+     * const telegramChannel = await prisma.telegramChannel.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TelegramChannelCreateManyArgs>(args?: SelectSubset<T, TelegramChannelCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a TelegramChannel.
+     * @param {TelegramChannelDeleteArgs} args - Arguments to delete one TelegramChannel.
+     * @example
+     * // Delete one TelegramChannel
+     * const TelegramChannel = await prisma.telegramChannel.delete({
+     *   where: {
+     *     // ... filter to delete one TelegramChannel
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TelegramChannelDeleteArgs>(args: SelectSubset<T, TelegramChannelDeleteArgs<ExtArgs>>): Prisma__TelegramChannelClient<$Result.GetResult<Prisma.$TelegramChannelPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one TelegramChannel.
+     * @param {TelegramChannelUpdateArgs} args - Arguments to update one TelegramChannel.
+     * @example
+     * // Update one TelegramChannel
+     * const telegramChannel = await prisma.telegramChannel.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TelegramChannelUpdateArgs>(args: SelectSubset<T, TelegramChannelUpdateArgs<ExtArgs>>): Prisma__TelegramChannelClient<$Result.GetResult<Prisma.$TelegramChannelPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more TelegramChannels.
+     * @param {TelegramChannelDeleteManyArgs} args - Arguments to filter TelegramChannels to delete.
+     * @example
+     * // Delete a few TelegramChannels
+     * const { count } = await prisma.telegramChannel.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TelegramChannelDeleteManyArgs>(args?: SelectSubset<T, TelegramChannelDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TelegramChannels.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramChannelUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TelegramChannels
+     * const telegramChannel = await prisma.telegramChannel.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TelegramChannelUpdateManyArgs>(args: SelectSubset<T, TelegramChannelUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one TelegramChannel.
+     * @param {TelegramChannelUpsertArgs} args - Arguments to update or create a TelegramChannel.
+     * @example
+     * // Update or create a TelegramChannel
+     * const telegramChannel = await prisma.telegramChannel.upsert({
+     *   create: {
+     *     // ... data to create a TelegramChannel
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TelegramChannel we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TelegramChannelUpsertArgs>(args: SelectSubset<T, TelegramChannelUpsertArgs<ExtArgs>>): Prisma__TelegramChannelClient<$Result.GetResult<Prisma.$TelegramChannelPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of TelegramChannels.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramChannelCountArgs} args - Arguments to filter TelegramChannels to count.
+     * @example
+     * // Count the number of TelegramChannels
+     * const count = await prisma.telegramChannel.count({
+     *   where: {
+     *     // ... the filter for the TelegramChannels we want to count
+     *   }
+     * })
+    **/
+    count<T extends TelegramChannelCountArgs>(
+      args?: Subset<T, TelegramChannelCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TelegramChannelCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TelegramChannel.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramChannelAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TelegramChannelAggregateArgs>(args: Subset<T, TelegramChannelAggregateArgs>): Prisma.PrismaPromise<GetTelegramChannelAggregateType<T>>
+
+    /**
+     * Group by TelegramChannel.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TelegramChannelGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TelegramChannelGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TelegramChannelGroupByArgs['orderBy'] }
+        : { orderBy?: TelegramChannelGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TelegramChannelGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTelegramChannelGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TelegramChannel model
+   */
+  readonly fields: TelegramChannelFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TelegramChannel.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TelegramChannelClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TelegramChannel model
+   */ 
+  interface TelegramChannelFieldRefs {
+    readonly id: FieldRef<"TelegramChannel", 'String'>
+    readonly label: FieldRef<"TelegramChannel", 'String'>
+    readonly chatId: FieldRef<"TelegramChannel", 'String'>
+    readonly purpose: FieldRef<"TelegramChannel", 'String'>
+    readonly events: FieldRef<"TelegramChannel", 'String'>
+    readonly active: FieldRef<"TelegramChannel", 'Boolean'>
+    readonly sortOrder: FieldRef<"TelegramChannel", 'Int'>
+    readonly createdAt: FieldRef<"TelegramChannel", 'DateTime'>
+    readonly updatedAt: FieldRef<"TelegramChannel", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TelegramChannel findUnique
+   */
+  export type TelegramChannelFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramChannel
+     */
+    select?: TelegramChannelSelect<ExtArgs> | null
+    /**
+     * Filter, which TelegramChannel to fetch.
+     */
+    where: TelegramChannelWhereUniqueInput
+  }
+
+  /**
+   * TelegramChannel findUniqueOrThrow
+   */
+  export type TelegramChannelFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramChannel
+     */
+    select?: TelegramChannelSelect<ExtArgs> | null
+    /**
+     * Filter, which TelegramChannel to fetch.
+     */
+    where: TelegramChannelWhereUniqueInput
+  }
+
+  /**
+   * TelegramChannel findFirst
+   */
+  export type TelegramChannelFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramChannel
+     */
+    select?: TelegramChannelSelect<ExtArgs> | null
+    /**
+     * Filter, which TelegramChannel to fetch.
+     */
+    where?: TelegramChannelWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TelegramChannels to fetch.
+     */
+    orderBy?: TelegramChannelOrderByWithRelationInput | TelegramChannelOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TelegramChannels.
+     */
+    cursor?: TelegramChannelWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TelegramChannels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TelegramChannels.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TelegramChannels.
+     */
+    distinct?: TelegramChannelScalarFieldEnum | TelegramChannelScalarFieldEnum[]
+  }
+
+  /**
+   * TelegramChannel findFirstOrThrow
+   */
+  export type TelegramChannelFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramChannel
+     */
+    select?: TelegramChannelSelect<ExtArgs> | null
+    /**
+     * Filter, which TelegramChannel to fetch.
+     */
+    where?: TelegramChannelWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TelegramChannels to fetch.
+     */
+    orderBy?: TelegramChannelOrderByWithRelationInput | TelegramChannelOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TelegramChannels.
+     */
+    cursor?: TelegramChannelWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TelegramChannels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TelegramChannels.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TelegramChannels.
+     */
+    distinct?: TelegramChannelScalarFieldEnum | TelegramChannelScalarFieldEnum[]
+  }
+
+  /**
+   * TelegramChannel findMany
+   */
+  export type TelegramChannelFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramChannel
+     */
+    select?: TelegramChannelSelect<ExtArgs> | null
+    /**
+     * Filter, which TelegramChannels to fetch.
+     */
+    where?: TelegramChannelWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TelegramChannels to fetch.
+     */
+    orderBy?: TelegramChannelOrderByWithRelationInput | TelegramChannelOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TelegramChannels.
+     */
+    cursor?: TelegramChannelWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TelegramChannels from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TelegramChannels.
+     */
+    skip?: number
+    distinct?: TelegramChannelScalarFieldEnum | TelegramChannelScalarFieldEnum[]
+  }
+
+  /**
+   * TelegramChannel create
+   */
+  export type TelegramChannelCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramChannel
+     */
+    select?: TelegramChannelSelect<ExtArgs> | null
+    /**
+     * The data needed to create a TelegramChannel.
+     */
+    data: XOR<TelegramChannelCreateInput, TelegramChannelUncheckedCreateInput>
+  }
+
+  /**
+   * TelegramChannel createMany
+   */
+  export type TelegramChannelCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TelegramChannels.
+     */
+    data: TelegramChannelCreateManyInput | TelegramChannelCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TelegramChannel update
+   */
+  export type TelegramChannelUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramChannel
+     */
+    select?: TelegramChannelSelect<ExtArgs> | null
+    /**
+     * The data needed to update a TelegramChannel.
+     */
+    data: XOR<TelegramChannelUpdateInput, TelegramChannelUncheckedUpdateInput>
+    /**
+     * Choose, which TelegramChannel to update.
+     */
+    where: TelegramChannelWhereUniqueInput
+  }
+
+  /**
+   * TelegramChannel updateMany
+   */
+  export type TelegramChannelUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TelegramChannels.
+     */
+    data: XOR<TelegramChannelUpdateManyMutationInput, TelegramChannelUncheckedUpdateManyInput>
+    /**
+     * Filter which TelegramChannels to update
+     */
+    where?: TelegramChannelWhereInput
+  }
+
+  /**
+   * TelegramChannel upsert
+   */
+  export type TelegramChannelUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramChannel
+     */
+    select?: TelegramChannelSelect<ExtArgs> | null
+    /**
+     * The filter to search for the TelegramChannel to update in case it exists.
+     */
+    where: TelegramChannelWhereUniqueInput
+    /**
+     * In case the TelegramChannel found by the `where` argument doesn't exist, create a new TelegramChannel with this data.
+     */
+    create: XOR<TelegramChannelCreateInput, TelegramChannelUncheckedCreateInput>
+    /**
+     * In case the TelegramChannel was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TelegramChannelUpdateInput, TelegramChannelUncheckedUpdateInput>
+  }
+
+  /**
+   * TelegramChannel delete
+   */
+  export type TelegramChannelDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramChannel
+     */
+    select?: TelegramChannelSelect<ExtArgs> | null
+    /**
+     * Filter which TelegramChannel to delete.
+     */
+    where: TelegramChannelWhereUniqueInput
+  }
+
+  /**
+   * TelegramChannel deleteMany
+   */
+  export type TelegramChannelDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TelegramChannels to delete
+     */
+    where?: TelegramChannelWhereInput
+  }
+
+  /**
+   * TelegramChannel without action
+   */
+  export type TelegramChannelDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TelegramChannel
+     */
+    select?: TelegramChannelSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SmmQueue
+   */
+
+  export type AggregateSmmQueue = {
+    _count: SmmQueueCountAggregateOutputType | null
+    _avg: SmmQueueAvgAggregateOutputType | null
+    _sum: SmmQueueSumAggregateOutputType | null
+    _min: SmmQueueMinAggregateOutputType | null
+    _max: SmmQueueMaxAggregateOutputType | null
+  }
+
+  export type SmmQueueAvgAggregateOutputType = {
+    attempts: number | null
+    placed: number | null
+  }
+
+  export type SmmQueueSumAggregateOutputType = {
+    attempts: number | null
+    placed: number | null
+  }
+
+  export type SmmQueueMinAggregateOutputType = {
+    id: string | null
+    postUrl: string | null
+    contextLabel: string | null
+    status: string | null
+    attempts: number | null
+    placed: number | null
+    viewsOrderId: string | null
+    reactionsOrderId: string | null
+    lastError: string | null
+    startedAt: Date | null
+    processedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type SmmQueueMaxAggregateOutputType = {
+    id: string | null
+    postUrl: string | null
+    contextLabel: string | null
+    status: string | null
+    attempts: number | null
+    placed: number | null
+    viewsOrderId: string | null
+    reactionsOrderId: string | null
+    lastError: string | null
+    startedAt: Date | null
+    processedAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type SmmQueueCountAggregateOutputType = {
+    id: number
+    postUrl: number
+    contextLabel: number
+    status: number
+    attempts: number
+    placed: number
+    viewsOrderId: number
+    reactionsOrderId: number
+    lastError: number
+    startedAt: number
+    processedAt: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SmmQueueAvgAggregateInputType = {
+    attempts?: true
+    placed?: true
+  }
+
+  export type SmmQueueSumAggregateInputType = {
+    attempts?: true
+    placed?: true
+  }
+
+  export type SmmQueueMinAggregateInputType = {
+    id?: true
+    postUrl?: true
+    contextLabel?: true
+    status?: true
+    attempts?: true
+    placed?: true
+    viewsOrderId?: true
+    reactionsOrderId?: true
+    lastError?: true
+    startedAt?: true
+    processedAt?: true
+    createdAt?: true
+  }
+
+  export type SmmQueueMaxAggregateInputType = {
+    id?: true
+    postUrl?: true
+    contextLabel?: true
+    status?: true
+    attempts?: true
+    placed?: true
+    viewsOrderId?: true
+    reactionsOrderId?: true
+    lastError?: true
+    startedAt?: true
+    processedAt?: true
+    createdAt?: true
+  }
+
+  export type SmmQueueCountAggregateInputType = {
+    id?: true
+    postUrl?: true
+    contextLabel?: true
+    status?: true
+    attempts?: true
+    placed?: true
+    viewsOrderId?: true
+    reactionsOrderId?: true
+    lastError?: true
+    startedAt?: true
+    processedAt?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SmmQueueAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SmmQueue to aggregate.
+     */
+    where?: SmmQueueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SmmQueues to fetch.
+     */
+    orderBy?: SmmQueueOrderByWithRelationInput | SmmQueueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SmmQueueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SmmQueues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SmmQueues.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SmmQueues
+    **/
+    _count?: true | SmmQueueCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SmmQueueAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SmmQueueSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SmmQueueMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SmmQueueMaxAggregateInputType
+  }
+
+  export type GetSmmQueueAggregateType<T extends SmmQueueAggregateArgs> = {
+        [P in keyof T & keyof AggregateSmmQueue]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSmmQueue[P]>
+      : GetScalarType<T[P], AggregateSmmQueue[P]>
+  }
+
+
+
+
+  export type SmmQueueGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SmmQueueWhereInput
+    orderBy?: SmmQueueOrderByWithAggregationInput | SmmQueueOrderByWithAggregationInput[]
+    by: SmmQueueScalarFieldEnum[] | SmmQueueScalarFieldEnum
+    having?: SmmQueueScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SmmQueueCountAggregateInputType | true
+    _avg?: SmmQueueAvgAggregateInputType
+    _sum?: SmmQueueSumAggregateInputType
+    _min?: SmmQueueMinAggregateInputType
+    _max?: SmmQueueMaxAggregateInputType
+  }
+
+  export type SmmQueueGroupByOutputType = {
+    id: string
+    postUrl: string
+    contextLabel: string
+    status: string
+    attempts: number
+    placed: number
+    viewsOrderId: string | null
+    reactionsOrderId: string | null
+    lastError: string | null
+    startedAt: Date | null
+    processedAt: Date | null
+    createdAt: Date
+    _count: SmmQueueCountAggregateOutputType | null
+    _avg: SmmQueueAvgAggregateOutputType | null
+    _sum: SmmQueueSumAggregateOutputType | null
+    _min: SmmQueueMinAggregateOutputType | null
+    _max: SmmQueueMaxAggregateOutputType | null
+  }
+
+  type GetSmmQueueGroupByPayload<T extends SmmQueueGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SmmQueueGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SmmQueueGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SmmQueueGroupByOutputType[P]>
+            : GetScalarType<T[P], SmmQueueGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SmmQueueSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    postUrl?: boolean
+    contextLabel?: boolean
+    status?: boolean
+    attempts?: boolean
+    placed?: boolean
+    viewsOrderId?: boolean
+    reactionsOrderId?: boolean
+    lastError?: boolean
+    startedAt?: boolean
+    processedAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["smmQueue"]>
+
+
+  export type SmmQueueSelectScalar = {
+    id?: boolean
+    postUrl?: boolean
+    contextLabel?: boolean
+    status?: boolean
+    attempts?: boolean
+    placed?: boolean
+    viewsOrderId?: boolean
+    reactionsOrderId?: boolean
+    lastError?: boolean
+    startedAt?: boolean
+    processedAt?: boolean
+    createdAt?: boolean
+  }
+
+
+  export type $SmmQueuePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SmmQueue"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      postUrl: string
+      contextLabel: string
+      status: string
+      attempts: number
+      placed: number
+      viewsOrderId: string | null
+      reactionsOrderId: string | null
+      lastError: string | null
+      startedAt: Date | null
+      processedAt: Date | null
+      createdAt: Date
+    }, ExtArgs["result"]["smmQueue"]>
+    composites: {}
+  }
+
+  type SmmQueueGetPayload<S extends boolean | null | undefined | SmmQueueDefaultArgs> = $Result.GetResult<Prisma.$SmmQueuePayload, S>
+
+  type SmmQueueCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<SmmQueueFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: SmmQueueCountAggregateInputType | true
+    }
+
+  export interface SmmQueueDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SmmQueue'], meta: { name: 'SmmQueue' } }
+    /**
+     * Find zero or one SmmQueue that matches the filter.
+     * @param {SmmQueueFindUniqueArgs} args - Arguments to find a SmmQueue
+     * @example
+     * // Get one SmmQueue
+     * const smmQueue = await prisma.smmQueue.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SmmQueueFindUniqueArgs>(args: SelectSubset<T, SmmQueueFindUniqueArgs<ExtArgs>>): Prisma__SmmQueueClient<$Result.GetResult<Prisma.$SmmQueuePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one SmmQueue that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {SmmQueueFindUniqueOrThrowArgs} args - Arguments to find a SmmQueue
+     * @example
+     * // Get one SmmQueue
+     * const smmQueue = await prisma.smmQueue.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SmmQueueFindUniqueOrThrowArgs>(args: SelectSubset<T, SmmQueueFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SmmQueueClient<$Result.GetResult<Prisma.$SmmQueuePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first SmmQueue that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SmmQueueFindFirstArgs} args - Arguments to find a SmmQueue
+     * @example
+     * // Get one SmmQueue
+     * const smmQueue = await prisma.smmQueue.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SmmQueueFindFirstArgs>(args?: SelectSubset<T, SmmQueueFindFirstArgs<ExtArgs>>): Prisma__SmmQueueClient<$Result.GetResult<Prisma.$SmmQueuePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first SmmQueue that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SmmQueueFindFirstOrThrowArgs} args - Arguments to find a SmmQueue
+     * @example
+     * // Get one SmmQueue
+     * const smmQueue = await prisma.smmQueue.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SmmQueueFindFirstOrThrowArgs>(args?: SelectSubset<T, SmmQueueFindFirstOrThrowArgs<ExtArgs>>): Prisma__SmmQueueClient<$Result.GetResult<Prisma.$SmmQueuePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more SmmQueues that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SmmQueueFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SmmQueues
+     * const smmQueues = await prisma.smmQueue.findMany()
+     * 
+     * // Get first 10 SmmQueues
+     * const smmQueues = await prisma.smmQueue.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const smmQueueWithIdOnly = await prisma.smmQueue.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SmmQueueFindManyArgs>(args?: SelectSubset<T, SmmQueueFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SmmQueuePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a SmmQueue.
+     * @param {SmmQueueCreateArgs} args - Arguments to create a SmmQueue.
+     * @example
+     * // Create one SmmQueue
+     * const SmmQueue = await prisma.smmQueue.create({
+     *   data: {
+     *     // ... data to create a SmmQueue
+     *   }
+     * })
+     * 
+     */
+    create<T extends SmmQueueCreateArgs>(args: SelectSubset<T, SmmQueueCreateArgs<ExtArgs>>): Prisma__SmmQueueClient<$Result.GetResult<Prisma.$SmmQueuePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many SmmQueues.
+     * @param {SmmQueueCreateManyArgs} args - Arguments to create many SmmQueues.
+     * @example
+     * // Create many SmmQueues
+     * const smmQueue = await prisma.smmQueue.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SmmQueueCreateManyArgs>(args?: SelectSubset<T, SmmQueueCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a SmmQueue.
+     * @param {SmmQueueDeleteArgs} args - Arguments to delete one SmmQueue.
+     * @example
+     * // Delete one SmmQueue
+     * const SmmQueue = await prisma.smmQueue.delete({
+     *   where: {
+     *     // ... filter to delete one SmmQueue
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SmmQueueDeleteArgs>(args: SelectSubset<T, SmmQueueDeleteArgs<ExtArgs>>): Prisma__SmmQueueClient<$Result.GetResult<Prisma.$SmmQueuePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one SmmQueue.
+     * @param {SmmQueueUpdateArgs} args - Arguments to update one SmmQueue.
+     * @example
+     * // Update one SmmQueue
+     * const smmQueue = await prisma.smmQueue.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SmmQueueUpdateArgs>(args: SelectSubset<T, SmmQueueUpdateArgs<ExtArgs>>): Prisma__SmmQueueClient<$Result.GetResult<Prisma.$SmmQueuePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more SmmQueues.
+     * @param {SmmQueueDeleteManyArgs} args - Arguments to filter SmmQueues to delete.
+     * @example
+     * // Delete a few SmmQueues
+     * const { count } = await prisma.smmQueue.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SmmQueueDeleteManyArgs>(args?: SelectSubset<T, SmmQueueDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SmmQueues.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SmmQueueUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SmmQueues
+     * const smmQueue = await prisma.smmQueue.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SmmQueueUpdateManyArgs>(args: SelectSubset<T, SmmQueueUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one SmmQueue.
+     * @param {SmmQueueUpsertArgs} args - Arguments to update or create a SmmQueue.
+     * @example
+     * // Update or create a SmmQueue
+     * const smmQueue = await prisma.smmQueue.upsert({
+     *   create: {
+     *     // ... data to create a SmmQueue
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SmmQueue we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SmmQueueUpsertArgs>(args: SelectSubset<T, SmmQueueUpsertArgs<ExtArgs>>): Prisma__SmmQueueClient<$Result.GetResult<Prisma.$SmmQueuePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of SmmQueues.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SmmQueueCountArgs} args - Arguments to filter SmmQueues to count.
+     * @example
+     * // Count the number of SmmQueues
+     * const count = await prisma.smmQueue.count({
+     *   where: {
+     *     // ... the filter for the SmmQueues we want to count
+     *   }
+     * })
+    **/
+    count<T extends SmmQueueCountArgs>(
+      args?: Subset<T, SmmQueueCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SmmQueueCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SmmQueue.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SmmQueueAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SmmQueueAggregateArgs>(args: Subset<T, SmmQueueAggregateArgs>): Prisma.PrismaPromise<GetSmmQueueAggregateType<T>>
+
+    /**
+     * Group by SmmQueue.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SmmQueueGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SmmQueueGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SmmQueueGroupByArgs['orderBy'] }
+        : { orderBy?: SmmQueueGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SmmQueueGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSmmQueueGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SmmQueue model
+   */
+  readonly fields: SmmQueueFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SmmQueue.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SmmQueueClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SmmQueue model
+   */ 
+  interface SmmQueueFieldRefs {
+    readonly id: FieldRef<"SmmQueue", 'String'>
+    readonly postUrl: FieldRef<"SmmQueue", 'String'>
+    readonly contextLabel: FieldRef<"SmmQueue", 'String'>
+    readonly status: FieldRef<"SmmQueue", 'String'>
+    readonly attempts: FieldRef<"SmmQueue", 'Int'>
+    readonly placed: FieldRef<"SmmQueue", 'Int'>
+    readonly viewsOrderId: FieldRef<"SmmQueue", 'String'>
+    readonly reactionsOrderId: FieldRef<"SmmQueue", 'String'>
+    readonly lastError: FieldRef<"SmmQueue", 'String'>
+    readonly startedAt: FieldRef<"SmmQueue", 'DateTime'>
+    readonly processedAt: FieldRef<"SmmQueue", 'DateTime'>
+    readonly createdAt: FieldRef<"SmmQueue", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SmmQueue findUnique
+   */
+  export type SmmQueueFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmmQueue
+     */
+    select?: SmmQueueSelect<ExtArgs> | null
+    /**
+     * Filter, which SmmQueue to fetch.
+     */
+    where: SmmQueueWhereUniqueInput
+  }
+
+  /**
+   * SmmQueue findUniqueOrThrow
+   */
+  export type SmmQueueFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmmQueue
+     */
+    select?: SmmQueueSelect<ExtArgs> | null
+    /**
+     * Filter, which SmmQueue to fetch.
+     */
+    where: SmmQueueWhereUniqueInput
+  }
+
+  /**
+   * SmmQueue findFirst
+   */
+  export type SmmQueueFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmmQueue
+     */
+    select?: SmmQueueSelect<ExtArgs> | null
+    /**
+     * Filter, which SmmQueue to fetch.
+     */
+    where?: SmmQueueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SmmQueues to fetch.
+     */
+    orderBy?: SmmQueueOrderByWithRelationInput | SmmQueueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SmmQueues.
+     */
+    cursor?: SmmQueueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SmmQueues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SmmQueues.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SmmQueues.
+     */
+    distinct?: SmmQueueScalarFieldEnum | SmmQueueScalarFieldEnum[]
+  }
+
+  /**
+   * SmmQueue findFirstOrThrow
+   */
+  export type SmmQueueFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmmQueue
+     */
+    select?: SmmQueueSelect<ExtArgs> | null
+    /**
+     * Filter, which SmmQueue to fetch.
+     */
+    where?: SmmQueueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SmmQueues to fetch.
+     */
+    orderBy?: SmmQueueOrderByWithRelationInput | SmmQueueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SmmQueues.
+     */
+    cursor?: SmmQueueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SmmQueues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SmmQueues.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SmmQueues.
+     */
+    distinct?: SmmQueueScalarFieldEnum | SmmQueueScalarFieldEnum[]
+  }
+
+  /**
+   * SmmQueue findMany
+   */
+  export type SmmQueueFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmmQueue
+     */
+    select?: SmmQueueSelect<ExtArgs> | null
+    /**
+     * Filter, which SmmQueues to fetch.
+     */
+    where?: SmmQueueWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SmmQueues to fetch.
+     */
+    orderBy?: SmmQueueOrderByWithRelationInput | SmmQueueOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SmmQueues.
+     */
+    cursor?: SmmQueueWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SmmQueues from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SmmQueues.
+     */
+    skip?: number
+    distinct?: SmmQueueScalarFieldEnum | SmmQueueScalarFieldEnum[]
+  }
+
+  /**
+   * SmmQueue create
+   */
+  export type SmmQueueCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmmQueue
+     */
+    select?: SmmQueueSelect<ExtArgs> | null
+    /**
+     * The data needed to create a SmmQueue.
+     */
+    data: XOR<SmmQueueCreateInput, SmmQueueUncheckedCreateInput>
+  }
+
+  /**
+   * SmmQueue createMany
+   */
+  export type SmmQueueCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SmmQueues.
+     */
+    data: SmmQueueCreateManyInput | SmmQueueCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SmmQueue update
+   */
+  export type SmmQueueUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmmQueue
+     */
+    select?: SmmQueueSelect<ExtArgs> | null
+    /**
+     * The data needed to update a SmmQueue.
+     */
+    data: XOR<SmmQueueUpdateInput, SmmQueueUncheckedUpdateInput>
+    /**
+     * Choose, which SmmQueue to update.
+     */
+    where: SmmQueueWhereUniqueInput
+  }
+
+  /**
+   * SmmQueue updateMany
+   */
+  export type SmmQueueUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SmmQueues.
+     */
+    data: XOR<SmmQueueUpdateManyMutationInput, SmmQueueUncheckedUpdateManyInput>
+    /**
+     * Filter which SmmQueues to update
+     */
+    where?: SmmQueueWhereInput
+  }
+
+  /**
+   * SmmQueue upsert
+   */
+  export type SmmQueueUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmmQueue
+     */
+    select?: SmmQueueSelect<ExtArgs> | null
+    /**
+     * The filter to search for the SmmQueue to update in case it exists.
+     */
+    where: SmmQueueWhereUniqueInput
+    /**
+     * In case the SmmQueue found by the `where` argument doesn't exist, create a new SmmQueue with this data.
+     */
+    create: XOR<SmmQueueCreateInput, SmmQueueUncheckedCreateInput>
+    /**
+     * In case the SmmQueue was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SmmQueueUpdateInput, SmmQueueUncheckedUpdateInput>
+  }
+
+  /**
+   * SmmQueue delete
+   */
+  export type SmmQueueDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmmQueue
+     */
+    select?: SmmQueueSelect<ExtArgs> | null
+    /**
+     * Filter which SmmQueue to delete.
+     */
+    where: SmmQueueWhereUniqueInput
+  }
+
+  /**
+   * SmmQueue deleteMany
+   */
+  export type SmmQueueDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SmmQueues to delete
+     */
+    where?: SmmQueueWhereInput
+  }
+
+  /**
+   * SmmQueue without action
+   */
+  export type SmmQueueDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SmmQueue
+     */
+    select?: SmmQueueSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -30526,6 +33450,49 @@ export namespace Prisma {
   };
 
   export type CodingSubmissionScalarFieldEnum = (typeof CodingSubmissionScalarFieldEnum)[keyof typeof CodingSubmissionScalarFieldEnum]
+
+
+  export const AppSettingScalarFieldEnum: {
+    key: 'key',
+    value: 'value',
+    description: 'description',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AppSettingScalarFieldEnum = (typeof AppSettingScalarFieldEnum)[keyof typeof AppSettingScalarFieldEnum]
+
+
+  export const TelegramChannelScalarFieldEnum: {
+    id: 'id',
+    label: 'label',
+    chatId: 'chatId',
+    purpose: 'purpose',
+    events: 'events',
+    active: 'active',
+    sortOrder: 'sortOrder',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TelegramChannelScalarFieldEnum = (typeof TelegramChannelScalarFieldEnum)[keyof typeof TelegramChannelScalarFieldEnum]
+
+
+  export const SmmQueueScalarFieldEnum: {
+    id: 'id',
+    postUrl: 'postUrl',
+    contextLabel: 'contextLabel',
+    status: 'status',
+    attempts: 'attempts',
+    placed: 'placed',
+    viewsOrderId: 'viewsOrderId',
+    reactionsOrderId: 'reactionsOrderId',
+    lastError: 'lastError',
+    startedAt: 'startedAt',
+    processedAt: 'processedAt',
+    createdAt: 'createdAt'
+  };
+
+  export type SmmQueueScalarFieldEnum = (typeof SmmQueueScalarFieldEnum)[keyof typeof SmmQueueScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -33041,6 +36008,216 @@ export namespace Prisma {
     aiFeedback?: StringNullableWithAggregatesFilter<"CodingSubmission"> | string | null
     aiModel?: StringNullableWithAggregatesFilter<"CodingSubmission"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"CodingSubmission"> | Date | string
+  }
+
+  export type AppSettingWhereInput = {
+    AND?: AppSettingWhereInput | AppSettingWhereInput[]
+    OR?: AppSettingWhereInput[]
+    NOT?: AppSettingWhereInput | AppSettingWhereInput[]
+    key?: StringFilter<"AppSetting"> | string
+    value?: StringNullableFilter<"AppSetting"> | string | null
+    description?: StringNullableFilter<"AppSetting"> | string | null
+    updatedAt?: DateTimeFilter<"AppSetting"> | Date | string
+  }
+
+  export type AppSettingOrderByWithRelationInput = {
+    key?: SortOrder
+    value?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AppSettingWhereUniqueInput = Prisma.AtLeast<{
+    key?: string
+    AND?: AppSettingWhereInput | AppSettingWhereInput[]
+    OR?: AppSettingWhereInput[]
+    NOT?: AppSettingWhereInput | AppSettingWhereInput[]
+    value?: StringNullableFilter<"AppSetting"> | string | null
+    description?: StringNullableFilter<"AppSetting"> | string | null
+    updatedAt?: DateTimeFilter<"AppSetting"> | Date | string
+  }, "key">
+
+  export type AppSettingOrderByWithAggregationInput = {
+    key?: SortOrder
+    value?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+    _count?: AppSettingCountOrderByAggregateInput
+    _max?: AppSettingMaxOrderByAggregateInput
+    _min?: AppSettingMinOrderByAggregateInput
+  }
+
+  export type AppSettingScalarWhereWithAggregatesInput = {
+    AND?: AppSettingScalarWhereWithAggregatesInput | AppSettingScalarWhereWithAggregatesInput[]
+    OR?: AppSettingScalarWhereWithAggregatesInput[]
+    NOT?: AppSettingScalarWhereWithAggregatesInput | AppSettingScalarWhereWithAggregatesInput[]
+    key?: StringWithAggregatesFilter<"AppSetting"> | string
+    value?: StringNullableWithAggregatesFilter<"AppSetting"> | string | null
+    description?: StringNullableWithAggregatesFilter<"AppSetting"> | string | null
+    updatedAt?: DateTimeWithAggregatesFilter<"AppSetting"> | Date | string
+  }
+
+  export type TelegramChannelWhereInput = {
+    AND?: TelegramChannelWhereInput | TelegramChannelWhereInput[]
+    OR?: TelegramChannelWhereInput[]
+    NOT?: TelegramChannelWhereInput | TelegramChannelWhereInput[]
+    id?: StringFilter<"TelegramChannel"> | string
+    label?: StringFilter<"TelegramChannel"> | string
+    chatId?: StringFilter<"TelegramChannel"> | string
+    purpose?: StringFilter<"TelegramChannel"> | string
+    events?: StringNullableFilter<"TelegramChannel"> | string | null
+    active?: BoolFilter<"TelegramChannel"> | boolean
+    sortOrder?: IntFilter<"TelegramChannel"> | number
+    createdAt?: DateTimeFilter<"TelegramChannel"> | Date | string
+    updatedAt?: DateTimeFilter<"TelegramChannel"> | Date | string
+  }
+
+  export type TelegramChannelOrderByWithRelationInput = {
+    id?: SortOrder
+    label?: SortOrder
+    chatId?: SortOrder
+    purpose?: SortOrder
+    events?: SortOrderInput | SortOrder
+    active?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TelegramChannelWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    chatId?: string
+    AND?: TelegramChannelWhereInput | TelegramChannelWhereInput[]
+    OR?: TelegramChannelWhereInput[]
+    NOT?: TelegramChannelWhereInput | TelegramChannelWhereInput[]
+    label?: StringFilter<"TelegramChannel"> | string
+    purpose?: StringFilter<"TelegramChannel"> | string
+    events?: StringNullableFilter<"TelegramChannel"> | string | null
+    active?: BoolFilter<"TelegramChannel"> | boolean
+    sortOrder?: IntFilter<"TelegramChannel"> | number
+    createdAt?: DateTimeFilter<"TelegramChannel"> | Date | string
+    updatedAt?: DateTimeFilter<"TelegramChannel"> | Date | string
+  }, "id" | "chatId">
+
+  export type TelegramChannelOrderByWithAggregationInput = {
+    id?: SortOrder
+    label?: SortOrder
+    chatId?: SortOrder
+    purpose?: SortOrder
+    events?: SortOrderInput | SortOrder
+    active?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TelegramChannelCountOrderByAggregateInput
+    _avg?: TelegramChannelAvgOrderByAggregateInput
+    _max?: TelegramChannelMaxOrderByAggregateInput
+    _min?: TelegramChannelMinOrderByAggregateInput
+    _sum?: TelegramChannelSumOrderByAggregateInput
+  }
+
+  export type TelegramChannelScalarWhereWithAggregatesInput = {
+    AND?: TelegramChannelScalarWhereWithAggregatesInput | TelegramChannelScalarWhereWithAggregatesInput[]
+    OR?: TelegramChannelScalarWhereWithAggregatesInput[]
+    NOT?: TelegramChannelScalarWhereWithAggregatesInput | TelegramChannelScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TelegramChannel"> | string
+    label?: StringWithAggregatesFilter<"TelegramChannel"> | string
+    chatId?: StringWithAggregatesFilter<"TelegramChannel"> | string
+    purpose?: StringWithAggregatesFilter<"TelegramChannel"> | string
+    events?: StringNullableWithAggregatesFilter<"TelegramChannel"> | string | null
+    active?: BoolWithAggregatesFilter<"TelegramChannel"> | boolean
+    sortOrder?: IntWithAggregatesFilter<"TelegramChannel"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"TelegramChannel"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TelegramChannel"> | Date | string
+  }
+
+  export type SmmQueueWhereInput = {
+    AND?: SmmQueueWhereInput | SmmQueueWhereInput[]
+    OR?: SmmQueueWhereInput[]
+    NOT?: SmmQueueWhereInput | SmmQueueWhereInput[]
+    id?: StringFilter<"SmmQueue"> | string
+    postUrl?: StringFilter<"SmmQueue"> | string
+    contextLabel?: StringFilter<"SmmQueue"> | string
+    status?: StringFilter<"SmmQueue"> | string
+    attempts?: IntFilter<"SmmQueue"> | number
+    placed?: IntFilter<"SmmQueue"> | number
+    viewsOrderId?: StringNullableFilter<"SmmQueue"> | string | null
+    reactionsOrderId?: StringNullableFilter<"SmmQueue"> | string | null
+    lastError?: StringNullableFilter<"SmmQueue"> | string | null
+    startedAt?: DateTimeNullableFilter<"SmmQueue"> | Date | string | null
+    processedAt?: DateTimeNullableFilter<"SmmQueue"> | Date | string | null
+    createdAt?: DateTimeFilter<"SmmQueue"> | Date | string
+  }
+
+  export type SmmQueueOrderByWithRelationInput = {
+    id?: SortOrder
+    postUrl?: SortOrder
+    contextLabel?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    placed?: SortOrder
+    viewsOrderId?: SortOrderInput | SortOrder
+    reactionsOrderId?: SortOrderInput | SortOrder
+    lastError?: SortOrderInput | SortOrder
+    startedAt?: SortOrderInput | SortOrder
+    processedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SmmQueueWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    postUrl?: string
+    AND?: SmmQueueWhereInput | SmmQueueWhereInput[]
+    OR?: SmmQueueWhereInput[]
+    NOT?: SmmQueueWhereInput | SmmQueueWhereInput[]
+    contextLabel?: StringFilter<"SmmQueue"> | string
+    status?: StringFilter<"SmmQueue"> | string
+    attempts?: IntFilter<"SmmQueue"> | number
+    placed?: IntFilter<"SmmQueue"> | number
+    viewsOrderId?: StringNullableFilter<"SmmQueue"> | string | null
+    reactionsOrderId?: StringNullableFilter<"SmmQueue"> | string | null
+    lastError?: StringNullableFilter<"SmmQueue"> | string | null
+    startedAt?: DateTimeNullableFilter<"SmmQueue"> | Date | string | null
+    processedAt?: DateTimeNullableFilter<"SmmQueue"> | Date | string | null
+    createdAt?: DateTimeFilter<"SmmQueue"> | Date | string
+  }, "id" | "postUrl">
+
+  export type SmmQueueOrderByWithAggregationInput = {
+    id?: SortOrder
+    postUrl?: SortOrder
+    contextLabel?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    placed?: SortOrder
+    viewsOrderId?: SortOrderInput | SortOrder
+    reactionsOrderId?: SortOrderInput | SortOrder
+    lastError?: SortOrderInput | SortOrder
+    startedAt?: SortOrderInput | SortOrder
+    processedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: SmmQueueCountOrderByAggregateInput
+    _avg?: SmmQueueAvgOrderByAggregateInput
+    _max?: SmmQueueMaxOrderByAggregateInput
+    _min?: SmmQueueMinOrderByAggregateInput
+    _sum?: SmmQueueSumOrderByAggregateInput
+  }
+
+  export type SmmQueueScalarWhereWithAggregatesInput = {
+    AND?: SmmQueueScalarWhereWithAggregatesInput | SmmQueueScalarWhereWithAggregatesInput[]
+    OR?: SmmQueueScalarWhereWithAggregatesInput[]
+    NOT?: SmmQueueScalarWhereWithAggregatesInput | SmmQueueScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SmmQueue"> | string
+    postUrl?: StringWithAggregatesFilter<"SmmQueue"> | string
+    contextLabel?: StringWithAggregatesFilter<"SmmQueue"> | string
+    status?: StringWithAggregatesFilter<"SmmQueue"> | string
+    attempts?: IntWithAggregatesFilter<"SmmQueue"> | number
+    placed?: IntWithAggregatesFilter<"SmmQueue"> | number
+    viewsOrderId?: StringNullableWithAggregatesFilter<"SmmQueue"> | string | null
+    reactionsOrderId?: StringNullableWithAggregatesFilter<"SmmQueue"> | string | null
+    lastError?: StringNullableWithAggregatesFilter<"SmmQueue"> | string | null
+    startedAt?: DateTimeNullableWithAggregatesFilter<"SmmQueue"> | Date | string | null
+    processedAt?: DateTimeNullableWithAggregatesFilter<"SmmQueue"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"SmmQueue"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -35820,6 +38997,244 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AppSettingCreateInput = {
+    key: string
+    value?: string | null
+    description?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type AppSettingUncheckedCreateInput = {
+    key: string
+    value?: string | null
+    description?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type AppSettingUpdateInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppSettingUncheckedUpdateInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppSettingCreateManyInput = {
+    key: string
+    value?: string | null
+    description?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type AppSettingUpdateManyMutationInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppSettingUncheckedUpdateManyInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    value?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TelegramChannelCreateInput = {
+    id?: string
+    label: string
+    chatId: string
+    purpose?: string
+    events?: string | null
+    active?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TelegramChannelUncheckedCreateInput = {
+    id?: string
+    label: string
+    chatId: string
+    purpose?: string
+    events?: string | null
+    active?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TelegramChannelUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    chatId?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    events?: NullableStringFieldUpdateOperationsInput | string | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TelegramChannelUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    chatId?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    events?: NullableStringFieldUpdateOperationsInput | string | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TelegramChannelCreateManyInput = {
+    id?: string
+    label: string
+    chatId: string
+    purpose?: string
+    events?: string | null
+    active?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TelegramChannelUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    chatId?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    events?: NullableStringFieldUpdateOperationsInput | string | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TelegramChannelUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    chatId?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    events?: NullableStringFieldUpdateOperationsInput | string | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SmmQueueCreateInput = {
+    id?: string
+    postUrl: string
+    contextLabel?: string
+    status?: string
+    attempts?: number
+    placed?: number
+    viewsOrderId?: string | null
+    reactionsOrderId?: string | null
+    lastError?: string | null
+    startedAt?: Date | string | null
+    processedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type SmmQueueUncheckedCreateInput = {
+    id?: string
+    postUrl: string
+    contextLabel?: string
+    status?: string
+    attempts?: number
+    placed?: number
+    viewsOrderId?: string | null
+    reactionsOrderId?: string | null
+    lastError?: string | null
+    startedAt?: Date | string | null
+    processedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type SmmQueueUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postUrl?: StringFieldUpdateOperationsInput | string
+    contextLabel?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    placed?: IntFieldUpdateOperationsInput | number
+    viewsOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    reactionsOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SmmQueueUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postUrl?: StringFieldUpdateOperationsInput | string
+    contextLabel?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    placed?: IntFieldUpdateOperationsInput | number
+    viewsOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    reactionsOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SmmQueueCreateManyInput = {
+    id?: string
+    postUrl: string
+    contextLabel?: string
+    status?: string
+    attempts?: number
+    placed?: number
+    viewsOrderId?: string | null
+    reactionsOrderId?: string | null
+    lastError?: string | null
+    startedAt?: Date | string | null
+    processedAt?: Date | string | null
+    createdAt?: Date | string
+  }
+
+  export type SmmQueueUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postUrl?: StringFieldUpdateOperationsInput | string
+    contextLabel?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    placed?: IntFieldUpdateOperationsInput | number
+    viewsOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    reactionsOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SmmQueueUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postUrl?: StringFieldUpdateOperationsInput | string
+    contextLabel?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    attempts?: IntFieldUpdateOperationsInput | number
+    placed?: IntFieldUpdateOperationsInput | number
+    viewsOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    reactionsOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[]
@@ -37578,6 +40993,126 @@ export namespace Prisma {
     percent?: SortOrder
   }
 
+  export type AppSettingCountOrderByAggregateInput = {
+    key?: SortOrder
+    value?: SortOrder
+    description?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AppSettingMaxOrderByAggregateInput = {
+    key?: SortOrder
+    value?: SortOrder
+    description?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AppSettingMinOrderByAggregateInput = {
+    key?: SortOrder
+    value?: SortOrder
+    description?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TelegramChannelCountOrderByAggregateInput = {
+    id?: SortOrder
+    label?: SortOrder
+    chatId?: SortOrder
+    purpose?: SortOrder
+    events?: SortOrder
+    active?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TelegramChannelAvgOrderByAggregateInput = {
+    sortOrder?: SortOrder
+  }
+
+  export type TelegramChannelMaxOrderByAggregateInput = {
+    id?: SortOrder
+    label?: SortOrder
+    chatId?: SortOrder
+    purpose?: SortOrder
+    events?: SortOrder
+    active?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TelegramChannelMinOrderByAggregateInput = {
+    id?: SortOrder
+    label?: SortOrder
+    chatId?: SortOrder
+    purpose?: SortOrder
+    events?: SortOrder
+    active?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TelegramChannelSumOrderByAggregateInput = {
+    sortOrder?: SortOrder
+  }
+
+  export type SmmQueueCountOrderByAggregateInput = {
+    id?: SortOrder
+    postUrl?: SortOrder
+    contextLabel?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    placed?: SortOrder
+    viewsOrderId?: SortOrder
+    reactionsOrderId?: SortOrder
+    lastError?: SortOrder
+    startedAt?: SortOrder
+    processedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SmmQueueAvgOrderByAggregateInput = {
+    attempts?: SortOrder
+    placed?: SortOrder
+  }
+
+  export type SmmQueueMaxOrderByAggregateInput = {
+    id?: SortOrder
+    postUrl?: SortOrder
+    contextLabel?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    placed?: SortOrder
+    viewsOrderId?: SortOrder
+    reactionsOrderId?: SortOrder
+    lastError?: SortOrder
+    startedAt?: SortOrder
+    processedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SmmQueueMinOrderByAggregateInput = {
+    id?: SortOrder
+    postUrl?: SortOrder
+    contextLabel?: SortOrder
+    status?: SortOrder
+    attempts?: SortOrder
+    placed?: SortOrder
+    viewsOrderId?: SortOrder
+    reactionsOrderId?: SortOrder
+    lastError?: SortOrder
+    startedAt?: SortOrder
+    processedAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SmmQueueSumOrderByAggregateInput = {
+    attempts?: SortOrder
+    placed?: SortOrder
+  }
+
   export type AuthIdentityCreateNestedManyWithoutUserInput = {
     create?: XOR<AuthIdentityCreateWithoutUserInput, AuthIdentityUncheckedCreateWithoutUserInput> | AuthIdentityCreateWithoutUserInput[] | AuthIdentityUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AuthIdentityCreateOrConnectWithoutUserInput | AuthIdentityCreateOrConnectWithoutUserInput[]
@@ -39051,6 +42586,18 @@ export namespace Prisma {
      * @deprecated Use CodingSubmissionDefaultArgs instead
      */
     export type CodingSubmissionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CodingSubmissionDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use AppSettingDefaultArgs instead
+     */
+    export type AppSettingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AppSettingDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use TelegramChannelDefaultArgs instead
+     */
+    export type TelegramChannelArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TelegramChannelDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use SmmQueueDefaultArgs instead
+     */
+    export type SmmQueueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SmmQueueDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

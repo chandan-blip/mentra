@@ -26,6 +26,8 @@ import { aiPromptRouter } from './modules/ai-prompt/index.js';
 import { careerChatRouter } from './modules/career-chat/index.js';
 import { codingRouter, codingTasksRouter } from './modules/coding/index.js';
 import { reviewsRouter, reviewsAdminRouter, reviewsPublicRouter } from './modules/reviews/index.js';
+import { telegramRouter, telegramWebhookRouter } from './modules/telegram/index.js';
+import { smmRouter } from './modules/smm/index.js';
 
 export function createApp(): Express {
   const app = express();
@@ -103,6 +105,11 @@ export function createApp(): Express {
   app.use('/api/v1/marketing', marketingOauthRouter);
   app.use('/api/v1/marketing', marketingRouter);
   app.use('/api/v1/jobs', jobsRouter);
+  // Telegram bot callbacks (no auth — verified by the secret header) must precede the
+  // role-gated admin router so /webhook is never swallowed by requireAuth.
+  app.use('/api/v1/telegram', telegramWebhookRouter);
+  app.use('/api/v1/telegram', telegramRouter);
+  app.use('/api/v1/smm', smmRouter);
   // Public onboarding enquiries from the marketing landing page (no auth) → creates Leads.
   app.use('/api/v1/enquiries', leadsEnquiryRouter);
   // Public Vapi webhook (no auth) must precede the role-gated leads router.

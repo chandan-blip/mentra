@@ -11,13 +11,19 @@ import {
   registerLiveSessionSocket,
   startChatFlusher,
 } from './modules/live-session/index.js';
+import { registerTelegramNotifications } from './modules/telegram/index.js';
+import { startSmmWorker } from './modules/smm/index.js';
 
 // --- Boot-time wiring ---
 registerUserProfileListeners();
 registerAccessListeners();
 registerLiveSessionListeners();
+registerTelegramNotifications();
 startCleanupWorker();
 startChatFlusher();
+// Drains the SMM order queue. Safe to start unconditionally: with no panel config it
+// simply polls an empty table, and webhook enqueues are gated by their own master switch.
+startSmmWorker().catch((err: unknown) => logger.error({ err }, 'smm worker failed to start'));
 seedFlags().catch((err: unknown) => logger.error({ err }, 'flag seed failed'));
 
 const app = createApp();

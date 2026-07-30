@@ -13,6 +13,7 @@ import type {
   UpdateLeadListInput,
 } from '@mentra/shared';
 import { env } from '../../env.js';
+import { emit } from '../../core/events.js';
 import { logger } from '../../logger.js';
 import { LeadError } from './leads.errors.js';
 import { createCall, mapVapiStatus, missingVapiVars, VapiError } from './vapi.js';
@@ -57,6 +58,15 @@ export async function createEnquiry(input: EnquiryInput): Promise<void> {
   };
   await repo.insertLead(ownerId, lead);
   logger.info({ email: input.email, source: 'landing' }, 'enquiry.created');
+  // Ops visibility (Telegram). Emitted after the lead is safely stored, so a notifier
+  // failure can never cost us the enquiry itself.
+  emit('lead.enquiry.created', {
+    name: input.name,
+    email: input.email,
+    phone: input.phone || null,
+    interest: input.interest || null,
+    message: input.message || null,
+  });
 }
 
 function normalizeTags(value: string[] | string | null): string[] {

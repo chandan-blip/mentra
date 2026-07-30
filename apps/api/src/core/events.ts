@@ -28,6 +28,23 @@ export type DomainEventMap = {
   };
   'live-session.started': { sessionId: string; mentorId: string };
   'live-session.ended': { sessionId: string; mentorId: string };
+  // Ops-visibility events. Consumed by the Telegram notifier (modules/telegram);
+  // emitting them must stay side-effect-free for the producer — handlers are detached.
+  'lead.enquiry.created': {
+    name: string;
+    email: string;
+    phone: string | null;
+    interest: string | null;
+    message: string | null;
+  };
+  'user.registered': { userId: string; email: string; name: string | null; role: string | null };
+  'support.message.created': {
+    userId: string;
+    name: string | null;
+    email: string | null;
+    message: string;
+    source: string;
+  };
 };
 
 type EventName = keyof DomainEventMap;

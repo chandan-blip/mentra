@@ -42,6 +42,8 @@ import { AdminRolesPage } from './modules/admin/AdminRoles.js';
 import { AdminSubscriptionsPage } from './modules/admin/AdminSubscriptions.js';
 import { AdminModulesPage } from './modules/admin/AdminModules.js';
 import { AdminSettingsPage } from './modules/admin/AdminSettings.js';
+import { AdminTelegramPage } from './modules/admin/AdminTelegram.js';
+import { AdminSmmPage } from './modules/admin/AdminSmm.js';
 import { AppLayout } from './components/AppLayout.js';
 import { getAccessToken } from './lib/auth.js';
 import { useMyAccess } from './lib/access.js';
@@ -109,6 +111,8 @@ export function App() {
         <Route path="/admin/roles" element={<AdminRolesPage />} />
         <Route path="/admin/subscriptions" element={<AdminSubscriptionsPage />} />
         <Route path="/admin/modules" element={<AdminModulesPage />} />
+        <Route path="/admin/telegram" element={<AdminTelegramPage />} />
+        <Route path="/admin/smm" element={<AdminSmmPage />} />
         <Route path="/admin/settings" element={<AdminSettingsPage />} />
       </Route>
     </Routes>

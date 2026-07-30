@@ -47,6 +47,10 @@ export const SEED_FEATURE_MODULES: FeatureModule[] = [
   // Content management — role-gated upload of student review videos/screenshots (students view at /reviews).
   { key: 'manage-reviews', label: 'Manage Reviews', icon: 'MessagesSquare', route: '/manage-reviews', sortOrder: 27 },
 
+  // NOTE: Telegram + SMM Orders are deliberately absent. They live in the admin console
+  // (/admin/telegram, /admin/smm) behind requireAdmin, not in the entitlement-driven
+  // sidebar — a Module row here would put a dead link in the student/mentor nav.
+
   // HR
   { key: 'hr-jobs', label: 'Job Postings', icon: 'Building2', route: '/hr-jobs', sortOrder: 25 },
 

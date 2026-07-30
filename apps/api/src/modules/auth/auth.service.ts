@@ -63,6 +63,15 @@ export async function signup(input: SignupInput, req: Request, res: Response) {
   // Email signups are active immediately (no OTP step in MVP), so treat signup
   // as verification — downstream modules create the profile off this event.
   emit('user.verified', { userId: user.id, email: user.email });
+  // Ops visibility (Telegram). Separate from user.verified, which downstream modules use
+  // to build the profile — a notifier subscribing to that would fire on every future
+  // verification path too.
+  emit('user.registered', {
+    userId: user.id,
+    email: user.email,
+    name: user.name ?? null,
+    role: user.role ?? null,
+  });
 
   return createSessionResponse(toAuthUser(user), req, res, true);
 }

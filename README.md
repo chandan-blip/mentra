@@ -52,3 +52,21 @@ journalctl -u mentra-api -f                      # API logs
 - **Secrets:** change the `JWT_*` and `LIVEKIT_*` defaults in `.env`; set a strong MySQL password
   (override `MYSQL_USER`/`MYSQL_PASSWORD` env before provisioning, and match `DATABASE_URL`).
 - **Firewall:** allow 22, 80, 443, 7881/tcp, 7882/udp; keep MySQL/Redis bound to localhost.
+
+
+
+Bot token and secret — where each comes from:
+
+┌──────────────────────────┬───────────────────────────────────────────────────────────────────────────────────────┐
+│           What           │                                         Where                                         │
+├──────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────┤
+│ TELEGRAM_BOT_TOKEN       │ @BotFather → /newbot (or /mybots → your bot → API Token). Format 123456789:AAE...     │
+├──────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────┤
+│                          │ Add the bot to the channel as admin, post a message, then open                        │
+│ TELEGRAM_DASH_CHANNEL_ID │ https://api.telegram.org/bot<TOKEN>/getUpdates and read channel_post.chat.id (a       │
+│                          │ negative number like -1001234567890). Or forward a channel message to @userinfobot    │
+├──────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────┤
+│                          │ You invent it — nothing to look up. openssl rand -hex 32. You pass it to setWebhook   │
+│ TELEGRAM_WEBHOOK_SECRET  │ as secret_token, Telegram echoes it back in the X-Telegram-Bot-Api-Secret-Token       │
+│                          │ header                                                                                │
+└──────────────────────────┴───────────────────────────────────────────────────────────────────────────────────────┘
